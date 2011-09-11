@@ -1,0 +1,462 @@
+\documentclass[]{beamer}
+\usetheme{Singapore}
+\usepackage{hyperref}
+\usepackage{helvet}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{tipa}
+\usepackage{booktabs}
+\usepackage[small,nohug,heads=vee]{diagrams}
+\usepackage[normalem]{ulem}
+
+\mode<presentation>
+\title{Using Speech Community Data as Phonological Evidence}
+\author{Josef Fruehwald}
+\institute{University of Pennsylvania}
+\date{September 16, 2011\\Penn State, The Center for Language Science}
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+
+\begin{document}
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\section{Introduction}
+
+\subsection{Motivations}
+
+\begin{frame}
+	\frametitle{Motivations}
+	\framesubtitle{Phonological Context}
+	
+	\begin{block}{``Classic'' Evidence}
+		\begin{itemize}
+			\item Alternations / Static Distributions.
+			\item Drawn from introspection / Small number of informants.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{LabPhon}
+		\begin{itemize}
+			\item Experimental Measures (acoustic, articulatory, judgments).
+			\item Drawn from standard pools of experimental subjects.
+			\item Frequently expressing concerns about the validity of Classic phonological evidence.
+		\end{itemize}
+	\end{block}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Motivations}
+	\framesubtitle{Sociolinguistic Context}
+	
+	\begin{block}{Linguistic Theory}
+		\begin{itemize}
+			\item Variable Rules
+			\item Lexical Phonology (Guy, 1991a;b)
+			\item Exemplar Theory
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Variation Theory}
+		\begin{itemize}
+			\item What is changing where, and how?
+			\item What can influence variation?
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Social Theory}
+		\begin{itemize}
+			\item How does one construct and project their identity?
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Motivations}
+	\framesubtitle{Sociolinguistic Context}
+	\begin{block}{Research Focus of Papers in the Proceedings of NWAV}
+		\begin{center}
+		\begin{tabular}{rrrrr}
+			\toprule
+						&Linguistic & Variation & Social & Etc.\\
+			\cmidrule{2-5}
+			NWAV 37 &      2         &   8       &   4       & --      \\
+			NWAV 38 &     1          &     12 &    4     &   2   \\
+			\bottomrule
+		\end{tabular}
+		\end{center}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Motivations}
+	\framesubtitle{Using Variation for Phonological Argument}
+	
+	\begin{block}{Andries Coetzee}
+		\begin{itemize}
+			\item [$\sim$] Frequency biases in phonological variation, {\it NLLT} (w/ Shigeto Kawahara)
+			\item [$\sim$] The place of variation in phonological theory, {\it The Handbook of Phonological Theory. 2nd Edition} (w/ Joe Pater)
+			\item [$\sim$] \ldots
+		\end{itemize}	
+	\end{block}
+	
+	\begin{block}{Ricardo Berm\'udez-Otero}
+		\begin{itemize}
+			\item [$\sim$] Cycles and continua: on unidirectionality and gradualness in language change {\it Handbook on the history of English} (w/ Graeme Trousdale)
+			\item [2007] Diachronic phonology {\it The Cambridge handbook of phonology}
+			\item [$\sim$] \ldots
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+
+\subsection{Goals}
+
+\begin{frame}
+	\frametitle{Goals}
+	
+	\begin{itemize}
+		\item Identify how sociolinguistic data can be used for phonological theory building.
+		\item Identify how sociolinguistic data can be used for identifying and specifying phonological phenomena.
+		\item Identify the ways in which sociolinguistic data achieves these goals uniquely.
+	\end{itemize}
+
+\end{frame}
+
+\subsection{Data}
+
+\begin{frame}{Data Sources}
+
+	\begin{block}{Philadelphia Corpus}
+		Automatically extracted vowel measurements from 272 Philadelphia speakers interviewed between 1973 and 2010. Dates of birth
+		ranging from 1888 to 1991.
+	\end{block}
+	
+	\begin{block}{Atlas of North American English}
+		Acoustic vowel measurements from survey respondents in the Atlas of North American English.
+	\end{block}
+
+	\begin{block}{Sociolinguistic Literature}
+		Various accounts of sound change in progress from the sociolinguistic literature.
+	\end{block}
+
+
+
+\end{frame}
+
+\begin{frame}{Philadelphia Corpus}
+	\framesubtitle{FAAV Project}
+%	\begin{columns}[c]
+	
+%	\column{1.5in}
+	\begin{diagram}
+		\raisebox{-.5\height}{\includegraphics[width = 0.1\textwidth]{figures/wav.pdf}} &&
+		\raisebox{-.5\height}{\includegraphics[width = 0.1\textwidth]{figures/wav.pdf}} + \fbox{transcription} &&
+		\raisebox{-.5\height}{\includegraphics[width = 0.1\textwidth]{figures/wav.pdf}} + \fbox{forced\vphantom{g}}\fbox{alignment}\\
+		 \dTo &\ruTo(2,3) & \dTo_{P2FA} & \ruTo(2,3) & \dTo_{extractFormants}\\
+		 		&&	&&\\
+		\fbox{transcription} &\phantom{what}& \fbox{forced\vphantom{g}}\fbox{alignment} &\phantom{what}&\raisebox{-.5\height}{\includegraphics[width = 0.2\textwidth]{figures/vowels.png}} \\
+	\end{diagram}
+	
+
+\end{frame}
+
+%% Motivation:
+%%	Classical / Laboratory Phonology
+%%	Naturalistic language observation is also useful / crucial\
+
+%% Outline:
+%%	Establish a linking hypothesis between observable phonetic variation and phonological structure
+%%		Universal Phonetics vs. Langauge Specific Phonetics vs. Exemplar Theory
+%%	Case Study
+
+\section{Phonology-Phonetics Interface}
+
+\begin{frame}{Phonology-Phonetic Interface}
+
+	\begin{block}{Options}
+		\begin{itemize}
+			\item Universal Phonetic Implementation
+			\item Langauge Specific Phonetic Implementation
+			\item Exemplar Theory
+		\end{itemize}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}{Phonology-Phonetic Interface}
+	
+	\begin{block}{Linking Hypothesis}
+		All I have to work with is phonetic measurements, so settling on a PH-interface model
+		is crucial in order to make any connection to phonological theory at all.
+	\end{block}
+
+\end{frame}
+
+\subsection{Universal Phonetic Implementation}
+
+<<"load_ay", echo = F>>=
+	
+	load("../data/eys.Rdata")
+	library(ggplot2)
+	
+	ays <- subset(all_philly.mean, VClass %in% c("ay","ay0"))
+	ays <- transform(ays, VClass = as.factor(as.character(VClass)))
+	
+	p <- ggplot(ays, aes(DOB, F1, color = VClass)) + 
+				geom_point() + 
+				stat_smooth(method  = "loess") + 
+				scale_y_reverse() +
+				theme_bw() +
+				opts(axis.title.x = theme_text(size = 18),
+					 axis.title.y = theme_text(size = 18, angle = 90))
+@
+
+\SweaveOpts{width = 8, height = 5}
+\setkeys{Gin}{with = 0.8\textwidth}
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Continuous Change}
+
+@
+<<echo = F, fig = T>>=
+	print(p)
+@	
+	
+	
+\end{frame}
+
+
+<<"ay.sd",echo = F>>=
+
+ay0 <- subset(all_philly, VClass == "ay0")
+ay0.mean <- ddply(ay0, c(speaker.id, "VClass"), summarise, F1 = mean(F1.n), F1.sd = sd(F1.n))
+
+p2 <- ggplot(ay0.mean, aes(F1, F1.sd, color = DOB)) + 
+				geom_point() + 
+				stat_smooth(legend = F)+
+				scale_x_reverse()+
+				theme_bw()+
+				opts(axis.title.x = theme_text(size = 18),
+					 axis.title.y = theme_text(size = 18, angle = 90))
+@
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Continuous Change}
+
+@
+<<echo = F, fig = T>>=
+	print(p2)
+@	
+	
+	
+\end{frame}
+
+\begin{frame}{Phonology-Phonetic Interface}
+
+	\begin{block}{Options}
+		\begin{itemize}
+			\item \sout{Universal Phonetic Implementation}
+			\item Langauge Specific Phonetic Implementation
+			\item Exemplar Theory
+		\end{itemize}
+	\end{block}
+
+\end{frame}
+
+\subsection{Exemplar Theory}
+
+\begin{frame}{Phonology-Phonetics Interface}
+	\framesubtitle{Category Shifts}
+	
+
+\end{frame}
+
+
+\subsection{Language Specific Phonetics}
+
+
+
+
+
+\section{Identifying Phonological Processes}
+
+<<"set.pal.fun", echo = F>>=
+## This should maintain consistent colors for all graphs
+set.palette <- function(levels, palette){
+  
+  if(is.null(names(palette))){
+    names(palette) <- NA
+  }
+  in.pal <- levels[levels %in% names(palette)]
+  out.pal <- levels[!(levels %in% names(palette))]
+  
+  have.names <- palette[!is.na(names(palette))]
+  need.names <- palette[is.na(names(palette))]
+  
+  names(need.names) <- out.pal
+  
+  return(c(have.names, need.names))
+}
+
+library(RColorBrewer)
+pal <- brewer.pal(9, "Set1")
+
+
+@
+
+
+\subsection{/ey/ Introduction}
+
+\subsection{Analysis}
+
+<<"ey.stable.plot",echo = F>>=
+
+pal <- set.palette(levels(eys.stable$Coda), pal)
+
+p <- ggplot(eys.stable.coda.mean, aes(DOB, Diag, color = Coda)) + 
+            geom_point() +
+            stat_smooth() + 
+            ylim(-2, 2.5) +
+            expand_limits(x = 2010) +
+            scale_color_manual(values = pal)+
+            theme_bw() + 
+			opts(axis.title.x = theme_text(size = 18),
+				 axis.title.y = theme_text(size = 18, angle = 90))
+
+library(directlabels)				 
+p <- direct.label(p, list("last.qp", rot = 30))
+@
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Syllabic Context}
+
+@
+<<echo = F, fig = T>>=
+	print(p)
+@	
+	
+\end{frame}
+
+<<"ey.manner.plot",echo = F>>=
+
+eys.manner.mean$Manner <- relevel(eys.manner.mean$Manner, c("lateral"))
+eys.manner.mean$Manner <- relevel(eys.manner.mean$Manner, c("stop"))
+
+pal <- set.palette(levels(eys.manner.mean$Manner), pal)
+
+
+p <- ggplot(eys.manner.mean, aes(DOB, Diag, color = Manner)) +
+            stat_smooth() + 
+            ylim(-2, 2.5) +
+            scale_color_manual(values = pal)+
+            theme_bw() + 
+			opts(axis.title.x = theme_text(size = 18),
+				 axis.title.y = theme_text(size = 18, angle = 90))
+@
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Segmental Context}
+
+@
+<<echo = F, fig = T>>=
+	print(p)
+@	
+		
+\end{frame}
+
+<<echo = F>>=
+	main <- c("closed","open","final","hiatus", "lateral")
+	reset.palette <- function(keep.levels, pal){
+		main.pal <- pal[keep.levels]
+		free.pal <- pal[!pal %in% main.pal]
+		names(free.pal) <- NA
+		pal <- c(main.pal, free.pal)
+		return(pal)
+	}
+	
+	pal <- reset.palette(main, pal)
+
+@
+
+<<echo = F>>=
+
+pal <- set.palette(levels(eys.final.mean$Context), pal)
+
+p <- ggplot(eys.final.mean, aes(DOB, Diag, color = Context)) + 
+              geom_point() + 
+              stat_smooth()+
+              ylim(-2, 2.5) +
+              expand_limits(x = 2010) +
+              scale_color_manual(values = pal)+
+              theme_bw() + 
+			  opts(axis.title.x = theme_text(size = 18),
+			    	   axis.title.y = theme_text(size = 18, angle = 90))
+
+p <- direct.label(p, list("last.points", rot = 30))				   
+@
+
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Morphological Interaction}
+
+@
+<<echo = F, fig = T>>=
+	print(p)
+@	
+		
+\end{frame}
+
+
+
+<<echo = F>>=
+	pal <- reset.palette(main, pal)
+	names(pal)[names(pal) == "lateral"] <- "/l/"
+	pal <- set.palette(levels(eys.compare.mean$Context), pal)
+	
+	p <- ggplot(eys.compare.mean, aes(DOB, Diag, color = Context)) + 
+        			stat_smooth() +
+			     ylim(-2, 2.5) +
+                 scale_color_manual(values = pal)+
+                 theme_bw() + 
+	   			opts(axis.title.x = theme_text(size = 18),
+		   	    	 axis.title.y = theme_text(size = 18, angle = 90))
+
+
+@
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Morphological Interaction}
+
+@
+<<echo = F, fig = T>>=
+	print(p)
+@	
+		
+\end{frame}
+
+
+
+\subsection{Phonological Description}
+
+
+\subsection{The Unique View of Diachrony}
+
+\section{Conclusion}
+
+
+
+
+
+\end{document}  

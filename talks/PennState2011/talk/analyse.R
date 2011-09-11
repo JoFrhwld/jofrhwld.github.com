@@ -4,7 +4,7 @@ eys.stable.coda.mean <- ddply(eys.stable, .(File, DOB, DOB0, Decade, Sex, Age, Y
                               summarise, 
                               Diag = mean(Diag), .progress = "text")
                               
-library(MASS)
+
 ggplot(eys.stable.coda.mean, aes(DOB, Diag, color = Coda)) + 
             geom_point() +
             stat_smooth()
@@ -33,7 +33,7 @@ eys.closed <- subset(eys.stable, Coda %in% c("closed","open"))
 eys.closed <- transform(eys.closed, Manner = as.factor(as.character(Manner)))
 eys.closed <- subset(eys.closed, !is.na(Manner))
 
-eys.closed$Manner <- relevel(eys.closed$Manner, "stop")
+eys.closed$Manner <- relevel(eys.closed$Manner, c("stop")
 
 
 eys.manner.mean <- ddply(eys.closed, .(File, DOB, Decade, DOB0, Manner), 
@@ -181,5 +181,15 @@ ggplot(out.df, aes((Iter+1888) + 68 , coef, color = Context)) +
         geom_hline(y = 0)+
         geom_line()+ 
         xlab("Study Year") 
+
+
+
+################
+## ays analysis
+
+
+ay0 <- subset(all_philly, VClass %in% c("ay0"))
+
+ay0.mean <- ddply(ay0, c(speaker.id, "VClass"), summarise, F1 = mean(F1.n), F1.sd = sd(F1.n))
 
 
