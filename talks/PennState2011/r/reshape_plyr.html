@@ -52,6 +52,11 @@
 			a:visited{
 				color : #A50026;
 			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+
 			-->
 		</style>
 	</head> 
@@ -77,13 +82,22 @@
 						</ol>
 				</ol>
 				
+				<h2><a name = "Intro"></a>Intro</h2>
+				<p>
+					Effective data analysis (statistical or otherwise) requires effective data manipulation and summarization. Without
+					the right tools, manipulating your data to be in the correct format for a particular statistical test can be the 
+					biggest time suck in your analysis.
+				</p>
+				
+				<p>
+					Fortunately, some appropriate tools exist. Two packages written by <a href="http://had.co.nz/">Hadley Wickham</a>, 
+					<rcode>reshape</rcode> and <rcode>plyr</rcode>,
+					have become central components to all of my data analyses.
+				</p>
+				
 				<h2><a name = "structuring_data"></a>Structuring Data</h2>
 					<p>
-						It is the way we structure data which will differ the most from the spreadsheet based thinking. In fact, working out how to effectively use
-						the <rcode>reshape</rcode>(<a href="http://cran.r-project.org/web/packages/reshape/index.html">Cran</a>, 
-						<a href="http://had.co.nz/reshape/">website</a>) package has really changed the way I think about data, and hopefully it will for you too. I said 
-						<a href="http://www.ling.upenn.edu/~joseff/rstudy/week3.html#Organization">here</a> that the ideal data structure is one where 
-						every row is an observation. Here, I'll be refining what counts as an observation.
+						To effectively use the <rcode>reshape</rcode> package, it's probably useful to think about data structure the same way it does.
 					</p>
 					<h3><a name = "id_and_measure_variables"></a>ID and Measure Variables</h3>
 						<p>
@@ -196,7 +210,7 @@
 					
 					<p>
 						If you already have data stored in only this summary format, or some other summary format, don't worry. By using the 
-						<rcode>reshape::melt()</rcode><sup><a id = "footnote" href = "#footnote1">*</a></sup> function, we can get from the summary format 
+						<rcode>reshape::melt()</rcode> function, we can get from the summary format 
 						to the ideal format. I would encourage you not to store data in summary formats anymore, however.
 					</p>
 					
@@ -303,7 +317,355 @@
 						line of code away from the ideal format, but from the summary format, and all other manners of aggregation.
 					</p>
 				   
-				   
+				
+				
+				<h2><a name = "reshape_package"></a> <rcode>reshape</rcode> Package</h2>
+					<p>
+						The webpage for the <rcode>reshape</rcode> package is located here: <a href="http://had.co.nz/reshape/">http://had.co.nz/reshape/</a>. The
+						<a href="http://www.jstatsoft.org/v21/i12">suggested documentation</a> on that page is pretty good.
+					</p>
+					
+				<h3><a name = "gender_gap"></a>Gender Gap</h3>
+				<p>
+					This next data set also comes from <a href="http://www.guardian.co.uk/news/datablog/2009/mar/10/gender-educationsgendergap">a post</a> 
+					to the Guardian Data blog about gender inequality. You can find the data here: 
+					<a href="data/gender_equality.txt">http://jofrhwld.github.com/talks/PennState2011/r/data/gender_equality.txt</a>
+				</p>
+				
+				<blockquote>
+					<rcode>gender <- read.delim("http://jofrhwld.github.com/talks/PennState2011/r/data/gender_equality.txt")</rcode>
+				</blockquote>
+				
+				<p>
+					The next step is to "melt" the data with the <rcode>reshape::melt()</rcode> function. The arguments that <rcode>melt()</rcode> takes 
+					are:
+				</p>
+				<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing the data.</dd>
+					<dt><rcode>id.vars</rcode></dt>
+						<dd>The columns which define the id variables</dd>
+					<dt><rcode>measure.vars</rcode></dt>
+						<dd>The columns which define measure variables. By default, it assumes all non-id variables are measure variables</dd>
+					<dt><rcode>variable_name</rcode></dt>
+						<dd>What you want to call the new variable column. The default is "variable", which is pretty fine.</dd>
+				</dl>
+				<p>
+					This data set has two ID variables: Country and Gender. Unfortunately, Gender has been spread across the columns with the measure variables.
+					So, in <rcode>melt()</rcode> we'll tell it that Country is the only ID variable.
+				</p>
+				<blockquote>
+					<rcode>
+						 ## Melt the data!<br>
+						 gender.m <- melt(gender, id = 1, na.rm = T)<br>
+						 ## Equivalently<br>
+						 #gender.m <- melt(gender, id = "Counry", na.rm = T)<br>
+						 head(gender.m)<br>
+					</rcode>
+				</blockquote>
+				<pre>
+              Country       variable value
+1         Afghanistan LifeExp_Female  43.2
+2             Albania LifeExp_Female  79.7
+3             Algeria LifeExp_Female  73.3
+4             Andorra LifeExp_Female  84.2
+5              Angola LifeExp_Female  43.7
+6 Antigua and Barbuda LifeExp_Female  74.5
+				</pre>
+				<p>
+					Now we need to split the column called <rcode>variable</rcode> into two: <rcode>Measure</rcode> and <rcode>Gender</rcode>.
+					Fortunately, there is a function just for this task in <rcode>reshape</rcode> called <rcode>colsplit()</rcode>. It takes the 
+					following arguments.
+				</p>
+				<dl>
+					<dt><rcode>x</rcode></dt>
+						<dd>The column (or vector) to be split.</dd>
+					<dt><rcode>split</rcode></dt>
+						<dd>A definition of what character to split the vector by (regex).</dd>
+					<dt><rcode>names</rcode></dt>
+						<dd>The names of the new columns to be created</dd>
+				</dl>
+
+				<p>
+					<rcode>colsplit()</rcode> just returns a data frame of the split column. 
+				</p>				
+				<blockquote>
+					<rcode>
+					new.cols <- colsplit(gender.m$variable, split = "_", names = c("Measure","Gender"))<br><br>
+					head(new.cols)
+					</rcode>
+				</blockquote>
+				<p>
+					We need to <rcode>cbind()</rcode> these new columns onto the old data frame. Of course, this can all be condensed into
+					one (gnarly) line of code.
+				</p>
+				<blockquote>
+					<rcode>
+						gender.m <- cbind(gender.m, new.cols)<br>
+						head(gender.m)
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Now that we have the data in this format, we can recast the data into almost any shape, including various aggregations.
+					The function to recast data is called <rcode>reshape::cast()</rcode>. It takes the following arguments:
+				</p>
+					<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing molten data.</dd>
+					<dt><rcode>formula</rcode></dt>
+						<dd>The casting formula. Variables to the left of the <rcode>~</rcode> define rows, and variables 
+						to the right define columns. A pipe (<rcode>|</rcode>) following the formula defines subsets.</dd>
+					<dt><rcode>value</rcode></dt>
+						<dd>The column to treat as the value. By default, it assumes that a column named "<rcode>value</rcode>"
+						is the value column</dd>
+					<dt><rcode>fun.aggregate</rcode></dt>
+						<dd>aggregation function</dd>
+					<dt><rcode>margins</rcode></dt>
+						<dd>Which margins to calculate grand summaries for</dd>
+				</dl>
+
+				<p>
+					We know that there is at most one observation for each measure for each country for each gender. If we wanted to recast
+					the data so that it's got a column for each gender, we can do so this way. 
+				</p>
+				
+				<blockquote>
+					<rcode>
+						cast(gender.m, Country + Measure ~ Gender)
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Since there was only one value per cell, <rcode>cast()</rcode> filled that value into the cell. However, if more than
+					one value can fit into a cell, <rcode>cast()</rcode> has to aggregate the data some how. For example:
+				</p>
+				
+				<blockquote>
+					<rcode>
+						cast(gender.m, Measure ~ Gender)
+					</rcode>
+				</blockquote>
+				<pre>
+  Aggregation requires fun.aggregate: length used as default
+     Measure Female Male
+  1      Edu    178  178
+  2   Income    174  174
+  3  LifeExp    194  194
+  4 Literacy    171  171
+				</pre>
+				
+				<p>
+					By crossing <rcode>Measure</rcode> and <rcode>Gender</rcode>, there are between 194 and 171 observations per cell. By default, 
+					<rcode>cast()</rcode> applies, <rcode>length()</rcode> to these observations, which tells you how many observations there were.
+					You can also apply other summary functions, for example
+				</p>
+
+				<blockquote>
+					<rcode>
+						cast(gender.m, Measure ~ Gender, fun = median)
+					</rcode>
+				</blockquote>
+				<pre>
+     Measure  Female    Male
+  1      Edu   74.25   72.05
+  2   Income 3994.00 7984.50
+  3  LifeExp   74.05   68.30
+  4 Literacy   89.20   93.70
+				</pre>
+				<p>Women have higher median educational involvement rates and life expectancy, but lower median literacy rates, and much lower
+				median incomes. Let's compare men and women on each metric.</p>
+				<blockquote>
+					<rcode>
+						## Create the comparison dataframe<br>
+						gender.comp <- cast(gender.m, Country + Measure ~ Gender)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/gendercompare.R"><img src = "plots/reshape/gendercompare.png" width = 60%></a>
+				</center>
+				<p>
+					There are a few interesting patterns here. To begin with, it looks mostly like the differences between countries is larger than
+					differences within countries. So, countries with high education, for instance, have both high male and female education. There's also apparently
+					an artificial clipping of reported male incomes. No country reports a mean male income greater than $40,000. I'll be excluding 
+					these and other artificially clipped data points in the following plots.
+				</p>
+				<p>
+					The gender differences within countries are also interesting. The most striking, to my eyes, is that in high education rate countries,
+					women have a higher education rate than men, but in lower education rate countries, men have a higher rate than women.
+				</p>
+				<p>
+					We should probably also look at how different measures are correlated with eachother.
+				</p>
+				<blockquote>
+					<rcode>
+						gender.comp2 <- cast(gender.m, Country + Gender ~ Measure)
+					</rcode>
+				</blockquote>
+				<p>
+					Let's start with income and life expectancy.
+				</p>
+				<center>
+					<a href = "plots/reshape/income_life.R"><img src = "plots/reshape/income_life.png" width = 70%></a>
+				</center>
+				<p>
+					Unsurprisingly, the greater average income, the greater life expectancy is. Women almost always have a higher life expectancy than men of the same
+					average income, but as income increases, life expectancy seems to increase at the same rate for men and women.
+				</p>
+				<p>
+					Next, education and literacy!
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_lit.R"><img src = "plots/reshape/edu_lit.png" width = 75%></a>
+				</center>
+				<p>
+					Unsurprisingly, as education increases, so does literacy. The effect of education on literacy also appears to be the same for both genders.
+				</p>
+				<p>
+					Next, let's look at the effect of education on income!
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_income1.R"><img src = "plots/reshape/edu_income1.png" width = 70%></a>
+				</center>
+				<p>
+					Now that is a strong interaction. Over all, as education increases, average income increases. However, the effect is stronger for men
+					than for women. That is, men get more income bang for their education buck, internationally. For women, the effect of education on income 
+					is weaker at the higher education and income end of the spectrum.
+				</p>
+				<p>
+					We can also visualize this effect by connecting the male and female data points within each country.
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_income2.R"><img src = "plots/reshape/edu_income2.png" width = 70%></a>
+				</center>
+				<p>
+					Now, the cross-over pattern in education above makes more sense. The high income countries are also the high education countries, but
+					it's in those countries that women need to have proportionally more education to get the same income benefits. The arbitrariness of this
+					effect should be clear. Women don't appear to be worse learners, as evidenced by there not being a large gender effect on the direct
+					outcome of education, literacy. 
+				</p>
+				<p>
+					Of course, I'm also commiting the <a href="http://en.wikipedia.org/wiki/Ecological_fallacy">environmental fallacy</a>, and maybe others.
+				</p>
+				
+				<h3><a name = "peterson_barney"></a>Peterson and Barney</h3>
+				<p>
+					I'll use this final set of data to demonstrate some useful aggregation utility in <rcode>cast()</rcode>. This data set is acoustic measurements
+					of recordings of 8 repitions of 10 vowels by 76 speakers as collected by Peterson and Barney (1952). It can be found here: 
+					<a href="http://ling.upenn.edu/courses/cogs501/pb.Table1">http://ling.upenn.edu/courses/cogs501/pb.Table1</a>
+				</p>
+				<p>
+					First, let's load it into R and clean it up a bit.
+				</p>
+				<blockquote>
+					<rcode>
+						## Read in the data<br>
+						pb <- read.delim("http://ling.upenn.edu/courses/cogs501/pb.Table1", header = F)<br>
+						<br>
+						## Give meaningful column names<br>
+						colnames(pb) <- c("Age","Sex","Speaker","Vowel","V1","F0.hz","F1.hz","F2.hz","F3.hz")<br>
+						<br>
+						## Fix up the age data<br>
+						levels(pb$Age) <- c("Child","Adult","Adult")<br>
+						pb$Age <- relevel(pb$Age, "Adult")
+					</rcode>
+				</blockquote>
+				<p>Next, melt the data.</p>
+				<blockquote>
+					<rcode>
+						pb.m <- melt(pb, id = 1:5)
+					</rcode>
+				</blockquote>
+				<p>
+					Now, examine the balance of the data.
+				</p>
+				<blockquote>
+					<rcode>
+						## How many measurements by age and sex?<br>
+						cast(pb.m, Vowel ~ Age+Sex)
+					</rcode>
+				</blockquote>
+				<xmp>
+  Aggregation requires fun.aggregate: length used as default
+     Vowel Adult_f Adult_m Child_f Child_m
+  1     aa     224     264      64      56
+  2     ae     224     264      64      56
+  3     ah     224     264      64      56
+  4     ao     224     264      64      56
+  5     eh     224     264      64      56
+  6     er     224     264      64      56
+  7     ih     224     264      64      56
+  8     iy     224     264      64      56
+  9     uh     224     264      64      56
+  10    uw     224     264      64      56
+				</xmp>
+				<blockquote>
+					<rcode>
+						## How many speakers by age and sex?<br>
+						cast(pb.m, Age+Sex ~ ., value = "Speaker", <br>
+						&nbsp;&nbsp;fun = function(x) length(unique(x)))
+					</rcode>
+				</blockquote>
+				<xmp>
+      Age Sex (all)
+  1 Adult   f    28
+  2 Adult   m    33
+  3 Child   f     8
+  4 Child   m     7				
+  				</xmp>
+				<blockquote>
+					<rcode>
+						## How many measurements of each vowel by speaker?<br>
+						cast(pb.m, Vowel ~ Speaker)
+					</rcode>
+				</blockquote>
+				<p>
+					So, the data isn't necesarilly balanced in terms of numbers of speakers in each category, but every speaker produced the same number
+					of each vowel.
+				</p>
+				<p>
+					Now, let's calculate the mean formant values for each vowel in each category of speaker.
+				</p>
+				<blockquote>
+					<rcode>
+						pb.means1 <- cast(pb.m, Vowel + Sex + Age + variable ~ ., fun = mean)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/sex_age_formant.R"><img src = "plots/reshape/sex_age_formant.png" width = 100%></a>
+				</center>
+				<p>
+					The patterns which seem most clear to me are
+				</p>
+				<ol>
+					<li>The logarithmic distribution of formant values</li>
+					<li>The order of low to high values go <br>
+						Adult Male < Adult Female < Child Male < Child Female</li>
+				</ol>
+				<p>
+					To calculate speaker category means:
+				</p>
+				<blockquote>
+					<rcode>
+						cast(pb.m, Vowel + Sex + Age ~ variable, fun = mean)
+					</rcode>
+				</blockquote>
+				<p>
+					To calculate speaker means:
+				</p>
+				<blockquote>
+					<rcode>
+						cast(pb.m, Speaker + Vowel + Sex + Age ~ variable, fun = mean)
+					</rcode>
+				</blockquote>
+			
+				<h2><rcode>plyr</rcode></h2>
+				<p>
+					The <rcode>plyr</rcode> package is built upon the idea that most operations in data analysis involve <b>splitting</b> data
+					up according to some criteria, <b>applying</b> some process to each piece, and <b>combining</b> the results back together.
+				</p>
+				
+				  
 			</div>
 		</div>
 	
