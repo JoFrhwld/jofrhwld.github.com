@@ -8,6 +8,7 @@
 \usepackage{booktabs}
 \usepackage[small,nohug,heads=vee]{diagrams}
 \usepackage[normalem]{ulem}
+\usepackage{multirow}
 
 \mode<presentation>
 \title{Using Speech Community Data as Phonological Evidence}
@@ -181,7 +182,7 @@
 %%		Universal Phonetics vs. Langauge Specific Phonetics vs. Exemplar Theory
 %%	Case Study
 
-\section{Phonology-Phonetics Interface}
+\section{Phonology-Phonetic Interface}
 
 \begin{frame}{Phonology-Phonetic Interface}
 
@@ -277,20 +278,410 @@ p2 <- ggplot(ay0.mean, aes(F1, F1.sd, color = DOB)) +
 
 \subsection{Exemplar Theory}
 
-\begin{frame}{Phonology-Phonetics Interface}
+<<echo = F>>=
+	anae <- load("~/Documents/Classes/Spring_10/misc/anae.Rdata")
+	anae <- load("~/Documents/Classes/Spring_10/misc/anae.Rdata")
+
+	anae.c <- cast(mean_anae, TS ~ VClass, value = "ZF2")
+	anae.cor <- cor(anae.c[, -1], use = "pairwise.complete.obs")
+
+	sparsify <- function(mat){
+	  for(i in 1:nrow(mat)){
+	    nr <- nrow(mat)
+	    mat[i,i:nr] <- NA
+	  }
+	  return(mat)
+	}
+
+
+	anae.cor <- sparsify(anae.cor)
+
+	anae.cor.df <- melt(anae.cor)
+	anae.cor.df <- subset(anae.cor.df, !is.na(value))
+	vowels <- levels(mean_anae$VClass)
+	anae.cor.df <- transform(anae.cor.df, X1 = vowels[X1], X2 = vowels[X2])
+	anae.cor.df <- arrange(anae.cor.df, -abs(value))
+@
+
+<<echo = F>>=
+	f2.range <- with(anae.c, range(c(aw, ow, uw), na.rm = T))
+
+	aw.ow <- ggplot(anae.c, aes(aw, ow)) + 
+				geom_hline(y = 0, color = "darkgrey") +
+				geom_vline(x = 0, color = "darkgrey")+
+				geom_point() + 
+				stat_smooth(size = 1) +
+				xlim(f2.range[2], f2.range[1]) +
+				ylim(f2.range[2], f2.range[1]) +
+				coord_fixed()+
+				theme_bw() +
+				opts(title = "r = 0.57")
+
+	aw.uw <- ggplot(anae.c, aes(aw, uw)) + 
+				geom_hline(y = 0, color = "darkgrey") +
+				geom_vline(x = 0, color = "darkgrey")+
+				geom_point() + 
+				stat_smooth(size = 1) +
+				xlim(f2.range[2], f2.range[1]) +
+				ylim(f2.range[2], f2.range[1]) +
+			  	coord_fixed()+
+				theme_bw()+
+				opts(title = "r = 0.48")				
+
+	ow.uw <- ggplot(anae.c, aes(ow, uw)) + 
+				geom_hline(y = 0, color = "darkgrey") +
+				geom_vline(x = 0, color = "darkgrey")+
+				geom_point() + 
+				stat_smooth(size = 1) +
+				xlim(f2.range[2], f2.range[1]) +
+				ylim(f2.range[2], f2.range[1]) +
+				coord_fixed()+
+				theme_bw()+
+				opts(title = "r = 0.73")
+@
+
+\SweaveOpts{width = 3, height = 3}
+\setkeys{Gin}{width = 0.32\textwidth}
+
+\begin{frame}{Phonology-Phonetic Interface}
 	\framesubtitle{Category Shifts}
+\begin{figure}
+@
+<<echo = F, fig = T>>=
+print(aw.ow)
+@
+<<echo = F, fig = T>>=
+print(aw.uw)
+@
+@
+<<echo = F, fig = T>>=
+print(ow.uw)
+@
+
+
+\end{figure}
+\end{frame}
+
+\SweaveOpts{width = 8, height = 5}
+\setkeys{Gin}{width = 0.8\textwidth}
+
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Category Shifts}
+\begin{block}{Canadian Shift}
+	\includegraphics[width = 0.25\textwidth]{figures/canshift.pdf}
+\end{block}
+\end{frame}
+
+<<echo = F>>=
+f1.df <- cast(all_philly.mean, File ~ VClass, value = "F1")
+f2.df <- cast(all_philly.mean, File ~ VClass, value = "F2")
+
+f1.cor <- cor(f1.df[, -1], use = "pairwise.complete.obs")
+f2.cor <- cor(f2.df[, -1], use = "pairwise.complete.obs")
+
+
+f1.cor <- sparsify(f1.cor)
+f2.cor <- sparsify(f2.cor)
+
+f1.cor.df <- melt(f1.cor)
+f2.cor.df <- melt(f2.cor)
+
+f1.cor.df <- subset(f1.cor.df, !is.na(value))
+f2.cor.df <- subset(f2.cor.df, !is.na(value))
+
+vowels <- levels(all_philly$VClass)
+
+f1.cor.df <- transform(f1.cor.df, X1 = vowels[X1], X2 = vowels[X2])
+f2.cor.df <- transform(f2.cor.df, X1 = vowels[X1], X2 = vowels[X2])
+
+f1.cor.df <- arrange(f1.cor.df, -abs(value))
+f2.cor.df <- arrange(f2.cor.df, -abs(value))
+
+allophones <- list(
+                  c("Tuw","uw", "uwr"), 
+                  c("ay","ay0"), 
+                  c("ey","eyF", "eyr"), 
+                  c("iy","iyF", "iyr"),
+                  c("ow","owF", "owr"))
+
+for(set in  allophones){
+  f1.cor.df <- subset(f1.cor.df, !(X1 %in% set & X2 %in% set))
+  f2.cor.df <- subset(f2.cor.df, !(X1 %in% set & X2 %in% set))
+}
+
+h_b_coding <- data.frame(
+  VClass = c("*hr", "Tuw", "ae", "aeBR", "aeh", "ah", "ahr", "aw", "ay", 
+"ay0", "e", "ey", "eyF", "eyr", "i", "iw", "iy", "iyF", "iyr", 
+"o", "oh", "ow", "owF", "owr", "oy", "u", "uh", "uw", "uwr"), 
+  Height = c(NA, 1, 3, NA, 2, 3, 2, 2, 3, 
+NA, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
+3, 2, 2, 2, 1, NA, 1, 2, 1, 1),                  
+  Backness = c(NA, 1, 1, NA, 1, 2, 2, 1, 2, 
+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+2, 2, 1, 1, 2, 2, 2, 2, 1, 2))
+
+f1.cor.df <- merge(f1.cor.df, h_b_coding, by.x = "X1", by.y = "VClass")
+f1.cor.df <- merge(f1.cor.df, h_b_coding, by.x = "X2", by.y = "VClass")             
+f1.cor.df <- transform(f1.cor.df, Height = Height.x == Height.y, Backness = Backness.x == Backness.y) 
+f1.cor.m <- melt(f1.cor.df,  id = "value", measure = c("Height","Backness"))
+colnames(f1.cor.m) <- c("cor", "Feature", "value")
+f1.cor.m$Dimension <- "F1"
+
+
+f2.cor.df <- merge(f2.cor.df, h_b_coding, by.x = "X1", by.y = "VClass")
+f2.cor.df <- merge(f2.cor.df, h_b_coding, by.x = "X2", by.y = "VClass")             
+f2.cor.df <- transform(f2.cor.df, Height = Height.x == Height.y, Backness = Backness.x == Backness.y) 
+f2.cor.m <- melt(f2.cor.df,  id = "value", measure = c("Height","Backness"))
+colnames(f2.cor.m) <- c("cor", "Feature", "value")
+
+f2.cor.m$Dimension <- "F2"
+
+cor.m <- rbind(f1.cor.m, f2.cor.m)
+
+
+@
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Category Correlation}
 	
+	\begin{block}{Correlation of Philadelphia Vowels}
+		\begin{itemize}
+			\item For the vowel means for each speaker, I calculated the correlations for every pairwise vowel
+			comparison across speakers, once for F1, once for F2.
+			\item For each pairwise comparison, I also coded for whether the two vowels also 
+			shared phonological specifications for height (3 degrees) or backness (2 degrees).
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+<<echo = F>>=
+	p <- ggplot(cor.m, aes(cor, value * 1, color = Feature)) +
+					geom_vline(x = 0, color = "darkgrey")+
+					geom_hline(y = 0.5, color = "darkgrey")+
+					stat_smooth(size = 1, method = "glm", family = binomial)+
+					theme_bw()+
+					xlim(-1,1)+
+					xlab("Pearson's r") +
+					ylab("Probability of Phonological Match") +
+					facet_wrap(~Dimension)
+@
+
+
+\SweaveOpts{width = 10, height = 5}
+\setkeys{Gin}{width = 1\textwidth}
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Category Correlation}
+@
+<<echo = F, fig = T>>=
+		print(p)
+@
+\end{frame}
+
+\SweaveOpts{width = 8, height = 5}
+\setkeys{Gin}{width = 0.8\textwidth}
+
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Category Correlation}
+	
+	\begin{block}{Correlation of Philadelphia Vowels}
+		\begin{itemize}
+			\item This result is suggestive that inter-speaker phonetic variation (due to change or any other reason) is relatable
+					to phonological features, not just atomic phonemes.
+			\item May also be used as a phonological diagnostic.
+				\begin{itemize}
+					\item The above analysis categorized /ow/ and /uw/ as [$-$back], since they are undergoing a change of fronting.
+					\item What would it look like of they were categorized as [$+$back]?
+				\end{itemize}
+		\end{itemize}
+	\end{block}
+
+\end{frame}
+
+<<echo = F>>=
+
+
+f2.df <- cast(all_philly.mean, File ~ VClass, value = "F2")
+
+
+f2.cor <- cor(f2.df[, -1], use = "pairwise.complete.obs")
+
+
+
+f2.cor <- sparsify(f2.cor)
+
+
+f2.cor.df <- melt(f2.cor)
+f2.cor.df <- subset(f2.cor.df, !is.na(value))
+
+vowels <- levels(all_philly$VClass)
+
+f2.cor.df <- transform(f2.cor.df, X1 = vowels[X1], X2 = vowels[X2])
+f2.cor.df <- arrange(f2.cor.df, -abs(value))
+
+allophones <- list(
+                  c("Tuw","uw", "uwr"), 
+                  c("ay","ay0"), 
+                  c("ey","eyF", "eyr"), 
+                  c("iy","iyF", "iyr"),
+                  c("ow","owF", "owr"))
+
+for(set in  allophones){
+  f2.cor.df <- subset(f2.cor.df, !(X1 %in% set & X2 %in% set))
+}
+
+h_b_coding.1.1 <- data.frame(
+  VClass = c("*hr", "Tuw", "ae", "aeBR", "aeh", "ah", "ahr", "aw", "ay", 
+"ay0", "e", "ey", "eyF", "eyr", "i", "iw", "iy", "iyF", "iyr", 
+"o", "oh", "ow", "owF", "owr", "oy", "u", "uh", "uw", "uwr"), 
+  Height = c(NA, 1, 3, NA, 2, 3, 2, 2, 3, 
+NA, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
+3, 2, 2, 2, 1, NA, 1, 2, 1, 1),                  
+  Backness = c(NA, 1, 1, NA, 1, 2, 2, 1, 2, 
+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+2, 2, 1, 1, 2, 2, 2, 2, 1, 2))
+
+h_b_coding.1.2 <- data.frame(
+  VClass = c("*hr", "Tuw", "ae", "aeBR", "aeh", "ah", "ahr", "aw", "ay", 
+"ay0", "e", "ey", "eyF", "eyr", "i", "iw", "iy", "iyF", "iyr", 
+"o", "oh", "ow", "owF", "owr", "oy", "u", "uh", "uw", "uwr"), 
+  Height = c(NA, 1, 3, NA, 2, 3, 2, 2, 3, 
+NA, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
+3, 2, 2, 2, 1, NA, 1, 2, 1, 1),                  
+  Backness = c(NA, 1, 1, NA, 1, 2, 2, 1, 2, 
+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+2, 2, 2, 2, 2, 2, 2, 2, 1, 2))
+
+
+h_b_coding.2.2 <- data.frame(
+  VClass = c("*hr", "Tuw", "ae", "aeBR", "aeh", "ah", "ahr", "aw", "ay", 
+"ay0", "e", "ey", "eyF", "eyr", "i", "iw", "iy", "iyF", "iyr", 
+"o", "oh", "ow", "owF", "owr", "oy", "u", "uh", "uw", "uwr"), 
+  Height = c(NA, 1, 3, NA, 2, 3, 2, 2, 3, 
+NA, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
+3, 2, 2, 2, 1, NA, 1, 2, 1, 1),                  
+  Backness = c(NA, 1, 1, NA, 1, 2, 2, 1, 2, 
+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+2, 2, 2, 2, 2, 2, 2, 2, 2, 2))
+
+
+f2.cor.df.1.1 <- merge(f2.cor.df, h_b_coding, by.x = "X1", by.y = "VClass")
+f2.cor.df.1.1 <- merge(f2.cor.df.1.1, h_b_coding, by.x = "X2", by.y = "VClass")             
+f2.cor.df.1.1 <- transform(f2.cor.df.1.1, Height = Height.x == Height.y, Backness = Backness.x == Backness.y) 
+f2.cor.1.1.m <- melt(f2.cor.df.1.1,  id = "value", measure = c("Height","Backness"))
+colnames(f2.cor.1.1.m) <- c("cor", "Feature", "value")
+
+f2.cor.1.1.m$Classification <- "ow, uw = front"
+
+f2.cor.df.1.2 <- merge(f2.cor.df, h_b_coding.1.2, by.x = "X1", by.y = "VClass")
+f2.cor.df.1.2 <- merge(f2.cor.df.1.2, h_b_coding.1.2, by.x = "X2", by.y = "VClass")             
+f2.cor.df.1.2 <- transform(f2.cor.df.1.2, Height = Height.x == Height.y, Backness = Backness.x == Backness.y) 
+f2.cor.1.2.m <- melt(f2.cor.df.1.2,  id = "value", measure = c("Height","Backness"))
+colnames(f2.cor.1.2.m) <- c("cor", "Feature", "value")
+
+f2.cor.1.2.m$Classification <- "ow = back, uw = front"
+
+
+f2.cor.df.2.2 <- merge(f2.cor.df, h_b_coding.2.2, by.x = "X1", by.y = "VClass")
+f2.cor.df.2.2 <- merge(f2.cor.df.2.2, h_b_coding.2.2, by.x = "X2", by.y = "VClass")             
+f2.cor.df.2.2 <- transform(f2.cor.df.2.2, Height = Height.x == Height.y, Backness = Backness.x == Backness.y) 
+f2.cor.2.2.m <- melt(f2.cor.df.2.2,  id = "value", measure = c("Height","Backness"))
+colnames(f2.cor.2.2.m) <- c("cor", "Feature", "value")
+
+f2.cor.2.2.m$Classification <- "ow , uw = back"
+
+
+classify.m <- rbind(f2.cor.1.1.m, f2.cor.1.2.m, f2.cor.2.2.m)
+classify.m <- subset(classify.m, Feature == "Backness")
+@
+
+
+<<echo = F>>=
+	p <- ggplot(classify.m, aes(cor, value * 1, color = Classification)) + 
+					geom_vline(x = 0, color = "darkgrey")+
+					geom_hline(y = 0.5, color = "darkgrey")+
+					stat_smooth(size = 1, method = "glm", family = binomial, se = F)+
+					theme_bw()+
+					xlim(-1,1)+
+					xlab("Pearson's r") +
+					ylab("Probability of Phonological Match") 
+@
+
+
+\SweaveOpts{width = 7, height = 5}
+\setkeys{Gin}{width = 0.8\textwidth}
+
+\begin{frame}{Phonology-Phonetic Interface}
+	\framesubtitle{Category Correlation}
+@
+<<echo = F, fig = T>>=
+	print(p)
+@
 
 \end{frame}
 
 
-\subsection{Language Specific Phonetics}
 
+
+\subsection{Language Specific Phonetics}
+\begin{frame}{Phonology-Phonetic Interface}
+
+	\begin{block}{Options}
+		\begin{itemize}
+			\item \sout{Universal Phonetic Implementation}
+			\item Langauge Specific Phonetic Implementation
+			\item \sout{Exemplar Theory}
+		\end{itemize}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}{Phonology-Phonetic Interface}
+\begin{diagram}
+\fbox{Phonology} & \mbox{uw} \rightarrow \mbox{[+back]/\underline{\hskip 15pt}l}  \\
+\dTo & \\
+\fbox{Language Specific Implementation} & \mbox{[+back]} \rightarrow 3\mbox{ on F2}\\
+\dTo & \\
+\fbox{Phonetic Alignment} & \mbox{\textipa{t\~{u:}n}}
+\end{diagram}
+
+\end{frame}
+
+\begin{frame}{Phonology-Phonetic Interface}
+
+	\begin{block}{In phonetic change...}
+		\begin{itemize}
+			\item The phonological representation remains stable (ish).
+			\item The phonetic implementation of the phonological representation changes.
+		\end{itemize}
+	\end{block}
+\end{frame}
 
 
 
 
 \section{Identifying Phonological Processes}
+
+\subsection{Utilizing Data on Phonetic Change}
+
+\begin{frame}{Identifying Phonological Processes}
+
+	\begin{block}{Follow}
+		\begin{itemize}
+			\item Phonological Unity $\rightarrow$ Phonetic Unity
+			\item $\neg$Phonetic Unity $\rightarrow$ $\neg$Phonological Unity
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Don't follow (but likely)}
+		\begin{itemize}
+			\item [*] Phonetic Unity $\rightarrow$ Phonological Unity
+			\item [*] $\neg$Phonological Unity $\rightarrow$ $\neg$Phonetic Unity
+		\end{itemize}
+	\end{block}
+\end{frame}
 
 <<"set.pal.fun", echo = F>>=
 ## This should maintain consistent colors for all graphs
@@ -317,36 +708,181 @@ pal <- brewer.pal(9, "Set1")
 @
 
 
-\subsection{/ey/ Introduction}
+\subsection{Philadelphia /ey/}
 
-\subsection{Analysis}
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Past description}
+
+			\begin{itemize}
+				\item The peripheralization of /ey/ in non-word-final contexts was identified as
+						a new and vigorous change in progress.
+				\item The primary distinction that has been made is word final /ey/ versus other.
+					\begin{itemize}
+						\item {\it pay} [\textipa{pEI}]
+						\item {\it make} [\textipa{m\|'eik}]
+					\end{itemize}
+			\end{itemize}
+\end{frame}
+
+
+<<echo = F>>=
+
+	p1 <- ggplot(eys.mean, aes(F2, F1,  color = VClass))+
+				geom_point() +
+				scale_x_reverse("F2") +
+				scale_y_reverse("F1") + 
+				coord_fixed() + 
+				theme_bw()
+				
+	p2 <- ggplot(compare_diag, aes(F2.1, F1, group = Diag)) + 
+		          geom_point(data = eys.mean, aes(x = F2,  color = VClass)) +
+				  scale_y_reverse("F1") + 
+		          geom_line() + 
+		          xlim(1.48, 0.21) + 
+		          xlab("F2") +
+		          coord_fixed() +
+		          theme_bw()
+@
+
+
+\SweaveOpts{width = 5, height = 5}
+\setkeys{Gin}{width = 1\textwidth}
+
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Past Description}
+	
+	\begin{columns}[c]
+		\column{0.49\textwidth}
+		
+\alt<2>{
+@
+<<echo = F, fig = T>>=
+	print(p2)
+@
+}{
+@
+<<echo = F, fig = T>>=
+	print(p1)
+@
+}		
+		
+		\column{0.49\textwidth}
+			\begin{block}{Questions}
+				\begin{itemize}
+					\item Are any other syllabic structures relevant?
+					\item Are there any other phonological effects?
+					\item How does it interact with morphology? (i.e.\ How does {\it pays} behave?)
+				\end{itemize}
+			\end{block}
+	\end{columns}
+\end{frame}
+
+\SweaveOpts{width = 8, height = 5}
+\setkeys{Gin}{width = 0.8\textwidth}
+
+
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Coding}
+	
+			\begin{itemize}
+				\item 4 syllable types
+					\begin{enumerate}
+						\item Open
+						\item Closed
+						\item Final
+						\item Hiatus
+					\end{enumerate}
+				\item Surface and ``Underlying'' Syllabification
+				\item 5 Morphological Contexts
+					\begin{enumerate}
+						\item Null {\it pay}
+						\item Inflectional {\it pays}
+						\item Derivational {\it payment}
+						\item Compounding  {\it paycheck}
+						\item Contraction  {\it they'd}
+					\end{enumerate}
+			\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Philadelphia /ey/}
+
+\begin{tabular}{llllll}
+\toprule
+	&&\multicolumn{4}{c}{Underlying}\\
+	
+								&&Closed & Open & Hiatus & Final\\
+	\cmidrule{3-6}
+	\multirow{4}{*}{Surface}&Closed&{\it came} & -- & -- & {\it days}\\
+						&Open	&{\it later} & {\it neighborhood} & -- & {\it playground}\\
+						&Hiatus & -- & -- & {\it mayor} & {\it saying}\\
+						&Final & -- & -- & -- & {\it they}\\
+	\bottomrule
+\end{tabular}
+
+
+\end{frame}
+
 
 <<"ey.stable.plot",echo = F>>=
 
 pal <- set.palette(levels(eys.stable$Coda), pal)
 
 p <- ggplot(eys.stable.coda.mean, aes(DOB, Diag, color = Coda)) + 
-            geom_point() +
-            stat_smooth() + 
+            geom_point(size = 1) +
+            stat_smooth(size = 1) + 
             ylim(-2, 2.5) +
-            expand_limits(x = 2010) +
             scale_color_manual(values = pal)+
             theme_bw() + 
 			opts(axis.title.x = theme_text(size = 18),
 				 axis.title.y = theme_text(size = 18, angle = 90))
-
-library(directlabels)				 
-p <- direct.label(p, list("last.qp", rot = 30))
 @
 
-\begin{frame}{Phonology-Phonetic Interface}
+\begin{frame}{Philadelphia /ey/}
 	\framesubtitle{Syllabic Context}
+First, only words with the same surface and ``underlying'' syllabification.
 
 @
 <<echo = F, fig = T>>=
 	print(p)
 @	
 	
+\end{frame}
+
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Syllable Results}
+	\begin{itemize}
+		\item [] formula: \texttt{\footnotesize Diag $\sim$ (DOB/10) * Syllable + (Syllable | Speaker)}
+		\item [] reference level: closed
+	\end{itemize}
+	\begin{columns}[c]
+		\column{0.49\paperwidth}
+	\begin{tabular}{rrr}
+		\toprule
+		&Estimate & t-value\\
+	\cmidrule{2-3}
+	Intercept & 0.57 & 11.1\\
+	DOB 	  & 0.11 & 12.6\\
+	\midrule
+	open	  & -0.14 & -2.9\\
+	final     & -0.04 & -0.7\\
+	hiatus    & -0.21 & -0.6\\
+	\midrule
+	DOB$\times$ open &  0.02 & 2.9\\
+	DOB$\times$ final & -0.08 & -9.1\\
+	DOB$\times$ hiatus & -0.16 & -2.6\\
+	\bottomrule
+	\end{tabular}
+		\column{0.49\paperwidth}
+		\begin{block}{Slope Estimates}
+			\begin{tabular}{lr@{=}l}
+				closed & 0.11 & 0.11\\
+				open & 0.13 & (0.11 + 0.02) \\
+				final & 0.03 & (0.11 - 0.08) \\
+				hiatus & -0.05 & (0.11 - 0.16)
+			\end{tabular}
+		\end{block}
+	\end{columns}
 \end{frame}
 
 <<"ey.manner.plot",echo = F>>=
@@ -358,7 +894,7 @@ pal <- set.palette(levels(eys.manner.mean$Manner), pal)
 
 
 p <- ggplot(eys.manner.mean, aes(DOB, Diag, color = Manner)) +
-            stat_smooth() + 
+            stat_smooth(size = 1) + 
             ylim(-2, 2.5) +
             scale_color_manual(values = pal)+
             theme_bw() + 
@@ -369,12 +905,51 @@ p <- ggplot(eys.manner.mean, aes(DOB, Diag, color = Manner)) +
 \begin{frame}{Phonology-Phonetic Interface}
 	\framesubtitle{Segmental Context}
 
+Following segment for closed and open syllables.
 @
 <<echo = F, fig = T>>=
 	print(p)
 @	
 		
 \end{frame}
+
+
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Manner Results}
+	\begin{itemize}
+		\item [] formula: \texttt{\footnotesize Diag $\sim$ (DOB/10) * Manner + (Manner | Speaker)}
+		\item [] reference level: stop
+	\end{itemize}
+	\begin{columns}[c]
+		\column{0.49\paperwidth}
+	\begin{tabular}{rrr}
+		\toprule
+		&Estimate & t-value\\
+	\cmidrule{2-3}
+	Intercept & 0.56 & 10.9\\
+	DOB 	  & 0.11 & 13.2\\
+	\midrule
+	fricative & -0.08 & -1.3\\
+	nasal     & -0.03 & -0.5\\
+	lateral   & 0.38  & 2.8\\
+	\midrule
+	DOB$\times$fricative & 0.02 & 1.5\\
+	DOB$\times$nasal     & 0.00 & 0.2\\
+	DOB$\times$lateral   & -0.09 & -3.8\\
+	\bottomrule
+	\end{tabular}
+		\column{0.49\paperwidth}
+		\begin{block}{Slope Estimates}
+			\begin{tabular}{lr@{=}l}
+				stop & 0.11 & 0.11\\
+				fricative & 0.13 & (0.11 + 0.02) \\
+				nasal & 0.11 & (0.11 + 0.00) \\
+				lateral & 0.02 & (0.11 - 0.09)
+			\end{tabular}
+		\end{block}
+	\end{columns}
+\end{frame}
+
 
 <<echo = F>>=
 	main <- c("closed","open","final","hiatus", "lateral")
@@ -395,21 +970,44 @@ p <- ggplot(eys.manner.mean, aes(DOB, Diag, color = Manner)) +
 pal <- set.palette(levels(eys.final.mean$Context), pal)
 
 p <- ggplot(eys.final.mean, aes(DOB, Diag, color = Context)) + 
-              geom_point() + 
-              stat_smooth()+
+              geom_point(size = 1) + 
+              stat_smooth(size = 1)+
               ylim(-2, 2.5) +
-              expand_limits(x = 2010) +
               scale_color_manual(values = pal)+
               theme_bw() + 
 			  opts(axis.title.x = theme_text(size = 18),
 			    	   axis.title.y = theme_text(size = 18, angle = 90))
 
-p <- direct.label(p, list("last.points", rot = 30))				   
 @
 
 
-\begin{frame}{Phonology-Phonetic Interface}
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Interim Description}
+	
+	\begin{columns}[c]
+		\column{0.49\textwidth}
+		\begin{tabular}{ll}
+			Non-undergoers & Undergoers\\
+			\midrule
+			Word-final & Everything Else\\
+			Pre-hiatus & \\
+			Pre-/l/ &
+			\end{tabular}
+		\column{0.49\textwidth}
+		\begin{block}{Options}
+			\begin{itemize}
+				\item Undergoers and Non-undergoers are phonemically distinct.
+				\item There is an active phonological process which differentiates undergoes and non-undergoers.
+			\end{itemize}
+		\end{block}
+	\end{columns}
+	
+\end{frame}
+
+\begin{frame}{Philadelphia /ey/}
 	\framesubtitle{Morphological Interaction}
+
+What effect does inflectional morphology have on otherwise word final /ey/?
 
 @
 <<echo = F, fig = T>>=
@@ -418,6 +1016,41 @@ p <- direct.label(p, list("last.points", rot = 30))
 		
 \end{frame}
 
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Morphological Results}
+	\begin{itemize}
+		\item [] formula: \texttt{\footnotesize Diag $\sim$ (DOB/10) * Morphology + (Morphology | Speaker)}
+		\item [] reference level: Null
+	\end{itemize}
+	\begin{columns}[c]
+		\column{0.49\paperwidth}
+	\begin{tabular}{rrr}
+		\toprule
+		&Estimate & t-value\\
+	\cmidrule{2-3}
+	Intercept & 0.52 & 12.2\\
+	DOB 	  & 0.03 & 4.2\\
+	\midrule
+	-ed & -0.09 & -0.8 \\
+	-s  & -0.12 & -1.3\\
+	-ing & -0.46 & -3.7\\
+	\midrule
+	DOB$\times$-ed & 0.05 & 2.7\\
+	DOB$\times$-s     & 0.11 & 6.8\\
+	DOB$\times$-ing   & -0.04 & -2.2\\
+	\bottomrule
+	\end{tabular}
+		\column{0.49\paperwidth}
+		\begin{block}{Slope Estimates}
+			\begin{tabular}{lr@{=}l}
+				final &  0.03 &  0.03\\
+				-ed & 0.08 & (0.03 + 0.05) \\
+				-s & 0.15 & (0.03 + 0.02) \\
+				-ing & -0.01 & (0.03 - 0.04)
+			\end{tabular}
+		\end{block}
+	\end{columns}
+\end{frame}
 
 
 <<echo = F>>=
@@ -426,7 +1059,7 @@ p <- direct.label(p, list("last.points", rot = 30))
 	pal <- set.palette(levels(eys.compare.mean$Context), pal)
 	
 	p <- ggplot(eys.compare.mean, aes(DOB, Diag, color = Context)) + 
-        			stat_smooth() +
+        			stat_smooth(size = 1) +
 			     ylim(-2, 2.5) +
                  scale_color_manual(values = pal)+
                  theme_bw() + 
@@ -436,9 +1069,9 @@ p <- direct.label(p, list("last.points", rot = 30))
 
 @
 
-\begin{frame}{Phonology-Phonetic Interface}
-	\framesubtitle{Morphological Interaction}
-
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Final Pattern}
+All unaffixed, or affixed inflectional morphology in 4 contexts: Word-final, Pre-hiatus, Pre-l, and elsewhere.
 @
 <<echo = F, fig = T>>=
 	print(p)
@@ -446,12 +1079,103 @@ p <- direct.label(p, list("last.points", rot = 30))
 		
 \end{frame}
 
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Phonological Description}
+	
+	\begin{block}{Phonological Process}
+		ey $\rightarrow$ [+peripheral]/\underline{\hskip 15pt}C\ldots]$_{word}$
+	\end{block}
+	
+	\begin{block}{Phonetic Change}
+		\begin{enumerate}
+			\item ey$_{+periph}$ $\rightarrow$ 0.1 peripherality
+			\item ey$_{+periph}$ $\rightarrow$ 0.2 peripherality
+			\item \ldots
+		\end{enumerate}
+	\end{block}
+	
+	\begin{block}{Phonetic Alignment}
+		\begin{itemize}
+			\item {[}eyl] $\rightarrow$ more peripheral
+			\item {[}ey\#] $\rightarrow$ less peripheral
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Philadelphia /ey/}
+	\framesubtitle{Phonological Description}
+	
+	\begin{block}{Phonological Process}
+		ey $\rightarrow$ [+peripheral]/\underline{\hskip 15pt}C\ldots]$_{word}$
+	\end{block}
+	\begin{block}{/l/ is not a C?}
+		\begin{itemize}
+			\item /l/ undergoes extreme vocalization in Philadelphia.
+				\begin{itemize}
+					\item Intervocalically ({\it balance})
+					\item Initial Clusters ({\it floor})
+				\end{itemize}
+			\item Triggers offglide deletion in /aw/.
+				\begin{itemize}
+					\item {\it Powel} = {\it pal}
+				\end{itemize}
+		\end{itemize}
+		
+	\end{block}
+\end{frame}
 
 
-\subsection{Phonological Description}
 
 
 \subsection{The Unique View of Diachrony}
+<<echo = F>>=
+	pal <- reset.palette(main, pal)
+	pal <- set.palette(levels(eys.compare.mean$Context), pal)
+	
+	## there's a bad color issue with yellow
+	pal["/l/"] <- "darkgoldenrod1"
+	p <- ggplot(subset(eys.compare.mean, DOB <= 1984 & DOB >= 1980), aes(Context, Diag, color = Context)) + 
+			stat_summary(fun.data = mean_cl_boot, size = 1) + 
+			scale_color_manual(values = pal)+
+			theme_bw()
+@
+
+
+
+\begin{frame}{The Unique View of Diachrony}
+	Would a study without a view of the changing state of the speech community have come
+	to the same conclusions?
+
+\end{frame}
+
+\begin{frame}{The Unique View of Diachrony}
+	If you had done a study of college aged Philadelphians in 2002, this is what you would have seen.
+	
+@
+<<echo = F, fig = T>>=
+print(p)
+@
+\end{frame}
+
+<<echo = F>>=
+
+p <- ggplot(subset(eys.compare.mean, DOB <= 1984 & DOB >= 1932), aes(2002-DOB, Diag, color = Context)) + 
+					stat_smooth(size = 1) + 
+ 					scale_color_manual(values = pal)+
+					theme_bw() + 
+					scale_x_reverse("Age")
+@
+
+\begin{frame}{The Unique View of Diachrony}
+If you had done a study of Philadelphians aged 18 to 70 in 2002, this is what you would have seen.
+	
+@
+<<echo = F, fig = T>>=
+print(p)
+@
+\end{frame}
+
+
 
 \section{Conclusion}
 

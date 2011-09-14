@@ -1,3 +1,5 @@
+
+########### eys.analysis
 eys.stable <- subset(eys, Base == Coda)
 
 eys.stable.coda.mean <- ddply(eys.stable, .(File, DOB, DOB0, Decade, Sex, Age, Year, Coda),
