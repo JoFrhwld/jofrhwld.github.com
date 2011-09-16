@@ -665,7 +665,168 @@
 					up according to some criteria, <b>applying</b> some process to each piece, and <b>combining</b> the results back together.
 				</p>
 				
-				  
+				<p>
+					The primary <rcode>plyr</rcode> functions follow this format: <rcode>**ply()</rcode> where the first to characters can be  
+				</p>
+				<center>
+				<table rules = groups>
+					<thead>
+						<td></td><td>Structure</td>
+					</thead>
+					<tbody>
+						<tr>
+							<td><rcode>a</rcode>:</td><td>array</td>
+						</tr>
+						<tr>
+							<td><rcode>d</rcode>:</td><td>data frame</td>
+						</tr>
+						<tr>
+							<td><rcode>l</rcode>:</td><td>list</td>
+						</tr>
+					</tbody>
+				</table>
+				</center>
+				<p>
+					So, <rcpde>plyr</rcpde> functions of called <rcode>d*ply()</rcode> take a data frame as input, and functons called
+					<rcode>*dply()</rcode> return data frames as output. A call to plyr looks like this.
+				</p>
+				<blockquote>
+					<rcode>
+						d*ply(data, .(variables), function, function.args, .progress = "text")<br><br>
+
+						l*ply(list, function, function.args, .progress = "text")
+					</rcode>
+				</blockquote>
+				<p>
+					For the <rcode>d*ply()</rcode> functions (the ones you'll probably use the most), the first argument is a data frame, followed by
+					a list of column names along which you want to split up the data. As you can see, <rcode>plyr</rcode> supports this
+					unique kind of variable quoting: <rcode>.(variable)</rcode>, which just saves you some typing. Normal ways of passing the column names, 
+					say, <rcode>c("variable","variable")</rcode> also work.
+				</p>
+				
+				<p>
+					<rcode>plyr</rcode> functions also support an optional <rcode>.progress</rcode> argument, which will print a 
+					progress bar. I suggest always doing this, so that you can assuage your anxieties of "is it working, or is R just hanging."
+				</p>
+				
+				<p>
+					Say you have a bunch of similarly formatted files in a directory, like I do 
+					<a href="https://github.com/JoFrhwld/jofrhwld.github.com/tree/master/talks/PennState2011/r/data/buckeye">here</a>.
+				</p>
+				<blockquote>
+					<rcode>
+						files <- Sys.glob("/data/buckeye/*")
+					</rcode>
+				</blockquote>
+				<p>
+					To load the data for one of these files we would use <rcode>read.delim()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						speaker <- read.delim(files[1])
+					</rcode>
+				</blockquote>
+				<p>
+					Without <rcode>plyr</rcode> functions, in order to load all of these data sets into R, you would usually have to use an ugly loop of a sort that
+					I will not reproduce here. Instead, we can easilly use <rcode>ldply()</rcode>, which will go through each element in the list (in our case,
+					a list of directory names), apply some function to it, (in our case, <rcode>read.delim()</rcode>), then paste all of the results back together 
+					into a data frame.
+				</p>
+				<blockquote>
+					<rcode>
+						buck <- ldply(files, read.delim, .progress = "text")
+					</rcode>
+				</blockquote>
+				  <p>
+				  	This is a data set on TD Deletion, which records for each speaker whether or not they pronounced the final /t/ sound in a word
+					like <i>last</i>. First, let's figure out how many observations we have from each speaker using <rcode>ddply()</rcode>. 
+					<rcode>ddply()</rcode> will split the data up into sub-data frames, so we need a function that takes a data fame as input.
+				  </p>
+				  <blockquote>
+				  	<rcode>
+				  		nrow(buck)<br>
+						<br>
+						#That'll do the trick.<br>
+						ddply(buck, .(Speaker), nrow)
+				  	</rcode>
+				  </blockquote>
+				  <p>
+				  	But we want to know more interesting things than that. For instance, the column called <rcode>td</rcode> is coded
+					<rcode>1</rcode> if a speaker pronounced the /t/, and <rcode>0</rcode> if they didn't. We want to know for each speaker, 
+					for each segment (/t/ or /d/), what their average rate of pronunciation was. 
+				  </p>
+				  <h3><rcode>summarise</rcode> and <rcode>transform</rcode></h3>
+				  <p>
+				  	Fortunately, you can use <rcode>summarise()</rcode> (note the British spelling) and <rcode>transform()</rcode> to 
+					produce these kinds of summaries.  
+				  </p>
+				<p>
+					<rcode>summarise()</rcode> takes a data frame as input, and takes arguments to define summary column. If we use it on just the 
+					entire data set, we get an output like this.
+				</p>
+				<blockquote>
+					<rcode>
+						summarise(buck, td = mean(td))
+					</rcode>
+				</blockquote>
+				<pre>
+         td
+1 0.3542757					
+				</pre>
+				<p>
+					But now, if we instead embed it within <rcode>ddply()</rcode>, we get a more useful result.
+				</p>
+				<blockquote>
+					<rcode>
+						ddply(buck, .(Speaker, seg), summarise, td = mean(td), .progress = "text")<br><br>
+						ddply(buck, .(Speaker, seg), summarise, td = mean(td), Rate = mean(Rate), .progress = "text")						
+					</rcode>
+				</blockquote>
+				
+				<p>
+					If you want to add a new column, enriching the original data, you can use <rcode>transform()</rcode>. If for some reason, you wanted to
+					add a column which contains the number of total rows in data frame, you could use transform this way.
+				</p>
+				<blockquote>
+					<rcode>
+						buck <- transform(buck, NObs = length(td))
+					</rcode>
+				</blockquote>
+				
+				<p>
+					That's a little useless. But, we can extend it with <rcode>plyr</rcode> and, say, add a column containing the frequency for each
+					word in the corpus.
+				</p>
+				
+				<blockquote>
+					<rcode>
+						buck <- ddply(buck, .(Word), transform, WordFreq = length(td), .progress = "text")
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Or, maybe you only want the frequency tabulated <i>within</i> a speaker.
+				</p>
+				<blockquote>
+					<rcode>
+						buck <- ddply(buck, .(Speaker, Word), transform, WordFreq = length(td), .progress = "text")
+					</rcode>
+				</blockquote>
+				
+				<h3><rcode>with()</rcode></h3>
+				<blockquote>
+					<rcode>
+						with(buck, glm(td ~ Rate, family = binomial))
+					</rcode>
+				</blockquote>
+				
+				<blockquote>
+					<rcode>
+						mods <- d<b>l</b>ply(buck, .(Speaker), with, glm(td ~ Rate, family = binomial))<br><br>
+						coefs <- ldply(mods, coef)
+					</rcode>
+				</blockquote>				
+				
 			</div>
 		</div>
 	
