@@ -837,7 +837,7 @@ pal <- brewer.pal(9, "Set1")
 pal <- set.palette(levels(eys.stable$Coda), pal)
 
 p <- ggplot(eys.stable.coda.mean, aes(DOB, Diag, color = Coda)) + 
-            geom_point(size = 2) +
+            geom_point(size = 1) +
             stat_smooth(size = 2) + 
             ylim(-2, 2.5) +
             scale_color_manual(values = pal)+
@@ -978,7 +978,7 @@ Following segment for closed and open syllables.
 pal <- set.palette(levels(eys.final.mean$Context), pal)
 
 p <- ggplot(eys.final.mean, aes(DOB, Diag, color = Context)) + 
-              geom_point(size = 2) + 
+              geom_point(size = 1) + 
               stat_smooth(size = 2)+
               ylim(-2, 2.5) +
               scale_color_manual(values = pal)+

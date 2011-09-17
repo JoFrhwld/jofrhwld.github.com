@@ -1,3 +1,8 @@
 data/*
 !data/eys.coding.txt
 !data/tocode.txt
+
+presentation/fruehwald_CLS_2011*
+!presentation/fruehwald_CLS_2011.pdf
+!presentation/fruehwald_CLS_2011.Rnw
+!presentation/fruehwald_CLS_2011.tex
