@@ -1,3 +1,4 @@
+.DS_Store
 .Rproj.user
 .Rhistory
 .RData
@@ -7,3 +8,4 @@
 *.vrb
 *.toc
 *.snm
+cache
