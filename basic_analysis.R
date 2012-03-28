@@ -25,7 +25,7 @@ philly.bw.count.w <- subset(philly.bw.count.w, !is.na(month.date) &
 																															"KNIFE",
 																															"HANDS"))
 
-ggplot(philly.bw.count.w, aes(month.date, freq, color = weapon)) + 
+p1 <- ggplot(philly.bw.count.w, aes(month.date, freq, color = weapon)) + 
 		geom_point()+
 		stat_smooth()+
 		facet_wrap(~race, scale = "free_y")+
@@ -47,7 +47,7 @@ philly.bw.count <- count(philly.bw, c("month.date","month", "race","ndays"))
 philly.bw.count <- subset(philly.bw.count, !is.na(month.date))
 
 
-ggplot(philly.bw.count, aes(month.date, 1/(freq/ndays), color = race)) + 
+p2 <- ggplot(philly.bw.count, aes(month.date, 1/(freq/ndays), color = race)) + 
 	geom_point()+
 	scale_color_hue(limits = c("B","W"))+
 	stat_smooth()+

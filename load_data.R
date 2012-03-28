@@ -1,5 +1,5 @@
 ## Load the data
-philly <- read.csv("Murders in Philadelphia County 1988 - 2011.csv")
+philly <- read.csv("Murders in Philadelphia County 1988 - 2011.csv", na.strings = "")
 
 ## Process the Hour of the day
 philly$half <- NA
@@ -15,6 +15,7 @@ philly$hour[philly$half == "PM"
 																									!is.na(philly$half)] + 12
 
 ## Hour of day centered with midnight as 0
+philly.hour <- subset(philly, !is.na(hour))
 philly.hour$hour2 <- philly.hour$hour
 philly.hour$hour2[philly.hour$half == "PM"] <- philly.hour$hour[philly.hour$half == "PM"] - 24
 
@@ -37,3 +38,6 @@ philly$month.date <- as.POSIXct(paste(dates$mon + 1,1, dates$year + 1900, sep = 
 philly$month.date <- as.Date(philly$month.date)
 
 
+
+## Weekdays
+philly$WDay <- weekdays(dates)
