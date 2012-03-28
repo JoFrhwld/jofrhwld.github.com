@@ -27,11 +27,13 @@ philly$date <- paste(philly$date, philly$hour3)
 ## Get various date information
 dates <- as.POSIXlt(philly$date, format = "%m/%d/%y %H")
 philly$date <- as.Date(dates)
-philly$month <- month.abb[dates$mon+1]
+philly$month <- as.factor(month.abb[dates$mon+1])
+philly$month <- reorder(philly$month, dates$mon, min)
 philly$year <- dates$year + 1900
 philly$monthn <- dates$mon + 1
 
 ## Month date indicates just the month in Date format
 philly$month.date <- as.POSIXct(paste(dates$mon + 1,1, dates$year + 1900, sep = "/"), format = "%m/%d/%Y")
+philly$month.date <- as.Date(philly$month.date)
 
 
