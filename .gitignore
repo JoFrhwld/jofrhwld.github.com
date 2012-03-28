@@ -1,3 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
+*.nav
+*.log
+*.gz
+*.vrb
+*.toc
+*.snm
