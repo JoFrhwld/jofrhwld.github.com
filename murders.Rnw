@@ -298,7 +298,7 @@ revlog_trans <- function (base = exp(1)) {
 		ylab("1 murder every X days")+
 		xlab("Date (by month)")+
 		theme_bw()+
-		facet_wrap(~weapon, scales = "free_y")+
+		facet_wrap(~weapon)+
 		scale_color_brewer(palette = "Set1")
 @
 
