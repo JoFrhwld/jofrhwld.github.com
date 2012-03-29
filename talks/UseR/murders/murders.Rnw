@@ -21,7 +21,7 @@
 \ifdefined\knitrout
 \renewenvironment{knitrout}{\begin{footnotesize}}{\end{footnotesize}}
 \else
-	\fi
+ \fi
 	
 \mode<presentation>
 \title{Murders in Philadelphia}
