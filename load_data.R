@@ -1,4 +1,5 @@
 ## Load the data
+### download from https://www.google.com/fusiontables/DataSource?snapid=S4035208e94
 philly <- read.csv("Murders in Philadelphia County 1988 - 2011.csv", na.strings = "")
 
 ## Process the Hour of the day
