@@ -1,3 +1,6 @@
+%%% This is a knitr document, not regular Sweave
+%%% http://yihui.name/knitr/
+
 \documentclass[]{beamer}
 \usetheme{Singapore}
 \usepackage{hyperref}
