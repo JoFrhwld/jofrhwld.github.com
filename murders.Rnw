@@ -23,7 +23,7 @@
 \mode<presentation>
 \title{Murders in Philadelphia}
 \author{Josef Fruehwald}
-\date{January 12, 2012}
+%\date{}
 
 	
 \SweaveOpts{cache=T, fig.path='figures/murder-', error=F, warning=F,message=F}
@@ -56,6 +56,7 @@
 	library(reshape2)
 	library(plyr)
 	library(mgcv)
+	library(scales)
 
 	options(width = 59)
 @
@@ -63,9 +64,15 @@
 
 \begin{frame}[fragile]
 	\frametitle{The Data}
-<<jawn>>=
+<<overview>>=
 	nrow(philly)
 	colnames(philly)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{The Data}
+<<missing>>=
 	table(is.na(philly$cause))
 	table(is.na(philly$motive))
 	table(is.na(philly$time))
@@ -74,16 +81,7 @@
 
 \begin{frame}[fragile]
 	\frametitle{The Data}
-<<jawn>>=
-	table(is.na(philly$cause))
-	table(is.na(philly$motive))
-	table(is.na(philly$time))
-@
-\end{frame}
-
-\begin{frame}[fragile]
-	\frametitle{The Data}
-<<jawn>>=
+<<weapon-by-race>>=
 	library(reshape2)
 	dcast(philly, race ~ weapon)
 @
@@ -142,10 +140,10 @@ philly$month.date <- as.Date(philly$month.date)
 	I've manipulated the data in my own way to include
 	\begin{itemize}
 		\item Month of year,
-		\item Year,
-		\item Month in Date format,
+		\item month in Date format,
+		\item year,
 		\item a few different representations of the hour of day
-		\item and the Weekday.
+		\item and the weekday.
 	\end{itemize}
 \end{frame}
 
@@ -208,12 +206,22 @@ philly$month.date <- as.Date(philly$month.date)
 
 \begin{frame}[fragile]
 \frametitle{Two Philadelphias}
-<<echo = F>>=
+<<>>=
 	philly.bw <- subset(philly, race %in% c("B","W") & !is.na(month))
 	philly.bw.count <- count(philly.bw, c("month.date","month", "race","ndays"))
 	head(philly.bw.count)
 @
 \end{frame}
+
+
+<<echo = F>>=
+revlog_trans <- function (base = exp(1)) {
+    trans <- function(x) -(log(x, base))
+    inv <- function(x) (base^(-x))
+    trans_new(paste("revlog-", base, sep = ""), trans, inv, log_breaks(base =	base), domain = c(1e-100, Inf))
+}
+	
+@
 
 
 \begin{frame}[fragile]
@@ -224,8 +232,8 @@ philly$month.date <- as.Date(philly$month.date)
 		geom_point()+
 		scale_color_hue(limits = c("B","W"))+
 		stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
-		coord_trans(ytrans="log2")+
-		scale_y_continuous(breaks = c(0.5,1,2,7,14,21,31))+
+		#coord_trans(ytrans="log2")+
+		scale_y_continuous(breaks = c(0.5,1,2,7,14,21,31), trans = revlog_trans(base = 2))+
 		expand_limits(y = 0.5)+
 		ylab("1 murder every X days")+
 		xlab("Date (by month)")+
@@ -280,12 +288,12 @@ philly$month.date <- as.Date(philly$month.date)
 \end{frame}
 
 \begin{frame}
+\frametitle{Two Philadelphias}
 <<plot2, echo = F, eval=F>>=
 	ggplot(philly.bw.count.w, aes(month.date, 1/(freq/ndays), color = race)) + 
 		geom_point()+
 		stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
-		coord_trans(ytrans="log2")+
-		scale_y_continuous(breaks = c(0.5,1,2,7,14,21,31))+
+		scale_y_continuous(breaks = c(0.5,1,2,7,14,21,31), trans = revlog_trans(base = 2))+
 		expand_limits(y = 0.5)+
 		ylab("1 murder every X days")+
 		xlab("Date (by month)")+
@@ -298,6 +306,69 @@ philly$month.date <- as.Date(philly$month.date)
 @
 \end{frame}
 
+
+\begin{frame}[fragile]
+<<>>=
+	model2 <- glm(freq ~ month + weapon*race, offset = ndays, data = philly.bw.count.w, family = poisson)
+	anova(model2, test = "Chisq")
+@
+\end{frame}
+
+\begin{frame}
+\frametitle{Two Philadelphias}
+ \begin{itemize}
+ 	\item White murder victims are 
+ 		$\Sexpr{round(exp(-(coef(model2)["weaponKNIFE"] + coef(model2)["weaponKNIFE:raceW"])), digits =2)}\times$ 
+ 		more likely to be shot than stabbed.
+ 	 	\item African American murder victims are 
+ 			$\Sexpr{round(exp(-coef(model2)["weaponKNIFE"]), digits =2)}\times$
+ 			more likely to be shot than stabbed.
+ 	\item African American murder victims are 
+ 			$\Sexpr{round(exp(coef(model2)["weaponKNIFE:raceW"]), digits =  2)}\times$
+ 			more likely to have been shot than White murder victims.
+ \end{itemize}
+\end{frame}
+
+
+<<echo = F>>=
+	philly.bw <- subset(philly.bw, age <= 200)
+	philly.bw$age.10 <- as.factor(floor(philly.bw$age/10)*10)
+	philly.bw.w <- subset(philly.bw, weapon %in%  c("FIREARM","KNIFE","HANDS") )
+	philly.bw.w$weapon <- relevel(philly.bw.w$weapon, "KNIFE")
+	philly.bw.w$weapon <- relevel(philly.bw.w$weapon, "FIREARM")
+
+	philly.bw.w$race <- as.factor(as.character(philly.bw.w$race))
+	levels(philly.bw.w$race) <- c("African American","White")
+	
+	philly.bw.w$sex <- as.factor(as.character(philly.bw.w$sex))
+	levels(philly.bw.w$sex)<- c("Female","Male")	
+@
+
+
+\begin{frame}
+	\frametitle{Two Philadelphias}
+<<age-plot, echo = F, eval=F>>=
+	ggplot(philly.bw.w, aes(age.10, fill = weapon)) + 
+		stat_bin(position = "dodge", color = "black")+
+		theme_bw()+
+		scale_fill_brewer(palette = "Dark2") +
+		xlab("Age")+
+		ylab("Murders (1988-2001)")+
+		facet_grid(sex ~ race)
+@
+
+<<ref.label="age-plot",dev="pdf", out.width='\\linewidth', echo = F, fig.width=8,fig.height=5>>=
+@
+
+\end{frame}
+
+
+
+\begin{frame}{}
+	\begin{center}
+		{\Huge Thanks}
+	\end{center}
+\end{frame}
 
 
 \end{document}
