@@ -29,7 +29,7 @@
 %\date{}
 
 	
-\SweaveOpts{cache=T, fig.path='figures/murder-', error=F, warning=F,message=F}
+\SweaveOpts{cache=F, fig.path='figures/murder-', error=F, warning=F,message=F}
 
 \begin{document}
 % very important to use option [fragile] for frames containing code output!
@@ -207,6 +207,8 @@ philly$month.date <- as.Date(philly$month.date)
 
 \section{Two Philadelphias}
 
+
+
 \begin{frame}[fragile]
 \frametitle{Two Philadelphias}
 <<>>=
@@ -280,6 +282,8 @@ revlog_trans <- function (base = exp(1)) {
 @
 \end{frame}
 
+
+
 \begin{frame}[fragile]
 \frametitle{Two Philadelphias}
 <<tidy = T>>=
@@ -290,10 +294,24 @@ revlog_trans <- function (base = exp(1)) {
 @
 \end{frame}
 
+
+\begin{frame}[fragile]
+<<tidy=T>>=
+	## To capture 0 counts
+	months.grid <- expand.grid(month.date = unique(philly.bw$month.date), race = c("B","W"), weapon = c("FIREARM","KNIFE","HANDS"))
+	months.grid <- join(months.grid, ndays)
+	months.grid$month <- month.abb[as.POSIXlt(months.grid$month.date)$mon+1]
+
+	philly.bw.count.w <- merge(months.grid, philly.bw.count.w, all.x = T)
+	philly.bw.count.w$freq[is.na(philly.bw.count.w$freq)] <- 0
+@
+
+\end{frame}
+
 \begin{frame}
 \frametitle{Two Philadelphias}
 <<plot2, echo = F, eval=F>>=
-	ggplot(philly.bw.count.w, aes(month.date, 1/(freq/ndays), color = race)) + 
+	ggplot(subset(philly.bw.count.w, freq > 0), aes(month.date, ndays/freq, color = race)) + 
 		geom_point()+
 		stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
 		scale_y_continuous(breaks = c(0.5,1,2,7,14,21,31), trans = revlog_trans(base = 2))+
