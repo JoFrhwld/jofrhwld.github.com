@@ -45,7 +45,7 @@ function init(){
                     children:[
                         {id: "speaker", name: "speaker", data: {nodeType: "param"}, children:[
                             {id: "normal1", name: "normal", data: {nodeType: "dist"}, children:[
-                                {id: "mu1", name: "&mu;|speaker & word", data: {nodeType: "param", width:100}, children:[]},
+                                {id: "mu1", name: "&mu;|speaker & context", data: {nodeType: "param", width:100}, children:[]},
                                 {id: "tau1", name: "&tau;|speaker", data: {nodeType: "param", width:100}, children:[]}
                             ]}
                         ]},
