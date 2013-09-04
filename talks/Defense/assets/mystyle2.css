@@ -67,11 +67,12 @@ ul, ol {
   padding: 0.5%;
   margin-left: 4%;
   margin-bottom: 1%;
-  margin-top: 2%;
+  margin-top: 1%;
   margin-right:1%;
-  font-size: 12pt;
+  font-size: 14pt;
   max-width: 80%;
 }
+
 .toc ul{
   list-style-type:disc;
   color: #006837;
@@ -86,6 +87,9 @@ ul, ol {
   font-size: 8pt;
   max-width: 100%;
   
+}
+.ref ul li{
+  margin: 0%;
 }
 
 .agenda{
@@ -102,6 +106,7 @@ ul, ol {
 
 li {
   line-height: 24px;
+  margin-top: 2%;
 }
 
 p {
@@ -168,10 +173,10 @@ hr {
 
 
 .box { 
-  margin: 5px; 
+  margin: 3px; 
   color: #000; 
     background: #E6E6E6; 
-    padding: 10px; 
+    padding: 5px; 
   border-width: 3px;
   border-color: black;
   border-style: solid;

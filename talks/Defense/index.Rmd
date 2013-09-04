@@ -1,0 +1,1827 @@
+% The Phonological Influence on Phonetic Change
+% Josef Fruehwald, University of Pennsylvania <br> September 4, 2013
+
+
+```{r load_libraries, cache = F, include =F}
+library(plyr)
+library(ggplot2)
+library(splines)
+library(car)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(directlabels)
+library(mgcv)
+library(googleVis)
+library(grid)
+library(xtable)
+library(extrafont)
+library(RColorBrewer)
+library(lme4)
+library(lubridate)
+
+opts_chunk$set(cache = T, autodep = T, warning=F, message =F, echo = F, fig.width = 8/1.5, fig.height = 5/1.5, out.width = "80%")
+opts_knit$set(animation.fun = hook_scianimator)
+dep_auto()
+
+knit_hooks$set(no_figure = function(before, options, envir){
+  if(!before){
+    return("\\ ")
+  }
+})
+
+font_import(paths="~/Documents/Numans/", recursive=T, prompt= F)
+
+source("~/Documents/Classes/Dissertation/ay_stan_modeling/syllabify.R")
+source("~/Documents/Classes/FAAV/r/stat-ellipse.R")
+loadfonts()
+```
+
+```{r verboten, cache =  F}
+verboten_vector <- c("PH76-3-1",
+"PH84-2-5",
+"PH84-2-3",
+"PH92-1-1",
+"PH82-1-16",
+"PH80-2-5",
+"PH80-2-4",
+"PH85-1-5",
+"PH84-1-2",
+"PH84-1-1")
+
+verboten_string <- paste(verboten_vector, collapse = "|")
+```
+
+
+```{r basic_context}
+  load("~/Documents/Classes/FAAV_Data/basic_context.Rdata")
+```
+
+---
+
+# Introduction
+
+1. Introduction to the Problem
+2. Analyses
+    1. Rate of Change
+    2. Mismatches between phonetic and phonological predictions
+3. Conclusions and Implications
+
+
+---
+
+## [Background](http://www.ling.upenn.edu/~joseff/assets/motion_chart.html)
+
+<object data="http://www.ling.upenn.edu/~joseff/assets/motion_chart.html" style="width:100%;height:90%;"></object>
+
+
+
+---
+
+# Background
+
+<div style = "width:100%" class = "incremental">
+  <div style = "width:50%;float:left;" align = "center" class = "inslide">
+    <table padding=10px>
+      <tr>
+        <td >/ay/</td>
+        <td>
+          <!-- { -->
+          <embed src = "assets/bracket.svg"  type="image/svg+xml" />
+        </td>
+        <td >
+            &#45; high<br>
+            <b>&#43; low</b><br>
+            &#43; back<br>
+            &#45; round<br>
+            &hellip;<br>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style = "width:50%;float:right;" align = "center" class = "inslide">
+    <table padding=10px>
+      <tr>
+        <td>/ay/</td>
+        <td>
+          <embed src = "assets/bracket.svg"  type="image/svg+xml" />
+        </td>
+        <td>
+            &#45; high<br>
+            <b>&#45; low</b><br>
+            &#43; back<br>
+            &#45; round<br>
+            &hellip;<br>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style = "width:50%;float:right;margin-top:3%;" align = "center" class = "inslide">
+    ay &rarr; -low/ __[-voice]
+  </div>
+</div>
+
+---
+
+# Backround
+
+```{r load_ays}
+  ays <- load.vowels(c("ay","ay0"), path = path)
+  ays <- subset(ays, !grepl("a|h", Eth))
+  ays <- subset(ays, !grepl(verboten_string, File))
+```
+
+```{r ays_means}
+  ays_mean1 <- ddply(ays, .(File, Word, Sex, Age, Year, DOB, VClass), 
+                     summarise, F1.n = mean(F1.n))
+  ays_mean2 <- ddply(ays_mean1, .(File, Sex, Age, Year, DOB, VClass), 
+                     summarise, F1.n = mean(F1.n))
+```
+
+```{r ay_plot, dev = "svg"}
+ggplot(ays_mean2, aes(DOB, F1.n, color = VClass))+
+    geom_point()+
+    stat_smooth(method = gam, formula = y ~ s(x,bs="cs"))+
+    scale_color_brewer(palette = "Set1")+
+    scale_y_reverse()+
+    xlab("Date of Birth")+
+    theme_bw()+
+    ggtitle("Pre-voiceless /ay/ raising")
+```
+
+---
+
+# Background
+#### Error Accumulation?
+
+<img src = "assets/ohala1981.png" style = "width:70%"></img>
+
+Ohala (1981)
+
+---
+
+# Background
+
+```{r load_aw}
+aw <- load.vowels("aw", path = path)
+aw <- subset(aw, !grepl("a|h", Eth))
+aw <- subset(aw, !grepl(verboten_string, File))
+
+```
+
+```{r aw_means}
+  aw_int <- subset(aw, Context == "Internal")
+  aw_int$FolSeg <- "oral"
+  aw_int$FolSeg[aw_int$FolSegTrans %in% c("M","N","NG")] <- "nasal"
+  aw_int_mean1 <- ddply(aw_int, .(File, Word, Sex, Age, Year, DOB, FolSeg),
+                        summarise, Diag = mean(F2.n - F1.n))
+  aw_int_mean2 <- ddply(aw_int_mean1, .(File, Sex, Age, Year, DOB, FolSeg),
+                        summarise, Diag = mean(Diag))
+```
+
+```{r aw_basic_plot, dev = "svg", fig.width = 9/1.5}
+  ggplot(aw_int_mean2, aes(DOB, Diag, color = FolSeg))+
+    geom_point()+
+    stat_smooth(method = gam, formula =y ~ s(x, bs = "cs"))+
+    scale_color_brewer(palette = "Set1")+    
+    facet_wrap(~Sex)+
+    theme_bw()+
+    ggtitle("Effect of nasals on /aw/")
+```
+
+---
+
+# The Data
+
+The data for my dissertation is drawn from the Philadelphia Neighborhood Corpus
+    
+- Sociolinguistic interviews carried out for the Ling 560 Class
+- I'm working with a subset of 735,408 measurements from 308 speakers from the PNC
+- Phonetic alignment and formant analysis was automated using [the FAVE suite](http://fave.ling.upenn.edu/).
+
+
+
+------------------
+
+<!-- http://www.flickr.com/photos/usnationalarchives/sets/72157630314917356/with/7455138062/ -->
+
+
+<div style="background:black;height:100%;width:100%">
+<myfig>
+![North Philadelphia Row Homes, 1973](assets/block2.jpg)
+<figcaption>North Philadelphia Row Homes, 1973</figcaption>
+</myfig>
+</div>
+
+
+------------------
+
+<div style="background:black;height:100%;width:100%">
+<myfig>
+![South Philadelphia Row Homes, 2012](assets/block3.jpg)
+<figcaption>South Philadelphia Row Homes, 2012</figcaption>
+</myfig>
+</div>
+
+------------------
+
+# The Use of Change in Progress
+
+When we observe a language change in progress, the change is taking place in speakers' knowledge of their language from generation to generation.
+
+- Speakers' supraglottal tracts are not changing meaningfully.
+- The speed of sound at sea level isn't changing.
+- Speakers' motor-planning abilities aren't changing meaningfully.
+
+To know *which* aspect of their knowledge is changing, we really need to observe the sound change in progress.
+
+---
+
+# The Use of Change in Progress
+
+#### Metathesis
+
+1. It could be lexically gradual, moving one word at a time, possibly due to perceptual confusion (Blevins & Garret 2004)
+    * e.g. chipotle -> chipolte
+2. It could be due to a new phonological process being added to the grammar, which produces phonetically abrupt variation.
+3. It could even be phonetically gradual
+    * Andalusian pre-aspiration becoming post aspiration (Parrel, 2012; Ruch 2012)
+         * ht > hth > th
+
+In all three cases, the outcome is the same, but result from changes to three very different aspects of linguistic knowledge.
+
+---
+
+# The Theoretical Model
+
+I'll adopt a model more or less similar to those proposed in the 80s and 90s in Generative Phonetics.
+
+<div align="center">
+
+  <div class = "box">
+
+Lexicon
+
+  </div>
+
+<font size = "6">&darr;</font>
+
+  <div class = "box">
+
+Phonological grammar
+
+  </div>
+
+<font size = "6">&darr;</font>
+
+  <div class = "box">
+
+Phonology-Phonetics Interface
+
+  </div>
+
+
+</div>
+
+---
+
+# The Theoretical Model
+
+##### Phonetic Implementation 
+As a [+back] vowel, /ow/ is mapped to a phonetic target for backness.
+
+![ow_intrisnic](assets/ow_implementation.svg) \
+
+This target can vary cross-dialectally, or change over time.
+
+<p>
+<div style="float:left;margin-left:5%;">
+![ow_intrisnic](assets/ow_intrinsic1.svg) \
+</div>
+<div style="float:left;margin-left:5%;">
+![ow_intrisnic](assets/ow_intrinsic.svg) \ 
+</div>
+<div style="float:left;margin-left:5%;">
+![ow_intrisnic](assets/ow_intrinsic2.svg) \
+</div>
+</p>
+
+---
+
+# The Theoretical Model
+In different contexts, this target for /ow/ will be subject to different coarticulatory pressures.
+
+<p>
+<div style="float:left;margin-left:5%;width:25%;">
+![owl_1](assets/owl_1.svg) \
+</div>
+<div style="float:left;margin-left:5%;">
+![owt_1](assets/owt_1.svg) \ 
+</div>
+</p>
+
+<br>
+<br>
+<br>
+<br>
+
+These coarticulatory pressures themselves may be subject to cross-dialectal variation and change (Zsiga 2000).
+
+<div style="float:left;margin-left:5%;">
+![owl_1](assets/owl_2.svg) \
+</div>
+<div style="float:left;margin-left:5%;">
+![owt_1](assets/owt_1.svg) \ 
+</div>
+
+---
+
+# The Theoretical Model
+Or, a phonological process may produce an /ow/ allophone with a different target of phonetic implementation.
+
+<div style = "width:100%;float:left;">
+<div style="float:left;margin-left:5%;">
+![owl_1](assets/owl_3.svg) \
+</div>
+<div style="float:left;margin-left:5%;">
+![owt_1](assets/owt_1.svg) \ 
+</div>
+</div>
+
+
+
+##### Phonetic Variants
+Shared target of phonetic implementation, perturbed by coarticulatory pressures.
+
+##### Phonological Variants
+Different surface phonological representations, thus different phonetic targets.
+
+
+---
+
+# The Theoretical Model
+
+
+```{r make_example}
+  example <- data.frame(F1 = c(rnorm(100),rnorm(100)), 
+  					  F2 = c(rnorm(100), rnorm(100, mean = 2)), 
+						  Context = rep(c("A","B"), each = 100))
+
+	centers <- data.frame(F1 = c(0,0), F2 = c(0,2), Context = c("A","B"))						  
+	assim <- data.frame(F1 = 0, F2 = 0, F1.end = 0, F2.end = 2, Context = "B")
+```
+
+<div style = "width:100%;">
+<div style ="width:50%;float:left;">
+Phonetics<br>
+```{r coarticulation, no_figure = T, dev = "svg", dependson = "make_example"}
+  ggplot(example, aes(F2, F1, color = Context))+
+		geom_point(size = 1.5)+
+		geom_point(data = assim, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		geom_segment(data = assim, 
+						aes(xend = F2.end, yend = F1.end), arrow = arrow(), 
+							size = 2)+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed()
+```
+The target of one variant is yoked to the other.
+
+</div>
+<div style ="width:50%;float:left;">
+Phonology<br>
+```{r assim, no_fig = T, dev = "svg", dependson="make_example"}
+  ggplot(example, aes(F2, F1, color = Context))+
+		geom_point(size = 1.5)+
+		geom_point(data = centers, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed()
+```
+The two targets are independent.
+
+</div>
+</div>
+
+<div style ="width:100%;float:left;">
+
+These will produce different patterns of change.
+
+</div>
+
+# The rate of change.
+##### Phonetics
+```{r coarticulate_ani, fig.show = "animate", aniopts="controls", fig.width=6, fig.height=4, dev = 'svg', dependson="make_example"}
+xrange <- range(example$F2)
+xrange[1] <- xrange[1]-2
+nframes <- 20
+for(x in 1:nframes){
+  ggplot(example, aes(F2, F1, color = Context))+
+  	geom_point(size = 1.5)+
+		geom_point(data = assim, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		geom_segment(data = assim, 
+						aes(xend = F2.end, yend = F1.end), arrow = arrow(), 
+							size = 2)+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+    xlim(xrange[1],xrange[2])+
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed()->p
+  
+    print(p)
+  
+    to_add <- -(2)/(nframes)
+    example$F2 <- example$F2 + to_add
+    assim$F2 <- assim$F2 + to_add
+    assim$F2.end <- assim$F2.end + to_add
+    centers$F2 <- centers$F2 + to_add
+}
+
+```
+
+# The rate of change.
+##### Phonology
+```{r remake_example, ref.label="make_example"}
+```
+
+```{r assim_ani, fig.show = "animate", aniopts="controls", fig.width=6, fig.height=4, dev = 'svg', dependson="remake_example"}
+xrange <- range(example$F2)
+xrange[1] <- xrange[1]-2
+nframes <- 20
+
+for(x in 1:nframes){
+  ggplot(example, aes(F2, F1, color = Context))+
+  	geom_point(size = 1.5)+
+		geom_point(data = centers, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+    xlim(xrange[1],xrange[2])+    
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed() -> p
+  
+    print(p)
+  
+    to_add <- -(2)/(nframes)
+    example$F2[example$Context == "A"] <- example$F2[example$Context == "A"] + to_add
+    centers$F2[centers$Context == "A"] <- centers$F2[centers$Context == "A"] + to_add
+}  
+```
+
+# The rate of change.
+##### Reanalysis
+```{r remake_example2, ref.label="make_example"}
+```
+
+```{r reananlysis_ani, fig.show = "animate", aniopts="controls", fig.width=6, fig.height=4, dev = 'svg', dependson="remake_example2"}
+xrange <- range(example$F2)
+xrange[1] <- xrange[1]-2
+nframes <- 20
+
+for(x in 1:(nframes/2)){
+    ggplot(example, aes(F2, F1, color = Context))+
+    geom_point(size = 1.5)+
+		geom_point(data = assim, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		geom_segment(data = assim, 
+						aes(xend = F2.end, yend = F1.end), arrow = arrow(), 
+							size = 2)+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+    xlim(xrange[1],xrange[2])+
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed()->p
+  
+    print(p)
+  
+    to_add <- -(2)/(nframes)
+    example$F2 <- example$F2 + to_add
+    assim$F2 <- assim$F2 + to_add
+    assim$F2.end <- assim$F2.end + to_add
+    centers$F2 <- centers$F2 + to_add
+  
+}
+for(x in ((nframes/2)+1):nframes){
+  ggplot(example, aes(F2, F1, color = Context))+
+    geom_point(size = 1.5)+
+		geom_point(data = centers, size = 5, shape = 21,color = "black", aes(fill = Context))+
+		stat_ellipse()+
+		scale_color_brewer(palette = "Set1")+
+		scale_fill_brewer(palette = "Set1")+
+    xlim(xrange[1],xrange[2])+    
+		theme_bw()+
+		theme(legend.position= "none")+
+		coord_fixed() -> p
+  
+    print(p)
+  
+    to_add <- -(2)/(nframes)
+    example$F2[example$Context == "A"] <- example$F2[example$Context == "A"] + to_add
+    centers$F2[centers$Context == "A"] <- centers$F2[centers$Context == "A"] + to_add
+}
+
+```
+
+# The rate of change.
+##### Phonetics
+```{r construct_coarticulate, dev = "svg"}
+  favor <- 0
+	disfavor <- -2
+	
+fake_rate2 <- data.frame(DOB = 1888:1991)
+fake_rate2$F2 <- pnorm(seq(-3,3, length = length(1888:1991)))
+
+fake_rate2 <- transform(fake_rate2, favor = (F2 * 2)+favor, 
+                       disfavor = (F2 * 2)+disfavor)
+
+fake_rate.m <- melt(fake_rate2, id = "DOB", measure.vars=c("favor","disfavor"),
+                    variable.name="Context",
+                    value.name="F2")
+fake_rate.m <- ddply(fake_rate.m, .(Context), transform, 
+                     Rate = c(NA, diff(F2)))
+fake_rate.m.m <- melt(fake_rate.m, id = c("DOB","Context"))	
+
+						
+arrow_annotation <- subset(fake_rate.m.m, variable == "F2" & Context == "favor" & 
+							DOB %in% c(1900, 1925, 1950,1975))
+arrow_annotation$Context <- "disfavor"							
+
+  ggplot(fake_rate.m.m, aes(DOB, value, color= Context, linetype = Context))+
+    geom_line(size = 1)+
+    geom_segment(data = arrow_annotation, aes(xend = DOB, yend = value + disfavor), arrow = arrow(), linetype = 1)+
+    facet_grid(variable~., scale = "free")+
+    theme_bw()+
+    xlab("Date of Birth")+
+    scale_color_brewer(palette = "Set1")+
+    theme(legend.position = "none")
+```
+
+# The rate of change.
+##### Phonology
+```{r construct_assim, dev = "svg"}
+  favor <- 0
+	disfavor <- -2
+	
+fake_rate2 <- data.frame(DOB = 1888:1991)
+fake_rate2$F2 <- pnorm(seq(-3,3, length = length(1888:1991)))
+
+fake_rate2 <- transform(fake_rate2, favor = (F2 * 2)+favor, 
+                       disfavor = (F2 *0 )+disfavor)
+
+fake_rate.m <- melt(fake_rate2, id = "DOB", measure.vars=c("favor","disfavor"),
+                    variable.name="Context",
+                    value.name="F2")
+fake_rate.m <- ddply(fake_rate.m, .(Context), transform, 
+                     Rate = c(NA, diff(F2)))
+fake_rate.m.m <- melt(fake_rate.m, id = c("DOB","Context"))	
+
+
+  ggplot(fake_rate.m.m, aes(DOB, value, color= Context))+
+    geom_line(size = 1)+
+    facet_grid(variable~., scale = "free")+
+    theme_bw()+
+    xlab("Date of Birth")+
+    scale_color_brewer(palette = "Set1")+
+    theme(legend.position = "none")
+```
+
+# The rate of change
+##### Reanalysis
+```{r construct_reanalysis, dev = "svg"}
+  favor <- 0
+	disfavor <- -2
+	
+fake_rate2 <- data.frame(DOB = 1888:1991)
+fake_rate2$F2 <- pnorm(seq(-3,3, length = length(1888:1991)))
+
+fake_rate2 <- transform(fake_rate2, favor = (F2 * 2)+favor, 
+                       disfavor = (F2 * 2)+disfavor)
+
+fake_rate2$disfavor_diff <- c(0, diff(fake_rate2$disfavor))
+
+N <- nrow(subset(fake_rate2, DOB > 1930))
+fake_rate2$disfavor_diff[fake_rate2$DOB > 1929] <- fake_rate2$disfavor_diff[fake_rate2$DOB > 1929] * (1/(seq(1,20, length = N)))
+
+fake_rate2$disfavor <- cumsum(fake_rate2$disfavor_diff) + (min(fake_rate2$F2) + disfavor)
+
+fake_rate.m <- melt(fake_rate2, id = "DOB", measure.vars=c("favor","disfavor"),
+                    variable.name="Context",
+                    value.name="F2")
+fake_rate.m <- ddply(fake_rate.m, .(Context), transform, 
+                     Rate = c(NA, diff(F2)))
+fake_rate.m.m <- melt(fake_rate.m, id = c("DOB","Context"))
+
+
+
+						
+arrow_annotation <- subset(fake_rate.m.m, variable == "F2" & Context == "favor" & 
+							DOB %in% c(1900, 1925))
+arrow_annotation$Context <- "disfavor"							
+
+
+
+ggplot(fake_rate.m.m, aes(DOB, value, color= Context))+
+    geom_vline(x = 1930)+
+    geom_line()+
+    geom_line(size = 1)+
+    geom_segment(data = arrow_annotation, aes(xend = DOB, yend = value + disfavor), arrow = arrow(), linetype = 1)+
+    facet_grid(variable~., scale = "free")+
+    scale_color_brewer(palette = "Set1")+
+    xlab("Date of Birth")+
+    theme_bw()+
+    theme(legend.position = "none")
+
+```
+
+---
+
+# Modeling the Rate of Change
+ 
+By trying to see where in the course of a sound change the rates of change of vowel variants diverge, we can see when phonological reanalysis occurred.
+
+For this analysis, I looked at three vowels: /aw/, /ow/ and /uw/
+
+
+```{r aw_basic_means}
+  aw_mean1 <- ddply(aw, .(File, Word, Age, Sex, Age, DOB), summarise, 
+                    Diag = mean(F2.n - F1.n))
+  aw_mean2 <- ddply(aw_mean1, .(File, Age, Sex, Age, DOB), summarise, 
+                    Diag = mean(Diag))
+```
+
+
+```{r load_ow}
+  ow <- load.vowels("ow", path = path)
+  ow <- subset(ow, !grepl("a|h", Eth))
+  ow <- subset(ow, !grepl(verboten_string, File))
+```
+
+```{r ow_basic_means}
+  ow <- subset(ow, FolSegTrans != "L")
+  ow_mean1 <- ddply(ow, .(File, Word, Age, Sex, Age, DOB), summarise, 
+                    F2.n = mean(F2.n))
+  ow_mean2 <- ddply(ow_mean1, .(File, Age, Sex, Age, DOB), summarise, 
+                    F2.n = mean(F2.n))
+```
+
+
+```{r load_uw}
+  uw <- load.vowels("uw", path = path)
+  uw <- subset(uw, !grepl("a|h", Eth))
+  uw <- subset(uw, !grepl(verboten_string, File))
+```
+
+```{r uw_basic_means}
+  uw <- subset(uw, FolSegTrans != "L")
+  uw_mean1 <- ddply(uw, .(File, Word, Age, Sex, Age, DOB), summarise, 
+                    F2.n = mean(F2.n))
+  uw_mean2 <- ddply(uw_mean1, .(File, Age, Sex, Age, DOB), summarise, 
+                    F2.n = mean(F2.n))
+```
+
+<div style="width:100%;">
+<div style = "float:left;width:33%;">
+```{r aw_basic_plot2, dev = "svg", out.width="100%"}
+  ggplot(aw_mean2, aes(DOB, Diag, color = Sex))+
+      geom_point()+
+      stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
+      theme_bw()+
+      ggtitle("/aw/")
+```
+</div>
+
+<div style = "float:left;width:33%;">
+```{r ow_basic_plot, dev = "svg", out.width="100%"}
+  ggplot(ow_mean2, aes(DOB, F2.n, color = Sex))+
+      geom_point()+
+      stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
+      theme_bw()+
+      ggtitle("/ow/")
+```
+</div>
+<div style = "float:left;width:33%;">
+```{r uw_basic_plot, dev = "svg", out.width="100%"}
+  ggplot(uw_mean2, aes(DOB, F2.n, color = Sex))+
+      geom_point()+
+      stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
+      theme_bw()+
+      ggtitle("/uw/")
+```
+</div>
+
+</div>
+
+---
+
+# Modeling the Rate of Change
+
+Since the trajectories of change of these vowels are clearly not linear, or even monotonic, I had to do something more complicated than linear regression.
+
+##### Basic Model
+
+<ul class = "incremental">
+<li> I modeled year-over-year change as a latent variable, which I call &delta;</li>
+<li> The estimated target for a given birth year is the sum of &delta; from the earliest DOB up until the year in question. I'm calling that value &Delta;</li>
+<li>I modeled each speaker's target as being normally distributed around the &Delta; for their DOB (a &mu; for each speaker.)</li>
+<li>The data from each speaker is normally distributed around their &mu;.</li>
+<li>There are also words specific random effects, normally distributed around 0.</li>
+</ul>
+
+
+---
+
+# Modeling the Rate of Change
+
+For modeling the year-over-year change (&delta;), I used b-splines.
+
+```{r}
+  basis <- bs(1:100, df = 5, int = T)
+  basis.m <- melt(basis)
+```
+
+
+
+```{r b_spline_animation, fig.show = "animate", aniopts="controls", fig.width=6, fig.height=4, dev = 'svg'}
+
+p <- ggplot(basis.m, aes(Var1, value, color = as.factor(Var2)))+
+    geom_line()+
+    scale_color_hue("Basis")+
+    ylim(0,1)
+print(p)
+
+
+weights <- c(0.0753302618395537, 0.305641739163548, 0.0564285379368812, 
+0.791336171561852, 0.779725495260209)
+nframes <- 10
+
+for(i in 0:nframes){
+  these_weights <- (rep(1, 5) * ((nframes - i)/nframes)) + (weights * (1-((nframes - i)/nframes)))
+  weighted_basis <- basis
+  for(i in 1:5){
+    weighted_basis[,i] <- basis[,i] * these_weights[i]
+  }
+  weighted_basis.m <- melt(weighted_basis)  
+  p <- ggplot(weighted_basis.m, aes(Var1, value, color = as.factor(Var2)))+
+    geom_line()+
+    scale_color_hue("Basis")+    
+    ylim(0,1)
+  print(p)
+}
+
+
+curve <- basis %*% weights
+curve.df <- data.frame(Var1 = 1:100, Var2 = 6, value = curve)
+
+for(i in seq(1, 100, length = 10)){
+  p <- ggplot(weighted_basis.m, aes(Var1, value, color = as.factor(Var2)))+
+    geom_line()+
+    geom_line(data = subset(curve.df, Var1 <= i), color = "black", size = 3)+
+    scale_color_hue("Basis")+    
+    ylim(0,1)
+  print(p)
+}
+
+```
+
+
+---
+
+# Modeling the Rate of Change
+
+The model was implemented in Stan, which estimates Bayesian models like this via Hamiltonian Monte Carlo.
+
+* Each model was fit with 3 chains, with a burn in of 750 iterations. These models converged very quickly.
+* Convergence was evaluated using the Gelman-Rubin Diagonstic
+
+```{r load_trace}
+  load("~/Documents/Classes/Dissertation/Rate_of_Change/aw_model_fit2.Rdata")
+```
+
+```{r traceplot, dev = "svg", out.width = "60%"}
+  female_d1940.df <- melt(female_d1940)	
+	female_d1940.df$segment <- "full trace"
+	
+	female_d1940.post <- subset(female_d1940.df, Var1 > 1500/2)
+	female_d1940.post$segment <- "posterior"
+	
+	female_d_comp <- rbind.fill(female_d1940.df, female_d1940.post)
+	
+	burnin <- data.frame(xmin = 0, xmax = 1500/2, segment = "full trace")
+
+	ggplot(female_d_comp, aes(Var1, value, color = as.factor(Var2)))+
+		geom_hline(y = 0)+
+		geom_line()+
+		geom_rect(data = burnin, aes(x = xmin, y = xmin, xmin = xmin, xmax = xmax, group = 1), 
+					ymin = -Inf, ymax = Inf, color = NA, alpha = 0.2)+
+		scale_color_brewer(palette = "Dark2", guide = "none")+
+		xlab("Iteration")+
+		theme_bw()+
+		facet_wrap(~segment, scales = "free", ncol  =1)
+
+```
+
+```{r extract_from_summar}
+extract_from_summary <- function(summary = NULL, pars){
+  require(stringr)
+	require(plyr)
+
+  pars <- paste(paste("^", pars, sep = ""), collapse = "|")
+	if(class(summary) == "matrix"){
+		summary.df <- as.data.frame(summary[grepl(pars, row.names(summary)),])
+	}else{
+		summary.df <- summary[grepl(pars, row.names(summary)),]
+	}
+
+	summary.df$full_pars <- row.names(summary.df)
+	summary.df$pars <- gsub("\\[.*\\]", "", summary.df$full_pars)
+
+	dim_cols <- ldply(
+					llply(
+						llply(
+							str_split(
+								gsub("\\[|\\]","",
+									str_extract(summary.df$full_pars, "\\[.*\\]")
+								),
+							 ","), 
+						as.numeric),
+					rbind), 
+				as.data.frame)
+
+	summary.df <- cbind(summary.df, dim_cols)
+	colnames(summary.df)[colnames(summary.df) %in% c("2.5%","97.5%")] <- c("hpd.lower","hpd.upper")
+
+	return(summary.df)
+  
+}
+
+```
+
+---
+
+# Modeling the Rate of Change
+
+```{r extrac_aw_pred}
+  aw_pred <- extract_from_summary(summary=aw_model_summary, pars = "predicted_change")
+	aw_pred <- transform(aw_pred, DOB = V1 + 1887, 
+								  Sex = levels(aw2$Sex)[V2],
+								  VClass = levels(aw2$VClass)[V3])
+
+	aw_pred <- subset(aw_pred, VClass %in% 	c("aw","awN") & Sex == "f")	
+```
+
+```{r aw_pred_plot, dev = "svg"}
+ggplot(aw_pred, aes(DOB, mean, fill = VClass))+
+  geom_ribbon(aes(ymax = hpd.upper, ymin = hpd.lower), alpha = 0.6)+
+  scale_fill_brewer(palette = "Set1") +
+  theme_bw()+
+  ylab("Diag")+
+  xlab("Date of Birth")+
+  ggtitle("Estimated /aw/ Trajectory")
+```
+
+
+
+---
+
+# Modeling the Rate of Change
+
+```{r extract_aw_delta}
+  aw_pred_delta <- extract_from_summary(summary = aw_model_summary, pars = "pred_delta")
+	aw_pred_delta <- transform(aw_pred_delta, DOB = V1 + 1887, 
+								  Sex = levels(aw2$Sex)[V2],
+								  VClass = levels(aw2$VClass)[V3])
+	aw_pred_delta <- subset(aw_pred_delta, VClass %in% 	c("aw","awN") & Sex == "f")	
+```
+
+```{r aw_pred_delta_plot, dev = "svg", fig.width = 9/1.5}
+ggplot(aw_pred_delta, aes(DOB, mean, fill = VClass))+
+  	geom_hline(y = 0)+  
+  geom_ribbon(aes(ymax = hpd.upper, ymin = hpd.lower), alpha = 0.6)+
+  scale_fill_brewer(palette = "Set1") +
+  geom_line(aes(y = hpd.lower, color = hpd.lower > 0, group = 1), size = 1)+
+		geom_line(aes(y = hpd.upper, color = hpd.upper < 0, group = 1), size = 1)+				
+		scale_color_manual(values = c("black","red"), guide = F)+
+		scale_alpha_manual(guide = "none", values = c(0,1))+  
+  theme_bw()+
+  ylab("Year-over-year Change")+
+  xlab("Date of Birth")+
+  facet_wrap(~VClass)+
+  ggtitle("Estimated /aw/ Rate of Change")
+```
+
+---
+
+# Modeling the Rate of Change
+
+```{r aw_delta_diff}
+  aw_delta_diff <- extract_from_summary(summary = aw_model_summary, pars = c("female_delta"))
+	aw_delta_diff <- transform(aw_delta_diff,
+								DOB = V1 + 1887,
+								VClass = levels(aw2$VClass)[V2])
+	
+	aw_delta_diff <- subset(aw_delta_diff, VClass %in% c("awN"))
+
+```
+
+
+```{r aw_delta_diff_plot, dev = "svg"}
+  ggplot(aw_delta_diff, aes(DOB))+
+		geom_hline(y = 0)+
+		geom_ribbon(aes(ymin = hpd.lower, ymax = hpd.upper), alpha = 0.6)+
+		geom_line(aes(y = hpd.lower, color = hpd.lower > 0), size = 1, group = 1)+
+		geom_line(aes(y = hpd.upper, color = hpd.upper < 0), size = 1, group = 1)+				
+		scale_color_manual(values = c("black","red"), guide = "none")+						
+		xlab("Date of Birth")+
+		ylab("delta differences")+						
+		facet_grid(VClass~., scales = "free_y")+
+		theme_bw()+
+    ggtitle("Difference in rate of change between /aw/ and /awN/")
+```
+
+---
+
+# Modeling the Rate of Change
+
+```{r load_ow_model}
+  load("~/Documents/Classes/Dissertation/Rate_of_Change/ow_model_fit2.Rdata")
+```
+
+```{r get_ow_pred}
+  ow_pred <- extract_from_summary(summary=ow_model_summary, pars = "predicted_change")
+	ow_pred <- transform(ow_pred, DOB = V1 + 1887, 
+								  Sex = levels(ow2$Sex)[V2],
+								  VClass = levels(ow2$VClass)[V3])
+
+  ow_pred <- subset(ow_pred, VClass %in% c("ow","owL") & Sex == "f")
+
+```
+
+```{r dev = "svg"}
+ ggplot(ow_pred, aes(DOB, fill = VClass))+
+   geom_ribbon(aes(ymin = hpd.lower, ymax = hpd.upper), alpha = 0.6)+
+   scale_fill_brewer(palette = "Set1")+
+   ylab("Normalized F2")+
+   xlab("Date of Birth")+
+   theme_bw()+
+  ggtitle("Estimated /aw/ Trajectory")
+```
+
+---
+
+# Modeling the Rate of Change
+
+```{r extract_ow_delta}
+  ow_pred_delta <- extract_from_summary(summary = ow_model_summary, pars = "pred_delta")
+  ow_pred_delta <- transform(ow_pred_delta, DOB = V1 + 1887, 
+								  Sex = levels(ow2$Sex)[V2],
+								  VClass = levels(ow2$VClass)[V3])
+	ow_pred_delta <- subset(ow_pred_delta, VClass %in% 	c("ow","owL") & Sex == "f")	
+```
+
+```{r ow_pred_delta_plot, dev = "svg", fig.width = 9/1.5}
+ggplot(ow_pred_delta, aes(DOB, mean, fill = VClass))+
+  	geom_hline(y = 0)+  
+  geom_ribbon(aes(ymax = hpd.upper, ymin = hpd.lower), alpha = 0.6)+
+  scale_fill_brewer(palette = "Set1") +
+  geom_line(aes(y = hpd.lower, color = hpd.lower > 0, group = 1), size = 1)+
+		geom_line(aes(y = hpd.upper, color = hpd.upper < 0, group = 1), size = 1)+				
+		scale_color_manual(values = c("black","red"), guide = F)+
+		scale_alpha_manual(guide = "none", values = c(0,1))+  
+  theme_bw()+
+  ylab("Year-over-year Change")+
+  xlab("Date of Birth")+
+  facet_wrap(~VClass)+
+  ggtitle("Estimated /ow/ Rate of Change")
+```
+
+---
+
+# Modeling the Rate of Change
+
+```{r ow_delta_diff}
+  ow_delta_diff <- extract_from_summary(summary = ow_model_summary, pars = c("female_delta"))
+  ow_delta_diff <- transform(ow_delta_diff,
+								DOB = V1 + 1887,
+								VClass = levels(ow2$VClass)[V2])
+	
+	ow_delta_diff <- subset(ow_delta_diff, VClass %in% c("owL"))
+
+```
+
+
+```{r ow_delta_diff_plot, dev = "svg"}
+  ggplot(ow_delta_diff, aes(DOB))+
+		geom_hline(y = 0)+
+		geom_ribbon(aes(ymin = hpd.lower, ymax = hpd.upper), alpha = 0.6)+
+		geom_line(aes(y = hpd.lower, color = hpd.lower > 0), size = 1, group = 1)+
+		geom_line(aes(y = hpd.upper, color = hpd.upper < 0), size = 1, group = 1)+				
+		scale_color_manual(values = c("black","red"), guide = "none")+						
+		xlab("Date of Birth")+
+		ylab("delta differences")+						
+		facet_grid(VClass~., scales = "free_y")+
+		theme_bw()+
+    ggtitle("Difference in rate of change between /ow/ and /owL/")
+```
+
+---
+
+# Modeling the Rate of Change
+
+According to the model:
+
+<table>
+
+<tr>
+  <td>
+    Year when /ow/ rate of change first &gt; 0:
+  </td>
+  <td>
+`r min(subset(ow_pred_delta, VClass == "ow" & hpd.lower > 0)$DOB)`
+  </td>
+</tr>
+
+<tr>
+  <td>
+    Year when /ow/ rate of change first &ne; /owL/ rate of change:
+  </td>
+  <td>
+`r min(subset(ow_delta_diff, hpd.upper <= 0)$DOB)`
+  </td>
+</tr>
+
+</table>
+
+This difference is smaller than the possible precision of the model.
+
+---
+
+# Modeling the Rate of Change
+
+#### Summary of results
+
+<table>
+<tr>
+  <td></td>
+  <td>/aw/</td>
+  <td>/ow/</td>
+  <td>/uw/</td>
+</tr>
+<tr>
+  <td>__[nasal]</td>
+  <td>Always Parallel</td>
+  <td><font color = "blue">Potential Reanalysis</font></td>
+  <td></td>
+<tr>
+<tr>
+  <td>[nasal]__</td>
+  <td>  </td>
+  <td>Always Parallel</td> 
+  <td></td>
+</tr>
+<tr>
+  <td>__l</td>
+  <td></td>
+  <td><font color = "red">Divergent from start</font></td>
+  <td><font color = "red">Divergent from start</font></td>
+</tr>
+<tr>
+  <td>__#</td>
+  <td>Always Parallel</td> 
+  <td>Ceiling Effect</td>
+  <td>Always Parallel</td>
+</tr>
+<tr>
+  <td>[cornal]__ </td>
+  <td> </td>
+  <td></td>
+  <td>Ambiguous</td>
+</tr>
+</table>
+
+---
+
+# Modeling the Rate of Change
+#### /owN/ reanalysis?
+
+```{r owN_pred}
+  owN_pred <- extract_from_summary(summary=ow_model_summary, pars = "predicted_change")
+  owN_pred <- transform(owN_pred, DOB = V1 + 1887, 
+								  Sex = levels(ow2$Sex)[V2],
+								  VClass = levels(ow2$VClass)[V3])
+
+  owN_pred <- subset(owN_pred, VClass %in% c("ow","owL", "owN") & Sex == "f")
+```
+
+
+```{r extract_owN_delta}
+  owN_pred_delta <- extract_from_summary(summary = ow_model_summary, pars = "pred_delta")
+  owN_pred_delta <- transform(owN_pred_delta, DOB = V1 + 1887, 
+  							  Sex = levels(ow2$Sex)[V2],
+								  VClass = levels(ow2$VClass)[V3])
+	owN_pred_delta <- subset(owN_pred_delta, VClass %in% 	c("ow","owL", "owN") & Sex == "f")	
+```
+
+```{r plot_owN_pred, dev = "svg"}
+
+ggplot(owN_pred, aes(DOB, fill = VClass))+
+   geom_ribbon(aes(ymin = hpd.lower, ymax = hpd.upper), alpha = 0.6)+
+   scale_fill_brewer(palette = "Set1")+
+   ylab("Normalized F2")+
+   xlab("Date of Birth")+
+   theme_bw()  
+
+```
+
+---
+
+# Modeling the Rate of Change
+#### /owN/ reanalysis?
+
+```{r plot_owN_pred_delta, dev = "svg", fig.width=10/1.5}
+
+ggplot(owN_pred_delta, aes(DOB, mean, fill = VClass))+
+    geom_hline(y = 0)+  
+  geom_ribbon(aes(ymax = hpd.upper, ymin = hpd.lower), alpha = 0.6)+
+  scale_fill_brewer(palette = "Set1") +
+  geom_line(aes(y = hpd.lower, color = hpd.lower > 0, group = 1), size = 1)+
+		geom_line(aes(y = hpd.upper, color = hpd.upper < 0, group = 1), size = 1)+				
+		scale_color_manual(values = c("black","red"), guide = F)+
+		scale_alpha_manual(guide = "none", values = c(0,1))+  
+  theme_bw()+
+  ylab("Year-over-year Change")+
+  xlab("Date of Birth")+
+  facet_grid(.~VClass)+
+  ggtitle("Estimated /ow/ Rate of Change")
+```
+
+---
+
+# Modeling the Rate of Change
+
+#### Wrapup
+For all of these vowel variants, I found only one case that fit the quantitative profile of phonological reanalysis, and even that is not clear cut.
+
+I also found two cases which were categorically exempt from their sound change from its onset, which is not predicted under the gradual reanalysis account.
+
+
+---
+
+# Mismatches
+
+The model of gradual reanalysis would predict that phonetic changes should progress from the most favoring environment to the least. 
+
+In some cases, there is a mismatch between contexts which phonetically favor a change, and the eventual phonological conditioning in its outcome.
+
+---
+
+# Mismatches
+
+#### /ay/ raising
+
+<img src="assets/mismatch.svg" width = "70%">
+
+
+(Joos, 1942; Chambers, 1973; Moreton & Thomas, 2007)
+
+---
+
+# Mismatches
+
+```{r prep_flaps}
+ay_TD <- subset(ays, FolSegTrans %in% c("T","D") & !(Context %in% c("Final", "Coextensive", "Initial")))
+
+
+td_in_word_coda <- function(df){
+  trans <- df$Trans
+	FolSegTrans <- df$FolSegTrans
+	PreSegTrans <- df$PreSegTrans
+
+	FolSegTrans <- gsub("AH0","@",FolSegTrans)
+	PreSegTrans <- gsub("AH0","@",PreSegTrans)
+
+
+	syls <- syllabify(trans)
+	syls_label <- unlist(syls)
+	syls_label <- syls_label[names(syls_label)!="stress"]
+
+	true_seg <- 0
+	for(seg in 1:length(syls_label)){
+		if(seg != 1 & seg != length(syls_label)){
+			if(syls_label[seg] == "AY" & syls_label[seg-1] == PreSegTrans & syls_label[seg+1] == FolSegTrans){
+				true_seg <- seg
+			}
+		}
+	}
+	if(true_seg != 0){
+		return(names(syls_label[true_seg+1]))
+	}else{
+		return(NA)
+	}
+}
+
+
+td_in_phrase_coda <- function(df){
+	trans <- paste(df$Trans, df$FolTrans, sep = " ")
+	trans <- gsub(" sp| ns| lg| br| cg", "", trans)
+	FolSegTrans <- df$FolSegTrans
+	PreSegTrans <- df$PreSegTrans
+
+	FolSegTrans <- gsub("AH0","@",FolSegTrans)
+	PreSegTrans <- gsub("AH0","@",PreSegTrans)
+
+	syls <- syllabify(trans)
+	syls_label <- unlist(syls)
+	syls_label <- syls_label[names(syls_label)!="stress"]
+
+	true_seg <- 0
+	for(seg in 1:length(syls_label)){
+		if(seg != 1 & seg != length(syls_label)){
+			if(syls_label[seg] == "AY" & syls_label[seg-1] == PreSegTrans & syls_label[seg+1] == FolSegTrans){
+				true_seg <- seg
+			}
+		}
+	}
+	if(true_seg != 0){
+		return(names(syls_label[true_seg+1]))
+	}else{
+		return(NA)
+	}
+}
+
+
+ay_TD$id <- 1:nrow(ay_TD)
+
+out_word <- dlply(ay_TD, .(id), td_in_word_coda)
+out_phrase <- dlply(ay_TD, .(id), td_in_phrase_coda)
+ay_TD$Word_Level <- unlist(out_word)
+ay_TD$Phrase_Level <- unlist(out_phrase)
+
+
+not_flap <- ay_TD[grepl("coda", ay_TD$Word_Level) & grepl("coda", ay_TD$Phrase_Level),]
+not_flap <- subset(not_flap, !grepl("[AEIOU]", FolSegTrans))
+
+
+def_flap <- subset(ay_TD, grepl("onset", Word_Level) & grepl("onset", Phrase_Level) & grepl("0", Fole2SegTrans))
+
+c("SNYDER", "SPIDER", "HEIDEL", "SPIDERS", 
+"SNEIDER", "SNYDER'S",  
+"CIDER", "SPIDERMAN", 
+"FIGHTING", "FIGHTIN'",
+"WRITIN'", 
+"BITIN'", "BITING", "HANDWRITING", 
+"ENLIGHTENMENT", "FRIGHTENING", 
+"EXCITING", "LIGHTING", "FRIGHTENED", "FRIGHTEN", 
+"TIGHTEN", "TIGHTENS", "LIGHTENING", 
+"HANDWRITIN'", 
+"ENLIGHTENED", "INVITING", "LIGHTENER",  
+"LIGHTIN'", "FIREFIGHTING" )->exclude
+
+
+def_flap <- subset(def_flap, !Word %in% exclude)
+word_flap <- subset(ay_TD, grepl("coda", Word_Level) & grepl("onset", Phrase_Level) & grepl("0", Fole2SegTrans))
+
+
+not_flap_sp <- subset(not_flap, Fole2SegTrans == "sp")
+not_flap_sp$Context <- paste(not_flap_sp$FolSegTrans, "Surface", sep = "_")
+def_flap$Context <- paste(def_flap$FolSegTrans, "Flap", sep = "_")
+
+
+flap_comp <- rbind.fill(not_flap_sp, def_flap)
+flap_comp$Context <- as.factor(flap_comp$Context)
+
+flap_comp$Context <- relevel(flap_comp$Context, "T_Flap")
+flap_comp$Context <- relevel(flap_comp$Context, "D_Flap")
+flap_comp$Context <- relevel(flap_comp$Context, "T_Surface")
+flap_comp$Context <- relevel(flap_comp$Context, "D_Surface")
+
+flap_comp$Flap <- "Surface"
+flap_comp$Flap[grepl("Flap",flap_comp$Context)] <- "Flap"
+```
+
+
+```{r flap_means}
+  flap_mean1 <- ddply(flap_comp, .(File, Word, DOB, Context, Flap, FolSegTrans),
+                      summarise, F1.n = mean(F1.n), Dur_msec = median(Dur_msec))
+  flap_mean2 <- ddply(flap_mean1, .(File, DOB, Context, Flap, FolSegTrans),
+                      summarise, F1.n = mean(F1.n), Dur_msec = median(Dur_msec))
+
+```
+
+```{r early_ay, dev = "svg"}
+  early_ay <- subset(flap_mean2, DOB <= 1920)
+  ggplot(flap_mean2, aes(Dur_msec, color = FolSegTrans, linetype = Flap))+
+    geom_density()+
+    scale_linetype("Realization",limits = c("Surface","Flap"), labels = c("Faithful","Flap"))+
+    scale_color_brewer("Following\nSegment",palette = "Set1")+
+    xlab("Duration (msec)")+
+    theme_bw()
+```
+
+```{r}
+ durs <- ddply(flap_mean2, .(FolSegTrans, Flap), summarise, Dur_msec = median(Dur_msec))
+```
+
+Faithful /d/ (`r round(subset(durs, FolSegTrans == "D" & Flap == "Surface")$Dur_msec)` ms) &gt; Flapped /d/ (`r round(subset(durs, FolSegTrans == "D" & Flap == "Flap")$Dur_msec)` ms); Faithful /t/ (`r round(subset(durs, FolSegTrans == "T" & Flap == "Surface")$Dur_msec)` ms); Flapped /t/ (`r round(subset(durs, FolSegTrans == "T" & Flap == "Flap")$Dur_msec)` ms)
+
+
+---
+
+# Mismatches
+
+It looks like /ay/ raising differentiates along phonological, not phonetic dimensions.
+
+```{r plot_flaps, dev = "svg"}
+
+  ggplot(flap_mean2, aes(DOB, F1.n, color = FolSegTrans, linetype = Flap, shape = Flap))+
+      geom_point(size = 1)+
+      stat_smooth(method = gam, formula = y ~ s(x,bs = "cs"))+
+      scale_y_reverse("Normalized F1")+
+      xlab("Date of Birth")+
+      scale_linetype("Realization",limits = c("Surface","Flap"), labels = c("Faithful","Flap"))+
+      scale_shape_manual("Realization", 
+                         limits = c("Surface","Flap"), 
+                         labels = c("Faithful","Flap"),
+                         values = c(19,1))+      
+      scale_color_brewer("Following\nSegment",palette = "Set1")+
+      theme_bw()
+
+```
+
+---
+
+# Mismatches
+
+/ay/ differentiates between pre-/t/ and pre-/d/ contexts in the exact same way whether the /t/ and /d/ are faithful, or flapped.
+
+
+```{r load_ay_model}
+  load("~/Documents/Classes/Dissertation/Manuscript/chapters/chapter5/ay_flap_model.Rdata")
+```
+
+```{r load_diffs}
+  diffs <- extract_from_summary(model_summary, c("flap_diff","surf_diff"))
+	diffs$pars <- as.factor(diffs$pars)
+	diffs$pars <- relevel(diffs$pars, "surf_diff")
+	levels(diffs$pars) <- c("surface","flap")
+```
+
+
+```{r plot_diffs, dev = "svg", fig.width = 10/1.5, outwidth = "100%"}
+  custom_pal <- c("#940808", "#124978", "#F25151", "#68A7DC")
+
+  ggplot(diffs, aes(V1+1887, mean, color = pars))+
+		geom_hline(y=0, linetype = 2)+
+		geom_line()+
+		geom_ribbon(aes(ymin = hpd.lower, ymax = hpd.upper, fill = pars), alpha = 0.3, color = NA)+
+		scale_fill_manual("Realization",
+                      limits = c("surface","flap"), 
+                       labels = c("faithful","flap"),values = custom_pal[c(2,4)])+
+		scale_color_manual("Realization", 
+                       limits = c("surface","flap"), 
+                       labels = c("faithful","flap"), values = custom_pal[c(2,4)])+
+		ylab("/ay/ height difference")+
+		xlab("Date of Birth")+
+		facet_wrap(~pars)+
+		theme_bw()
+
+```
+---
+
+# Mismatches
+
+#### /ey/ raising
+
+```{r load_eys}
+eys <- load.vowels(c("ey", "eyF"), path = path)
+eys <- subset(eys, !grepl("a|h", Eth))
+eys <- subset(eys, !grepl(verboten_string, File))
+```
+
+
+```{r days_prep}
+
+  day <- subset(eys, Word == "DAY" & grepl("[AEIOU]", FolSegTrans))
+  days <- subset(eys, Word == "DAYS")
+
+  day_comp <- rbind.fill(day, days)
+  day_means <- ddply(day_comp, .(File, DOB, Word), summarise, Diag = mean(F2.n - F1.n))
+```
+
+```{r day_plot, dev = "svg"}
+  ggplot(day_means, aes(DOB, Diag, color = Word))+
+      geom_point()+
+      stat_smooth(method = gam, formula = y ~ s(x, bs = "cs"))+
+      scale_color_brewer(palette = "Dark2")+
+      xlab("Date of Birth")+
+      theme_bw()
+```
+
+
+
+---
+
+# Mismatches
+#### /ey/ raising
+
+
+```{r prep_eys}
+
+  wday <- c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
+  wday_string <- paste(wday, collapse="|")
+  wday_string <- toupper(wday_string)
+
+  eys <- subset(eys, !grepl(wday_string, Word))  
+
+  eys_int <- subset(eys, Context == "Internal")
+  eys_int$FolSeg <- "C"
+  eys_int$FolSeg[eys_int$FolSegTrans == "L"] <- "/l/"
+  eys_int$FolSeg[grepl("[AEIOU]", eys_int$FolSegTrans)] <- "V"
+  eys_int <- subset(eys_int, FolSegTrans != "G")
+
+  eys_final <- subset(eys, Context == "Final")
+  eys_final$FolSeg <- as.character(eys_final$FolSegTrans)
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("B","CH","D","DH","F","G",
+                                          "HH","JH","K","M","N","P","S","SH","T","TH","V",
+                                          "Z")] <- "C"
+  eys_final$FolSeg[grepl("[AEIOU]", eys_final$FolSegTrans)] <- "V"
+
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("R")] <- "/r/"
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("L")] <- "/l/"
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("W")] <- "/w/"
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("Y")] <- "/y/"
+  eys_final$FolSeg[eys_final$FolSegTrans %in% c("cg","br","lg","ls","ns","sp")] <- "misc"
+
+  eys_comp <- rbind.fill(eys_int, eys_final)
+  eys_comp$FolSeg <- as.factor(eys_comp$FolSeg)
+  eys_comp$FolSeg <- relevel(eys_comp$FolSeg, "/l/")
+  eys_comp$FolSeg <- relevel(eys_comp$FolSeg, "V")
+  eys_comp$FolSeg <- relevel(eys_comp$FolSeg, "C")
+```
+
+```{r eys_int_mean}
+  eys_mean1 <- ddply(eys_comp, .(File, Word, Context, DOB, FolSeg), summarise, 
+                         Diag = mean(F2.n - F1.n))
+  eys_mean2 <- ddply(eys_mean1, .(File, Context, DOB, FolSeg), summarise, Diag = mean(Diag))
+```
+
+
+```{r plot_ey_raising, dev = "svg", fig.width = 9/1.5, out.width = "100%"}
+  ggplot(eys_mean2, aes(DOB, Diag, color = FolSeg)) + 
+    stat_smooth(method = gam, formula =y ~s(x, bs = "cs"), se = F) +
+    facet_wrap(~Context)+
+    scale_color_brewer(palette = "Dark2")+
+    xlab("Date of Birth")+
+    theme_bw() -> p
+
+  p <- direct.label(p, method = "last.points") + expand_limits(x = 2005)
+  print(p)
+```
+
+---
+
+# Mismatches
+
+```{r int_mod}
+
+eys_int$Diag <- eys_int$F2.n - eys_int$F1.n
+eys_int$FolSeg <- as.factor(eys_int$FolSeg)
+eys_int$FolSeg <- relevel(eys_int$FolSeg, "C")
+eys_int$Decade2 <- (eys_int$DOB - 1900)/10
+
+eys_int_mod <- lmer(Diag ~ FolSeg * Decade2 + (FolSeg | File) + (1|Word), data = eys_int)
+
+
+```
+
+```{r eys_coefs}
+  eys_int_coefs <- summary(eys_int_mod)@coefs
+```
+
+
+`lmer(Diag ~ Decade*FolSeg + (FolSeg | Speaker) + (1|Word))`
+
+Decade is date of birth minus 1900 divided by 10.
+
+
+<div text-align = "center">
+<table rules="groups">
+
+<th>
+<td colspan = 2 align = "left" padding="0"> 
+  C Estimates
+</td>
+<td></td>
+<td colspan = 3 align = "left">
+  Interactions
+</td>
+</th>
+<tbody>
+<tr>
+<td rowspan = "2" valign = "top">
+Intercept
+</td>
+<td align="right">
+`r round(eys_int_coefs["(Intercept)", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;">
+t = `r round(eys_int_coefs["(Intercept)", "t value"], digits = 2)`
+</td>
+<td></td>
+<td align="right">
+`r round(eys_int_coefs["FolSegV", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;">
+t = `r round(eys_int_coefs["FolSegV", "t value"], digits = 2)`
+</td>
+<td >
+FolSeg = V
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td></td>
+<td align="right" style = "font-weight:800;color:#7570B3;">
+`r round(eys_int_coefs["FolSeg/l/", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;font-weight:800;color:#7570B3;">
+t = `r round(eys_int_coefs["FolSeg/l/", "t value"], digits = 2)`
+</td>
+<td style = "font-weight:800;color:#7570B3;">
+FolSeg = /l/
+</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td rowspan = "2" valign = "top">
+Decade
+</td>
+<td align="right">
+`r round(eys_int_coefs["Decade2", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;">
+t = `r round(eys_int_coefs["Decade2", "t value"], digits = 2)`
+</td>
+<td></td>
+<td align="right">
+`r round(eys_int_coefs["FolSegV:Decade2", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;">
+t = `r round(eys_int_coefs["FolSegV:Decade2", "t value"], digits = 2)`
+</td>
+<td >
+FolSeg = V  &times; Decade
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td></td>
+<td align="right" style = "font-weight:800;color:#7570B3;">
+`r round(eys_int_coefs["FolSeg/l/:Decade2", "Estimate"], digits = 2)`
+</td>
+<td align="right" style="font-size:8pt;font-weight:800;color:#7570B3;">
+t = `r round(eys_int_coefs["FolSeg/l/:Decade2", "t value"], digits = 2)`
+</td>
+<td style = "font-weight:800;color:#7570B3;">
+FolSeg = /l/ &times; Decade
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+---
+
+# Mismatches
+#### Wrapup
+
+Phonetic favoribility is a weak predictor of which variants will undergo a change.
+
+First is not fastest.
+
+*Phonological* conditioning is present at the onset of these changes.
+
+
+---
+
+# Conclusions and Analysis
+
+The conventional wisdom regarding the gradual phonological reanalysis of phonetic effects:
+
+1. Either doesn't happen, or happens too rarely to be observed in the sound changes I've analyzed.
+2. Can't account for a number of the patterns in sound changes that I've observed.
+3. My proposal that phonetic changes operate over surface phonological representations makes additional predictions which are borne out (e.g. parallel phonetic shifts of phonological natural classes).
+
+---
+
+# Conclusions and Analysis
+
+I have observed that when there is clear phonological conditioning of a sound change towards its end, that phonological conditioning is also in place at the sound change's onset.
+
+#### Proposal
+
+New phonological processes enter the grammar as strictly phonological innovations, not reanalyses of phonetic processes, and have relatively small phonetic correlates at first. This is similar to the "Big Bang" theory of Joseph & Janda.
+
+---
+
+# Is this Plausible?
+
+There are plenty of examples children briefly entertaining phonological hypotheses which are markedly absent from the adult grammar, like Consonant Harmony.
+
+
+<table>
+<tr>
+  <td>
+    Word
+  </td>
+  <td>
+    Ahmal
+  </td>
+<tr>
+  <td>
+    <i>duck</i>
+  </td>
+  <td>
+    g̊ʌk
+  </td>
+<tr>
+<tr>
+  <td>
+    <i>kiss</i>
+  </td>
+  <td>
+    g̊ik
+  </td>
+</tr>
+<tr>
+  <td>
+    <i>stop</i>
+  </td>
+  <td>
+    d̥ɔp ~b̥ɔp
+  </td>
+</tr>
+
+</table>
+
+(Smith (1973), quoted in Goad (1997))
+
+---
+
+# Is this Plausible?
+
+#### Why aren't we in phonological chaos?
+
+Learning, both linguistic and social, could iron out a lot of idiosyncratic variation.
+
+
+---
+
+# Is this Plausible?
+
+#### Why aren't we in phonological chaos?
+
+How do we know we aren't?
+
+<div style = "width:100%">
+<div style = "width:50%;float:left">
+<img src="assets/mielke_r.png" width = "100%"></img>
+</div>
+<div style = "width:50%;float:left">
+
+Mielke, Baker, Archangeli (forthcoming)
+
+</div>
+</div>
+
+---
+
+# Conclusions
+
+* A model of phonetic change taking into account a strong but distinct role of phonology does a better job analyzing and predicting the observed patterns of sound change than one without.
+* The study of sound change in progress offers unique insight into the interrelationship between phonology and phonetics, and vice versa.
+* My proposal, and is consequences for understanding sound change introduces many more interesting questions and avenues of research.
+
+---
+
+# A few more numbers
+
+```{r thanks}
+bday <- mdy("January 5, 1985")
+upenn <- mdy("September 3, 2003")
+ling <- mdy("September 8, 2004")
+defense <- mdy("September 4, 2013")
+  
+```
+
+
+<table>
+<tr class = "incremental">
+<td>
+  
+Age
+    
+</td>
+<td>
+    
+`r format(as.numeric(defense - bday), format = "d", big.mark = ",")` days
+
+</td>    
+</tr>
+
+<tr class = "incremental">
+<td>
+  
+At Penn
+    
+</td>
+<td>
+    
+`r format(as.numeric(defense - upenn), format = "d", big.mark = ",")` days
+
+</td>    
+</tr>
+
+
+<tr class = "incremental">
+<td>
+  
+In linguistics
+    
+</td>
+<td>
+    
+`r format(as.numeric(defense - ling), format = "d", big.mark = ",")` days
+
+</td>    
+</tr>
+
+</table>
+<div style="padding-left:10%;float:left;" class = "incremental">
+<div>
+<sup>`r as.numeric(defense - ling)`</sup>&frasl;<sub>`r format(as.numeric(defense - bday), format = "d")`</sub> = `r round(as.numeric(defense-ling)/as.numeric(defense-bday), digits = 2)*100`% of my life
+</div>
+</div>
+<div style="padding-left:0%;float:left;" class = "incremental">
+<div>
+*****
+</div>
+</div>
+
+
+---
+
+# References
+
+<div class = "ref">
+
+* Ash, S. (1982). The Vocalization of /l/ in Philadelphia. University of Pennsylvania.
+* Baker, A., Archangeli, D., & Mielke, J. (2011). Variability in American English s-retraction suggests a solution to the actuation problem. Language Variation and Change, 23, 347–374.
+* Bailey, C.-J. (1973). Variation and Linguistic Theory. Washington.
+* Bermúdez-Otero, R. (2007). 21 Diachronic Phonology. In P. de Lacy (Ed.), The Cambridge Handbook of Phonology (pp. 497–517). Cambridge: Cambridge University Press.
+* Blevins, J. (2004). Evolutionary phonology: the emergence of sound patterns. Cambridge University Press.
+* Blevins, J., & Garrett, A. (2004). The Evolution of Metathesis. In B. Hayes, R. Kirchner, & D. Steriade (Eds.), {Phonetically Based Phonology} (pp. 117–156). New York: Cambridge University Press.
+* Chambers, J. K. (1973). Canadian Raising. Canadian Journal of Linguistics, 18, 131–135.
+* Dinkin, A (2011). What's Really Happening to Short A Before L in Philadelphia? Talk presented at NWAV 40, Washington, D.C.
+* Fruehwald, J. (2008). The Spread of Raising : Opacity , Lexicalization , and Diffusion. Penn Working Papers in Linguistics, 14(2), 83–92.
+* Conn, J. (2005). Of 'moice' and men: The evolution of a male-led sound change. University of Pennsylvania.
+* Hyman, L. (1976). Phonologization. In A. Juilland, A. M. Devine, & L. D. Stephens (Eds.), Linguistic studies offered to Joseph Greenberg on the Occasion of His Sixtieth Birthday (Vol. 4, pp. 407–418). Anima Libri.
+* Joos, M. (1942). A phonological dilemma in Canadian English. Language, 18, 141–144.
+* Labov, W. (2001). Principles of linguistic change. Volume 2: Social Factors. Language in Society. Oxford: Blackwell.
+* Labov, W., Rosenfelder, I., & Fruehwald, J. (2013). One hundred years of sound change in Philadelphia: Linear Incrementaion, Reversal, and Reanalysis. Language, 89(1), 30–65.
+
+</div>
+
+---
+
+# References
+
+<div class = "ref">
+
+
+* Moreton, E., & Thomas, E. R. (2004). Origins of Canadian Raising in voiceless-coda effects: a case study in phonologization. In J. Cole & J. I. Hualde (Eds.), Papers in Laboratory Phonology 9. Cambridge University Press.
+* Ohala, J. (1981). The listener as a source of language change. In C. S. Masek, R. A. Hendrick, & M. F. Miller (Eds.), Papers from the Parasession on Language and Behavior. Chicago Linguistics Society.
+* Ohala, J. J. (1990). The phonetics and phonology of aspects of assimilation. In J. Kingston & M. E. Beckman (Eds.), Papers in laboratory phonology 1: Between the grammar and physics of speech (pp. 258–282). Cambridge: Cambridge University Press.
+* The Philadelphia Neighborhood Corpus.
+* Stan Development Team. (2012). Stan: A C++ Library for Probability and Sampling. Retrieved from http://mc-stan.org/
+* Tucker, R. W. (1944). Notes on the Philadelphia dialect. American Speech, 19(1), 37–42.
+* Wagner, S. E. (2007). We act like girls and we don’t act like men: The use of the male-associated variable (ay0) in South Philadelphia. In T. Scheffler, J. Tauberer, A. Eilam, & L. Mayol (Eds.), Penn Working Papers in Linguistics (Vol. 13.1, pp. 393–406). Philadelphia: University of Pennsylvania Press.
+
+</div>

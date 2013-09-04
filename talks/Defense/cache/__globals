@@ -1,0 +1,68 @@
+basic_context	load
+thanks	mdy
+load_ays	!	Eth	File	c	grepl	load.vowels	path	subset	verboten_string
+ays_means	.	Age	DOB	F1.n	File	Sex	VClass	Word	Year	ays	ddply	mean	summarise
+ay_plot	DOB	F1.n	VClass	aes	ays_mean2	gam	geom_point	ggplot	ggtitle	scale_color_brewer	scale_y_reverse	stat_smooth	theme_bw	xlab	~
+load_aw	!	Eth	File	grepl	load.vowels	path	subset	verboten_string
+aw_means	$	$<-	.	==	Age	Context	DOB	Diag	F1.n	F2.n	File	FolSeg	Sex	Word	Year	[<-	aw	c	ddply	mean	subset	summarise
+aw_basic_plot	DOB	Diag	FolSeg	aes	aw_int_mean2	facet_wrap	gam	geom_point	ggplot	ggtitle	scale_color_brewer	stat_smooth	theme_bw	~
+unnamed-chunk-1	T	bs	melt
+unnamed-chunk-2	DOB	VClass	aes	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	ow_pred	scale_fill_brewer	theme_bw	xlab	ylab
+b_spline_animation	<=	Var1	Var2	[<-	aes	as.factor	basis	basis.m	c	data.frame	for	geom_line	ggplot	melt	print	rep	scale_color_hue	seq	subset	value	ylim
+unnamed-chunk-3	.	Dur_msec	Flap	FolSegTrans	ddply	flap_mean2	median	summarise
+make_example	c	data.frame	rep	rnorm
+coarticulation	Context	F1	F1.end	F2	F2.end	aes	arrow	assim	coord_fixed	example	geom_point	geom_segment	ggplot	scale_color_brewer	scale_fill_brewer	stat_ellipse	theme	theme_bw
+assim	Context	F1	F2	aes	centers	coord_fixed	example	geom_point	ggplot	scale_color_brewer	scale_fill_brewer	stat_ellipse	theme	theme_bw
+coarticulate_ani	$	$<-	Context	F1	F1.end	F2	F2.end	[<-	aes	arrow	coord_fixed	for	geom_point	geom_segment	ggplot	print	range	scale_color_brewer	scale_fill_brewer	stat_ellipse	theme	theme_bw	xlim
+remake_example	c	data.frame	rep	rnorm
+assim_ani	$	$<-	==	Context	F1	F2	[<-	aes	coord_fixed	for	geom_point	ggplot	print	range	scale_color_brewer	scale_fill_brewer	stat_ellipse	theme	theme_bw	xlim
+remake_example2	c	data.frame	rep	rnorm
+reananlysis_ani	$	$<-	==	Context	F1	F1.end	F2	F2.end	[<-	aes	arrow	coord_fixed	for	geom_point	geom_segment	ggplot	print	range	scale_color_brewer	scale_fill_brewer	stat_ellipse	theme	theme_bw	xlim
+construct_coarticulate	$<-	&	.	==	Context	DOB	F2	aes	arrow	c	data.frame	ddply	diff	facet_grid	geom_line	geom_segment	ggplot	length	melt	pnorm	scale_color_brewer	seq	subset	theme	theme_bw	transform	value	variable	xlab	~
+construct_assim	$<-	.	Context	DOB	F2	aes	c	data.frame	ddply	diff	facet_grid	geom_line	ggplot	length	melt	pnorm	scale_color_brewer	seq	theme	theme_bw	transform	value	xlab	~
+construct_reanalysis	$	$<-	&	.	==	>	Context	DOB	F2	[<-	aes	arrow	c	cumsum	data.frame	ddply	diff	facet_grid	geom_line	geom_segment	geom_vline	ggplot	length	melt	min	nrow	pnorm	scale_color_brewer	seq	subset	theme	theme_bw	transform	value	variable	xlab	~
+aw_basic_means	.	Age	DOB	Diag	F1.n	F2.n	File	Sex	Word	aw	ddply	mean	summarise
+load_ow	!	Eth	File	grepl	load.vowels	path	subset	verboten_string
+ow_basic_means	!=	.	Age	DOB	F2.n	File	FolSegTrans	Sex	Word	ddply	mean	subset	summarise
+load_uw	!	Eth	File	grepl	load.vowels	path	subset	verboten_string
+uw_basic_means	!=	.	Age	DOB	F2.n	File	FolSegTrans	Sex	Word	ddply	mean	subset	summarise
+aw_basic_plot2	DOB	Diag	Sex	aes	aw_mean2	gam	geom_point	ggplot	ggtitle	stat_smooth	theme_bw	~
+ow_basic_plot	DOB	F2.n	Sex	aes	gam	geom_point	ggplot	ggtitle	ow_mean2	stat_smooth	theme_bw	~
+uw_basic_plot	DOB	F2.n	Sex	aes	gam	geom_point	ggplot	ggtitle	stat_smooth	theme_bw	uw_mean2	~
+load_trace	load
+traceplot	$<-	>	Var1	Var2	aes	as.factor	data.frame	facet_wrap	female_d1940	geom_hline	geom_line	geom_rect	ggplot	melt	rbind.fill	scale_color_brewer	subset	theme_bw	value	xlab	xmax	xmin	~
+extract_from_summar	$	$<-	==	[<-	as.data.frame	as.numeric	c	cbind	class	colnames	colnames<-	grepl	gsub	if	ldply	llply	paste	rbind	require	return	row.names	str_extract	str_split
+extrac_aw_pred	$	&	==	Sex	V1	V2	V3	VClass	aw2	aw_model_summary	c	extract_from_summary	levels	subset	transform
+extract_aw_delta	$	&	==	Sex	V1	V2	V3	VClass	aw2	aw_model_summary	c	extract_from_summary	levels	subset	transform
+unnamed-chunk-4	!	Eth	File	c	grepl	load.vowels	path	subset	verboten_string
+aw_pred_plot	DOB	VClass	aes	aw_pred	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	mean	scale_fill_brewer	theme_bw	xlab	ylab
+aw_pred_delta_plot	<	>	DOB	F	VClass	aes	aw_pred_delta	c	facet_wrap	geom_hline	geom_line	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	mean	scale_alpha_manual	scale_color_manual	scale_fill_brewer	theme_bw	xlab	ylab	~
+aw_delta_diff	$	V1	V2	VClass	aw2	aw_model_summary	c	extract_from_summary	levels	subset	transform
+aw_delta_diff_plot	<	>	DOB	aes	aw_delta_diff	c	facet_grid	geom_hline	geom_line	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	scale_color_manual	theme_bw	xlab	ylab	~
+load_ow_model	load
+get_ow_pred	$	&	==	Sex	V1	V2	V3	VClass	c	extract_from_summary	levels	ow2	ow_model_summary	subset	transform
+extract_ow_delta	$	&	==	Sex	V1	V2	V3	VClass	c	extract_from_summary	levels	ow2	ow_model_summary	subset	transform
+ow_pred_delta_plot	<	>	DOB	F	VClass	aes	c	facet_wrap	geom_hline	geom_line	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	mean	ow_pred_delta	scale_alpha_manual	scale_color_manual	scale_fill_brewer	theme_bw	xlab	ylab	~
+ow_delta_diff	$	V1	V2	VClass	c	extract_from_summary	levels	ow2	ow_model_summary	subset	transform
+ow_delta_diff_plot	<	>	DOB	aes	c	facet_grid	geom_hline	geom_line	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	ow_delta_diff	scale_color_manual	theme_bw	xlab	ylab	~
+owN_pred	$	&	==	Sex	V1	V2	V3	VClass	c	extract_from_summary	levels	ow2	ow_model_summary	subset	transform
+extract_owN_delta	$	&	==	Sex	V1	V2	V3	VClass	c	extract_from_summary	levels	ow2	ow_model_summary	subset	transform
+plot_owN_pred	DOB	VClass	aes	geom_ribbon	ggplot	hpd.lower	hpd.upper	owN_pred	scale_fill_brewer	theme_bw	xlab	ylab
+plot_owN_pred_delta	<	>	DOB	F	VClass	aes	c	facet_grid	geom_hline	geom_line	geom_ribbon	ggplot	ggtitle	hpd.lower	hpd.upper	mean	owN_pred_delta	scale_alpha_manual	scale_color_manual	scale_fill_brewer	theme_bw	xlab	ylab	~
+prep_flaps	!	!=	$	$<-	&	.	==	Context	FolSegTrans	Fole2SegTrans	Phrase_Level	Word	Word_Level	[<-	as.factor	ays	c	dlply	for	grepl	gsub	id	if	length	names	nrow	paste	rbind.fill	relevel	return	subset	syllabify	unlist
+flap_means	.	Context	DOB	Dur_msec	F1.n	File	Flap	FolSegTrans	Word	ddply	flap_comp	mean	median	summarise
+early_ay	<=	DOB	Dur_msec	Flap	FolSegTrans	aes	c	flap_mean2	geom_density	ggplot	scale_color_brewer	scale_linetype	subset	theme_bw	xlab
+prep_eys	!	!=	$	$<-	==	Context	FolSegTrans	Word	[<-	as.character	as.factor	c	grepl	paste	rbind.fill	relevel	subset	toupper
+eys_mean	.	DOB	Diag	F1.n	F2.n	File	FolSeg	Word	ddply	eys_int	mean	summarise
+plot_flaps	DOB	F1.n	Flap	FolSegTrans	aes	c	flap_mean2	gam	geom_point	ggplot	scale_color_brewer	scale_linetype	scale_shape_manual	scale_y_reverse	stat_smooth	theme_bw	xlab	~
+load_ay_model	load
+load_diffs	$	$<-	as.factor	c	extract_from_summary	levels<-	model_summary	relevel
+plot_diffs	V1	aes	c	diffs	facet_wrap	geom_hline	geom_line	geom_ribbon	ggplot	hpd.lower	hpd.upper	mean	pars	scale_color_manual	scale_fill_manual	theme_bw	xlab	ylab	~
+days_prep	&	.	==	DOB	F1.n	F2.n	File	FolSegTrans	Word	ddply	eys	grepl	mean	rbind.fill	subset	summarise
+load_eys	!	Eth	File	c	grepl	load.vowels	path	subset	verboten_string
+day_plot	DOB	Diag	Word	aes	day_means	gam	geom_point	ggplot	scale_color_brewer	stat_smooth	theme_bw	xlab	~
+eys_int_mean	.	Context	DOB	Diag	F1.n	F2.n	File	FolSeg	Word	ddply	eys_comp	mean	summarise
+plot_ey_raising	DOB	Diag	F	FolSeg	aes	direct.label	expand_limits	eys_mean2	facet_wrap	gam	ggplot	print	scale_color_brewer	stat_smooth	theme_bw	xlab	~
+int_mod	$	$<-	as.factor	lmer	relevel	~
+eys_mod	@	eys_int_mod	print	summary	xtable
+eys_coefs	@	eys_int_mod	summary

@@ -1,0 +1,68 @@
+basic_context	files	load.vowels	nvowels	path	read_and_split	spinfo	vinfo	write.vowel
+thanks	bday	defense	ling	upenn
+load_ays	ays
+ays_means	ays_mean1	ays_mean2
+ay_plot
+load_aw	aw
+aw_means	aw_int	aw_int_mean1	aw_int_mean2
+aw_basic_plot
+unnamed-chunk-1	basis	basis.m
+unnamed-chunk-2
+b_spline_animation	curve	curve.df	i	nframes	p	these_weights	weighted_basis	weighted_basis.m	weights
+unnamed-chunk-3	durs
+make_example	assim	centers	example
+coarticulation
+assim
+coarticulate_ani	assim	centers	example	nframes	p	to_add	x	xrange
+remake_example	assim	centers	example
+assim_ani	centers	example	nframes	p	to_add	x	xrange
+remake_example2	assim	centers	example
+reananlysis_ani	assim	centers	example	nframes	p	to_add	x	xrange
+construct_coarticulate	arrow_annotation	disfavor	fake_rate.m	fake_rate.m.m	fake_rate2	favor
+construct_assim	disfavor	fake_rate.m	fake_rate.m.m	fake_rate2	favor
+construct_reanalysis	N	arrow_annotation	disfavor	fake_rate.m	fake_rate.m.m	fake_rate2	favor
+aw_basic_means	aw_mean1	aw_mean2
+load_ow	ow
+ow_basic_means	ow	ow_mean1	ow_mean2
+load_uw	uw
+uw_basic_means	uw	uw_mean1	uw_mean2
+aw_basic_plot2
+ow_basic_plot
+uw_basic_plot
+load_trace	.Random.seed	.__C__Rcpp_stan_fit21ad31f42b_delt_vector	.__global__	.ls.objects	.requireCachedGenerics	aw	aw2	aw_agg	aw_model_summary	female_d1940
+traceplot	burnin	female_d1940.df	female_d1940.post	female_d_comp
+extract_from_summar	extract_from_summary
+extrac_aw_pred	aw_pred
+extract_aw_delta	aw_pred_delta
+unnamed-chunk-4	eys
+aw_pred_plot
+aw_pred_delta_plot
+aw_delta_diff	aw_delta_diff
+aw_delta_diff_plot
+load_ow_model	.Random.seed	.__C__Rcpp_stan_fitad5b75c7e898_delt_vector	.__global__	.ls.objects	.requireCachedGenerics	ow	ow2	ow_agg	ow_model_summary
+get_ow_pred	ow_pred
+extract_ow_delta	ow_pred_delta
+ow_pred_delta_plot
+ow_delta_diff	ow_delta_diff
+ow_delta_diff_plot
+owN_pred	owN_pred
+extract_owN_delta	owN_pred_delta
+plot_owN_pred
+plot_owN_pred_delta
+prep_flaps	ay_TD	def_flap	exclude	flap_comp	not_flap	not_flap_sp	out_phrase	out_word	td_in_phrase_coda	td_in_word_coda	word_flap
+flap_means	flap_mean1	flap_mean2
+early_ay	early_ay
+prep_eys	eys	eys_comp	eys_final	eys_int	wday	wday_string
+eys_mean	eys_mean1	eys_mean2
+plot_flaps
+load_ay_model	.Random.seed	.__C__Rcpp_stan_fit4model2496171e42f6_ay_flap_model	.__global__	.requireCachedGenerics	ayTD_comp	dat	model_summary	objs	remove
+load_diffs	diffs
+plot_diffs	custom_pal
+days_prep	day	day_comp	day_means	days
+load_eys	eys
+day_plot
+eys_int_mean	eys_mean1	eys_mean2
+plot_ey_raising	p
+int_mod	eys_int	eys_int_mod
+eys_mod
+eys_coefs	eys_int_coefs
