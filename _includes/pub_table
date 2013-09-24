@@ -1,0 +1,71 @@
+<table class = "pub">
+{% for paper in site.posts %}
+	{% if paper.categories contains pub_type %}
+		<tr>
+			<td valign="top">
+				{{ paper.year }}
+			</td>
+			<td style = "border-bottom: 1px solid #A0A0A0 ">
+				<b><a href = "{{paper.url | prepend: site.baseurl}}">{{paper.title}}</a></b><br>
+				{% if paper.author.size > 1 %}
+					{% for author in paper.author %}
+						{% if author.url != null %}
+							<a href = "{{author.url}}">{{author.name}}</a>
+						{% else %}
+							{{author.name}}
+						{% endif %}
+						{% if forloop.rindex > 2 %}
+							{{ ", "}}
+						{% elsif forloop.rindex == 2 %}
+							{{" and "}}
+							{% endif %}							
+					{% endfor %}
+					</br>
+				{% endif %}
+
+				{% if paper.presented.size > 0 %}
+					Presented at
+						{% for conf in paper.presented %}
+							{% if conf.url != null %}
+								<a href="{{conf.url}}">{{conf.conf}}</a>&nbsp;
+							{% else %}
+								{{conf.conf}}
+							{% endif %}
+						{% endfor %}
+						<br>
+				{% endif %}
+				{% if paper.published.size > 0 %}
+					 Published
+						{% for pub in paper.published %}
+								{{pub}}
+						{% endfor %}
+						<br>
+				{% endif %}
+				{% if paper.docs.size > 1 %}
+					{% for doc in paper.docs %}
+						{% if doc.local == true %}
+							<a href = "{{doc.url | prepend: site.baseurl }}">
+						{% else %}
+							<a href = "{{doc.url}}">
+						{% endif %}
+							{{doc.format}}</a>
+						{% if forloop.rindex >= 2 %}
+							{{";"}}
+						{% endif %}
+					{% endfor %}
+				{% elsif paper.docs.size > 0 %}
+					{% for doc in paper.docs %}
+						{% if doc.local == true %}
+							<a href = "{{doc.url | prepend: site.baseurl }}">
+						{% else %}
+							<a href = "{{doc.url}}">
+						{% endif %}
+							{{doc.format}}</a>
+					{% endfor %}					
+				{% endif %}
+
+			</td>
+		</tr>
+	{% endif %}		
+{% endfor %}
+</table>
