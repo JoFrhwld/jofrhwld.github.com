@@ -1,0 +1,5 @@
+time<-seq(-6,6,length=50)
+plot(time,time,type = "l",axes = F,lwd = 2,ylab = "logit(p)")
+axis(1,labels = c("begin","end"),at = c(-6,6))
+axis(2)
+box()

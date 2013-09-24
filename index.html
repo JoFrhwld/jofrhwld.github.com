@@ -1,142 +1,129 @@
-<html>
+---
+layout: main
+title: Josef Fruehwald
+---
 
-	<head>
-		<title>JoFrhwld Github Repositories</title>
-		<style type="text/css"> 
-			<!--
-			body {
-				font: 100% Verdana, Arial, Helvetica, sans-serif;
-				background: #ebeb2b2;
-				margin: 0;
-				padding: 0;
-				text-align: center; 
-				color: #000000;
-			}
-			.oneColElsCtr #container {
-				width: 46em;
-				background: #FFFFFF;
-				margin: 0 auto; 
-				text-align: left; 
-			}
-			.oneColElsCtr #mainContent {
-				padding: 0 20px;
-			}
-			h1 {
-				color:  #08306B;
-			}
-			h2 {
-				color: #08519C;
-			}
-			h3 {
-				color: #2171B5;
-				padding-top: 0px;
-				padding-bottom: 0px;
-			}
-			h4 {
-				color: #4292C6;
-			}
-			a {
-				color: #006837;
-			}
-			a:hover {
-				color: #A6D96A;
-			}
-			a:visited{
-				color : #A50026;
-			}
-			.left {
-				float: left;
-				width: 50%;
-				margin: 0 0 10px 0;
-			}
-		
-			.box { 
-				margin: 5px; 
-				color: #000; 
-				background: #E6E6E6; 
-				padding: 10px; 
-				border-width: 3px;
-				border-color: black;
-				border-style: solid;
-			}
-			
-		
-			.boxrow{
-				margin: 10px;
-				patting: 3px;
-			}
+<a name = "home"></a>
+<ul id="topnav">
+	<li id = "curr">Home</li>
+	<li><a href="#papers">&darr;Papers and Presentations</a></li>
+	<li><a href = "{{ "/update.html" | prepend: site.baseurl}}">Updates&rarr;</a></li>
+</ul>
 
-			.right {
-				float: right;
-				width: 50%;
-				margin: 0 0 10px 0;
-			}
 
-			.mid {
-				float: left;
-				width: 100%;
-				margin: 0 0 10px 0;
-			}
 
-				
-			-->
-		</style>
-		<!-- Google Analytics Code -->
-		<script type="text/javascript">
-  			var _gaq = _gaq || [];
-  			_gaq.push(['_setAccount', 'UA-835627-7']);
-  			_gaq.push(['_trackPageview']);
 
-			  (function() {
-    			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  			})();
-</script>
-	</head> 
+<div class = "left">
+	<div class = "box">
+		<h2>About Me</h2>
+		<p>I am a Lecturer in Sociolinguistics in <a href = "http://www.lel.ed.ac.uk/">Linguistics and English Language</a>
+		 	in the <a href = "http://www.ppls.ed.ac.uk/">School of Philosophy, Psychology and Language Sciences</a> at the 
+		 	<a href = "http://www.ed.ac.uk/home">University of Edinburgh</a>. I recently finished my PhD in Linguistics
+		 	at the University of Pennsylvania.
+			My interests within linguistics are sociolinguistics, variation and change, phonetics, and phonology.
+	</div>
+
+	<div class = "box">
+		<h3>Research</h3>
+			<p>Linguistic variation is a complex and sensitive phenomenon, and data on it can be brought to bear on
+			a number of different research questions.  For example, linguistic systems are embedded in complex social 
+			structures, so linguistic variation can be informative about social meaning.
+	  		My own research interests concern how linguistic variation can be informative about Language itself.</p>
+	</div>
+</div>
+
+<div class = "right">
+	<div class = "imgbox">
+		<img width=70% src = "assets/joseff.png">
+	</div>
+	<div class = "box">
+			<h3>Contact</h3>
+			<p><script language="JavaScript">
+			 		<!-- 
+
+			 		var email = "joseff"; var emailHost = "babel.ling.upenn.edu"
+			 		document.write("<a href=" + "mai" + "lto:" +email +
+			 		"&#64;" + emailHost+ ">" + "<b"+">"+ email + "&#64;" + emailHost + "</"+"b>"+"</a>")
 	
-	<body class="oneColElsCtr">
-		<div id = "container">
-			<div id = "mainContent">
-				<div class = "mid">
-				<h1>JoFrhwld Github Repository</h1>
-				
-					<h2>About me</h2>
-						<p>
-							I am a linguist, and I develop code for that purpose.
-						</p>
-				
-					
+				 	//-->
+   				</script></p>
+	</div>
+	<div class = "box">
+		<h3>Links</h3>
+		<p><a href = "http://www.lel.ed.ac.uk/">Linguistics and English Language</a></p>
+		<p><a href = "http://www.ppls.ed.ac.uk/">School of Philosophy, Psychology and Language Sciences</a> </p>
+		<p><a href= "rstudy/index.html">R Study Group</a></p>
+		<p><a href = "phillymotion.html">Philadelphia Language in Motion</a></p>
+		<p><a href = "avml2012/">AVML 2012 workshop on ggplot2</a></p>
+	</div>
 
-					<h2>Repositories</h2>
-				</div>
-			<!--		<h3>Talks / Papers</h3>
-						This is a code repository associated with talks that I have given.
-			-->
-					<div class = "left">	
-						<div class = "box">
-							<h3><a href="http://jofrhwld.github.com/FAAV/">FAAV</a></h3>
-							<p>This is a repository of code associated with the FAAV (forced alignment and automatic vowel analysis) project.
-							The core bit of code is located in the extractFormants directory, and was mostly developed by Keelan Evanini and 
-							Ingrid Rosenfelder.</p>
-						
-							<p>
-								The other code, including specialized Praat, R, and Python scripts were developed by myself.
-							</p>
-						</div> 
-					</div>
-					
-					<div class = "right">
-						<div class = "box">
-							<h3><a href="talks/talks.html">Talks / Papers</a></h3>
-								This is a code repository associated with talks that I have given.
-						</div> 
-						<div class = "box">
-							<h3><a href="https://github.com/JoFrhwld/Mapping-Scripts">Mapping Scripts</a></h3>
-								These are some scripts I wrote to facilitate plotting geographic data and producing voronoi tesselations.
-						</div>
-					</div>
-			</div>
-		</div>
-	</body>
-</html>
+
+</div>
+
+<div class = "mid">
+	<div class = "box">
+		<h3>Recent Updates</h3>
+		{% include post_list %}
+	</div>
+</div>
+<a name = "papers"></a>
+<ul id="topnav">
+	<li><a href = "#home">&uarr;Home</a></li>
+	<li id = "curr">Papers and Presentations</li>
+	<li><a href = "{{ "/update.html" | prepend: site.baseurl}}">Updates&rarr;</a></li>
+</ul>
+
+<div class = "left">
+	<div class = "box">
+		<h3>Dissertation</h3>
+		{% assign pub_type = "dissertation" %}
+		<h4>Dissertation
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h4>
+		{% include pub_table %}
+
+		<h4>Proposal</h4>
+		{% assign pub_type = "proposal" %}
+		{% include pub_table %}
+	</div>
+	<div class = "box">
+		{% assign pub_type = "paper"%}
+		<h3>Working Papers and Proceedings 
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h3>
+		{% include pub_table %}
+	</div>
+	<div class = "box">
+		{% assign pub_type = "workshop"%}
+		<h3>Workshops
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h3>
+
+		{% include pub_table %}
+	</div>
+
+</div>
+
+<div class = "right">
+	<div class = "box">
+		{% assign pub_type = "rpaper"%}
+		<h3>Journal Papers 
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h3>
+
+		{% include pub_table %}
+	</div>
+	<div class = "box">
+		{% assign pub_type = "talk"%}
+		<h3>Talks and Presentations 
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h3>
+
+		{% include pub_table %}
+	</div>
+	<div class = "box">
+		{% assign pub_type = "italk"%}
+		<h3>Invited Talks 
+			<a href = "{{ pub_type | prepend: "/" | prepend: site.baseurl | append: ".html"}}" id = "nav">&rarr;</a></h3>
+
+		{% include pub_table %}		
+	</div>
+
+</div>
+
+

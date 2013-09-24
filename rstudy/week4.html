@@ -1,0 +1,605 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 4</title><h1>Week 4</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week3.html"><- Week 3</a></td><td><a href="week5.html">Week 5-></a></td>
+				</tr>
+			</table>
+		</p>
+		
+		<h2>Contents</h2>
+		<ol>
+	<li><a href="#Base">Base Graphics</a></li>
+
+	<li><a href = "#Basics">Plotting Basics</a></li>
+	<ol>
+		<li><a href = "#type">Plot Types</a></li>
+		<li><a href = "#pch">Point Types</a></li>
+		<li><a href = "#lty">Line Types</a></li>
+		<li><a href = "#cex">Weights and Sizes</a></li>
+		 <li><a href = "#col">Colors</a></li>
+		<ol>
+			<li><a href = "#brewer">Color Brewer</a></li>
+			<li><a href = "#rgb">RGB, HSV, HCL</a></li>
+		</ol>
+
+	</ol>
+	<li><a href = "#Building">Building up Plots</a></li>
+	<ol>
+		<li><a href = "#par"><font face = "Courier">par()</font></a></li>
+		<ol>
+			<li><a href = "#mfcol"><font face = "Courier">mfcol, mfrow</font></a></li>
+			<li><a href = "#mar"><font face = "Courier">mar</font></a></li>
+			<li><a href = "#bg">bg</a></li>
+		</ol>
+		<li><a href = "#plot">Plot Region</a></li>
+		<ol>
+			<li><a href = "#xlim">x and y limits</a></li>
+			<li><a href = "#axis">Axes</a></li>
+			<li><a href = "#box">Bounding Box</a></li>
+			<li><a href = "#title">Titles and Axis Labels</a></li>
+		</ol>
+		<li><a href = "#add">Adding Elements</a></li>
+		<ol>
+			<li><a href = "#points"><font face = "Courier">points()</font></a></li>
+			<li><a href = "#lines"><font face = "Courier">lines()</font></a></li>
+			<li><a href = "#segments"><font face = "Courier">segments()</font></a></li>
+			<li><a href = "#arrows"><font face = "Courier">arrows()</font></a></li>
+			<li><a href = "#text"><font face = "Courier">text()</font></a></li>
+			<li><a href = "#abline"><font face = "Courier">abline()</font></a></li>
+		</ol>
+
+	</ol>
+	<li><a href = "#higher">Higher Level Plots</a></li>
+	<ol>
+		<li><a href = "#boxplot">Boxplots</a></li>
+		<li><a href = "#stripchart">Stripchart</a></li>
+		<li><a href = "#hist">Histogram</a></li>
+		<li><a href = "#barplot">Bar Chart</a></li>
+		<li><a href = "#dotchart">Dot Chart</a></li>
+		<li><a href = "#pie">Pie Charts</a></li>
+		<li><a href = "#interactionplot">Interaction Plot</a></li>
+
+	</ol>
+	<li><a href = "#labels">Legends, Labels, Etc.</a></li>
+	<ol>
+		<li><a href = "#locator"><font face = "Courier">locator()</font></a></li>
+		<li><a href = "#identify"><font face = "Courier">identify()</font></a></li>
+		<li><a href = "#legend"><font face = "Courier">legend()</font></a></li>
+	</ol>
+</ol>
+		
+		<h2>References</h2>
+		<p>
+			<b>Dalgaard 2008</b><br>
+			<b>Wickham, H. 2009</b> <i><a href="http://had.co.nz/ggplot2/book/">ggplot2: Elegant graphics for data analysis</a></i><br>
+			<b>Paradis, E. 2005 </b> <i><a href="http://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf ">R for Beginners</a></i> [PDF]<br>
+			<b><a href="http://addictedtor.free.fr/graphiques/">R Graph Gallery</a></b><br>
+			<b>Tufte, E. 2001</b> <i>The Visual Display of Quantitative Information</i>
+		</p>
+		<h2>To install today</h2>
+		<p><font face = "Courier">install.packages("RColorBrewer")</font></p>
+		
+		<h2><a name="Base">Base Graphics</a></h2>
+		<p>As Wickham points out in his book on his R graphics package, the R base graphics system has a pen on paper design. The basic way it works
+		is you set up the plotting area, and then you add elements to it.  Once you've added an element to a plot, it cannot be removed, so it's good idea
+		to keep a little plotting script going so you can re-plot your tweaks more easilly.</p>
+		
+		<h2><a name = "Basics"></a>Plotting Basics</h2>
+		<p>The most basic command you can use to produce a plot is <font face = "Courier">plot()</font>.  The first two arguments to 
+		<font face = "Courier">plot()</font> are taken to be x and y coordinates.  If you only provide one vector of values, this is used as the 
+		y-coordinate, and it is plotted against the index values of the vector.</p>
+		
+		<h3><a name = "type"></a>Plot Types</h3>
+		<p>There are 9 basic ways for R to plot a set of points. To use one of these, define the <font face = "Courier">type</font> argument one of these ways:</p>
+		<ul>
+			<li><font face = "Courier">p</font>: points (this is the default)</li>
+			<li><font face = "Courier">l</font>: a line</li>
+			<li><font face = "Courier">b</font>: "both", points connected by line segments</li>
+			<li><font face = "Courier">c</font>: just the connecting segments of "b"</li>
+			<li><font face = "Courier">o</font>: "overplotted", points and lines overplotted</li>
+			<li><font face = "Courier">h</font>: a histogram</li>
+			<li><font face = "Courier">s</font>: stair</li>
+			<li><font face = "Courier">S</font>: alternative stairs</li>
+			<li><font face = "Courier">n</font>: none</li>
+		</ul>
+		<p>Here's what the output looks like:</p>
+		<center>
+		<a href="plots/plotting/types.R" ><img src = "plots/plotting/types.png" height = 70%></a>
+		</center>
+		
+		
+		<h3><a name = "pch"></a>Point Types</h3>
+		<p>There are 25 different plotting points that can be used by defining the argument <font face = "Courier">pch</font> (which I believe
+		stands for "point character").  Points 21 thru 25 are multi-color points. Define the fill color for these with <font face = "Courier">bg</font> (which 
+		stands for "background").</p>
+		<center>
+		<a href="plots/plotting/pch.R" ><img src = "plots/plotting/pch.png" height = 70%></a>
+		</center>
+		<p>You can also give <font face = "Courier">pch</font> any single character string, and it will plot that.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(1:10,pch = c("@","$","#","&","%"),main = "Sarge says to Beetle...")
+			</font>
+		</blockquote>
+		
+		<h3><a name = "lty"></a>Line Types</h3>
+		<p>There are 6 line types you can use by defining <font face = "Courier">lty</font> with 1 thru 6.</p>
+		<center>
+		<a href = "plots/plotting/lty.R"><img src = "plots/plotting/lty.png" height = 70%></a>
+		</center>
+		
+		
+		<h3><a name = "cex"></a>Weights and Sizes</h3>
+		<p>To control the size of plotted points, give the argument <font face = "Courier">cex</font> (for <b>c</b>haracter <b>ex</b>pansion I
+		think) a value <i>x</i>, which will multiply the size of the character <i>x</i> times.</p>
+		<center>
+		<a href = "plots/plotting/cex.R"><img src = "plots/plotting/cex.png" width = 40%></a>
+		</center>
+		<p>There are also <font face = "Courier">cex</font> arguments for different plot elements: <font face = "Courier">cex.axis, cex.lab, 
+		cex.main</font> and  <font face = "Courier">cex.sub</font></p>
+		
+		
+		<h3><a name = "col"></a>Colors</h3>
+		<p>R has 8 default system colors, which can be assigned to a point or line by passing a numeric value of 1:8 to <font face = "Courier">col</font> 
+		</p>
+		<center>
+		<a href = "plots/plotting/col.R"><img src = "plots/plotting/col.png" height = 70%></a>
+		</center>
+		<p>However, R has 657 named colors you can call upon by passing the name of the color to <font face = "Courier">col</font>.  To see 
+		all the names, type <font face = "Courier">colors()</font>.  You can read more about the named colors in R 
+		<a href = "http://research.stowers-institute.org/efg/R/Color/Chart/">here</a>, and there is a full chart available
+		<a href = "http://research.stowers-institute.org/efg/R/Color/Chart/ColorChart.pdf">here</a> [PDF].</p>
+		<p>There are particular color palettes that you could select colors from as well:</p>
+		<ul>
+			<li><font face = "Courier">rainbow()</font></li>
+			<li><font face = "Courier">heat.colors()</font></li>
+			<li><font face = "Courier">terrain.colors()</font></li>
+			<li><font face = "Courier">topo.colors()</font></li>
+			<li><font face = "Courier">cm.colors()</font></li>
+			<li><font face = "Courier">grey()</font></li>
+			
+		</ul>
+		<p>If you give any of these functions a number, <i>n</i>, it will return that number of colors from the palette as a vector.  There are also some other
+		arguments you can pass to them as well, such as <font face = "Courier">alpha</font>, which controls transparency.  They all share the same help page,
+		so inspect that for more details.</p>
+		<p>The <font face = "Courier">grey()</font> palette is different, however.  It takes a vector of values between 0 and 1 instead.  0 returns
+		black, 1 returns white, and values in between return the appropriate percent grey.</p>
+		<center>
+		<a href = "plots/plotting/palettes.R"><img src = "plots/plotting/palettes.png" height = 70%></a>
+		</center>
+		
+		<h4><a name = "brewer"></a>Color Brewer</h4>
+		<p>The RColorBrewer package is designed to provide a number of attractive palettes to suit different needs.  You can explore the differen palettes
+		interactively <a href="http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer.html">here.</a>  Enter the following to inspect the palettes you have
+		to choose from.</p>
+		<blockquote>
+			<font face = "Courier">
+				library(RColorBrewer)<br>
+				display.brewer.all()<br>
+				?brewer.pal() ##to the help page
+			</font>
+		</blockquote>
+		
+		<h4><a name = "rgb"></a>RGB, HSV, HCL</h4>
+		<p>Of course, if you control the rgb, hsv or hcl color spaces, you can hand design your own color palettes.  I don't so I won't talk any more about it,
+		but it is a possibility</p>
+		
+		
+		<h2><a name = "Building"></a>Building up Plots</h2>
+		<p>With the information above, you can make some of the most basic plots.  Here, we'll go over how to build plots from the ground up. The simplest way to
+		think about it is that first you define the paper on which the plots will be drawn, then you define the plotting region in which you will draw, and then
+		you add elements to that region.</p>
+		
+		
+		<h3><a name = "par"></a><font face = "Courier">par()</font></h3>
+		<p><font face = "Courier">par()</font> stands for "graphical <b>par</b>ameters", and in essence defines the paper on which plots will be drawn, as
+		well as certain parameters which will be inherited by each plot on the page. Most graphical parameters can be set for each individual plot, but some
+		must be set for the whole page.  I'll go over some of these.  To see the full list of definable parameters, see <font face = "Courier">?par</font>
+		</p>
+		
+		<h4><a name = "mfcol"></a><font face = "Courier">mfcol, mfrow</font></h4>
+		<p>If you want to have multiple plots per page, then you define it as follows:</p>
+		<blockquote>
+			<font face = "Courier">
+				n.col <- 2<br>
+				n.row <- 2<br>
+				par(mfrow = c(n.col,n.row))
+			</font>
+		</blockquote>
+		<p>Now, every time you define a  new plot, it will fill in the page like this:</p>
+		<table border = 1>
+			<tr><td>plot 1</td><td>plot 2</td></tr>
+			<tr><td>plot 3</td><td>plot 4</td></tr>
+		</table>
+		<p>If you used <font face = "Courier">mfcol</font> instead, then the page will fill in like this:</p>
+		<table border = 1>
+			<tr><td>plot 1</td><td>plot 3</td></tr>
+			<tr><td>plot 2</td><td>plot 4</td></tr>
+		</table>
+		
+		<h4><a name = "mar"></a><font face = "Courier">mar</font></h4>
+		<p>The <font face = "Courier">mar</font> argument sets the margins in terms of "lines" between the plotting region and the edge of the page. By
+		default, they are set to <font face = "Courier">c(5,4,4,2)+0.1</font>.  The numbers in the vectors stand for c(bottom, left, top, right).
+		</p>
+		
+		
+		<h4><a name = "bg"></a>bg</h4>
+		<p>When defined within <font face = "Courier">par()</font>, <font face = "Courier">bg</font> changes the background color of the plotting
+		area.  By default, this is set to <font face = "Courier">"transparent"</font>, and I would suggest keeping it this way unless you have some other 
+		good reason.</p>
+		
+		
+		<h3><a name = "plot"></a>Plot Region</h3>
+		<p>Assuming you've set up your page as you like, then you need to define the plotting region with <font face = "Courier">plot()</font>.</p>
+		
+		
+		<h4><a name = "xlim"></a>x and y limits</h4>
+		<p>By default, R will set the limits of the x and y axes to accommodate the range of x and y values passed to it.  However, you can
+		hand adjust the range of the axes with <font face = "Courier">xlim</font> and <font face = "Courier">xlim</font>.  They take a vector
+		of two numerical values: <font face = "Courier">c(from,to)</font>.</p>
+		<p>There are two immediate applications I can think of for changing the x and y ranges.  First, when plotting vowel systems, the axis values 
+		run in reverse.  <font face = "Courier">range()</font> will return the range of values, and <font face = "Courier">rev()</font> will reverse them.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(F2,F1,xlim = rev(range(F2)),ylim = rev(range(F1)))
+			</font>
+		</blockquote>
+		<p>The second case I can think of is i you have the age of a speaker or text, and want to plot some kind of variable in relation to this 
+		age.  To represent the time course of a change on the x-axis, you need to reverse the order of the ages along it.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(Age, Variable,xlim = rev(range(Age)))
+			</font>
+		</blockquote>
+		
+		
+		<h4><a name = "axis"></a>Axes</h4>
+		<p>By default <font face = "Courier">plot()</font> will draw axes with ticks and labels at automatically determined places.  If you would
+		like to hand roll your own axes, set <font face = "Courier">axes = F</font> in the original <font face = "Courier">plot()</font> command,
+		and add axes with <font face = "Courier">axis()</font>.</p>
+		
+		<p>The first argument to <font face = "Courier">axis()</font> is which side to add the axis to.  1 = bottom, 2 = left, 3 =  top and 4 = right.
+		With no other arguments, this will add the axes as they would have been automatically in <font face = "Courier">plot()</font>.  To have different
+		labels on the axis, you need to provide a vector of labels to <font face = "Courier">labels</font>, and a vector of where to place them to 
+		<font face = "Courier">at</font>. The following code from the <font face = "Courier">axis()</font> help page demonstrates some of the possible 
+		customization of axes.
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(1:7, rnorm(7), main = "axis() examples", type = "s", xaxt = "n", frame = FALSE, col = "red")<br><br>
+				axis(1, 1:7, LETTERS[1:7], col.axis = "blue")<br>
+				# unusual options:<br>
+				axis(4, col = "violet", col.axis="dark violet", lwd = 2)<br>
+				axis(3, col = "gold", lty = 2, lwd = 0.5)
+			</font>
+		</blockquote>
+		
+		
+		<h4><a name = "box"></a>Bounding Box</h4>
+		<p>By default, <font face = "Courier">plot()</font> will produce a bounding box around the plotted region.  To suppress this, pass
+		<font face = "Courier">frame = F</font> to <font face = "Courier">plot()</font>.  To change the box type, define <font face = "Courier">bty</font>
+		with one of the following character values: <font face = "Courier">"l","7","c","u","]"</font>.  The box type drawn will look like the capital form
+		of these characters, (default is <font face = "Courier">"o"</font>).  If you want to customise the color or line type of the box, then set 
+		<font face = "Courier">frame = F</font> in the original plot, and add the box with <font face= "Courier">box()</font>, passing the appropriate
+		<font face = "Courier">bty, col, lty, lwd</font> values as desired.</p>
+		
+		
+		<h4><a name = "title"></a>Titles and Axis Labels</h4>
+		<p>As far as I can tell, axis labels can only be defined in the original plot call.  By default labels will be the names of the x and y arguments given
+		to <font face = "Courier">plot()</font>.  You'll frequently want to change these, especially if the argment utilize the <font face = "Courier">$</font>
+		referencing.  Do this by giving <font face = "Courier">xlab</font> or <font face = "Courier">ylab</font> the desired character sting.</p>
+		<p>To add a main title to a plot, pass a character string to <font face = "Courier">main</font>.</p>
+		
+		
+		<h3><a name = "add"></a>Adding Elements</h3>
+		<p>Once you have defined a plotting window, it is possible to add more points, lines, etc to the plot.  Exercise caution, however, since 
+		you may add points and lines which will be cut off by the plotting region.  If this happens, it's necessary to go back and tweak 
+		<font face = "Courier">xlim</font> or <font face = "Courier">ylim</font> to be large enough to include the points you'll add.</p>
+		
+		
+		<h4><a name = "points"></a><font face = "Courier">points()</font></h4>
+		<p>Just like it sounds, this adds points to a plot.  Give it x and y value, and you can pass any other color, size or shape argument to it
+		that you want.</p>
+		
+		
+		<h4><a name = "lines"></a><font face = "Courier">lines()</font></h4>
+		<p>Again, just like it sounds, this will draw lines from x and y values.</p>
+		
+		
+		<h4><a name = "segments"></a><font face = "Courier">segments()</font></h4>
+		<p>This draws line segments from one point to another. It takes 4 vectors of arguments: From-x,From-y,To-x,To-y.</p>
+		<blockquote>
+			<font face = "Courier">
+				a <- rnorm(10)<br>
+				b <- a - rnorm(10)<br>
+				plot(rep(1,10),a, xlim = c(1,2), ylim = range(a,b) ,xlab = "The before and after",ylab = "The values",axes = F)<br><br>
+				points(rep(2,10),b)<br>
+				axis(2)<br>
+				axis(1,labels = c("Before","After"),at = 1:2)<br>
+				segments(rep(1,10),a,rep(2,10),b,lty = 4,lwd = 3, col = "darkred")
+			</font>
+		</blockquote>
+		<center>
+		<img src =  "plots/plotting/segments.png" height = 70%>
+		</center>
+		
+		
+		<h4><a name = "arrows"></a><font face = "Courier">arrows()</font></h4>
+		<p><font face = "Courier">arrows()</font> does much the same as <font face = "Courier">segments()</font>, but now draws an 
+		arrow head.  There are a few more possible arguments to <font face = "Courier">arrows()</font>.  <font face = "Courier">code</font> defines
+		where the arrow head is drawn: 1 = from location; 2 = to location; 3 = both ends.  <font face = "Courier">angle</font> defines the angle
+		at which the arrow heads should be drawn from the segment. <font face = "Courier">length</font> defines the length in inches that the arrow
+		head edges should extend.</p>
+		<blockquote>
+			<font face = "Courier">
+				a <- rnorm(10)<br>
+				b <- a - rnorm(10)<br>
+				plot(rep(1,10),a, xlim = c(1,2), ylim = range(a,b) ,xlab = "Back and Forth",ylab = "The values",axes = F)<br>
+				points(rep(2,10),b)<br>
+				axis(2)<br>
+				axis(1,labels = c("Back","Forth"),at = 1:2)<br>
+				arrows(rep(1,10),a,rep(2,10),b,code = 1)<br>
+				##or<br>
+				arrows(rep(1,10),a,rep(2,10),b,code = 2)<br>
+				##or<br>
+				arrows(rep(1,10),a,rep(2,10),b,code = 3)
+				
+			</font>
+		</blockquote>
+		<center>
+		<img src =  "plots/plotting/arrows.png" width = 70%>
+		</center>
+		
+		<p>Note: This is a nice cheap way to draw some error bars.</p>
+		<blockquote>
+			<font face = "Courier">
+				a <- rnorm(10)<br>
+				stripchart(a,method = "jitter", vert = T,pch = 1,col ="grey")<br>
+				a.mean <- mean(a)<br>
+				SEM <- sd(a)/sqrt(10)<br>
+				a.high <- a.mean+(SEM*1.96)<br>
+				a.low <- a.mean-(SEM*1.96)<br>
+				arrows(1,a.high,1,a.low, angle = 90, code = 3)<br>
+			</font>
+		</blockquote>
+		<center>
+		<img src =  "plots/plotting/error_bar.png" height= 70%>
+		</center>
+		
+		
+		<h4><a name = "text"></a><font face = "Courier">text()</font></h4>
+		<p>If you want to plot text on certain points, then you can use the <font face = "Courier">text()</font> function.
+		It takes x and y values, and a vector of character strings to plot on the points.</p>
+		
+		
+		<h4><a name = "abline"></a><font face = "Courier">abline()</font></h4>
+		<p>There are a few ways to use <font face = "Courier">abline()</font>.  In the simplest form it takes two arguments, <font face = "Courier">a</font>
+		and <font face = "Courier">b</font>.  It plots a line where <font face = "Courier">a</font> = intercept and <font face = "Courier">b</font> = slope.
+		You can also plot simple horizontal and vertical lines by defining <font face = "Courier">h</font> and <font face = "Courier">v</font> values instead.</p>
+		<p>When look at simple regressions next week, we'll give <font face = "Courier">abline()</font> an <font face = "Courier">lm</font> object as an argument,
+		and it'll plot the simple regression line.</p>
+		
+		
+		<h2><a name = "higher"></a>Higher Level Plots</h2>
+		<p>There are a number of higher level plots in R that have their own kind of unique behavior and arguments.  These are some of the more
+		useful ones.</p>
+		
+		<h3><a name = "boxplot"></a>Boxplots</h3>
+		<p>Even though <a href="http://www.stat.columbia.edu/~cook/movabletype/archives/2009/02/boxplot-challen.html">some people</a> don't like boxplots, they can
+		be useful for eyballing the distribution of data.  The box indicates the location of the first and third quartile, with the median indicated with a bar.
+		Whiskers are drawn out to 1.5 times the length of the box, and any points outside this range are plotted (these can be considered outliers).</p>
+		<blockquote>
+			<font face = "Courier">
+				boxplot(rnorm(50),rnorm(100),rlnorm(100))<br>
+				library(ISwR)<br>
+				boxplot(expend~stature,data = energy)
+			</font>
+		</blockquote>
+		<center>
+			<img src = "plots/plotting/boxplot.png" width = 70%>
+		</center>
+		<p>Some important arguments for <font face = "Courier">boxplot()</font> are:</p>
+		<ul>
+			<li>names: A vector of names for the labels</li>
+			<li>col: color to fill the box with</li>
+			<li>border: color for the lines to be drawn with</li>
+		</ul>
+		
+		<h3><a name = "stripchart"></a>Stripchart</h3>
+		<p>When you want to compare two groups along a single dimension, a stripchart is a good alternative to the box plot. By default, 
+		<font face = "Courier">stripchart</font> will use <font face = "Courier">method = "overplot"</font>, but I prefer
+		<font face = "Courier">method = "jitter"</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				stripchart(expend~stature,data = energy)<br>
+				stripchart(expend~stature, data = energy, method = "jitter")<br>
+				stripchart(expend~stature, data = energy, method = "jitter",vert = T)<br>
+			</font>
+		</blockquote>
+		<center>
+			<img src = "plots/plotting/stripchart.png" width = 70%>
+		</center>
+		
+		<h3><a name = "hist"></a>Histogram</h3>
+		<p>You can easilly plot a histogram of continuous data with <font face = "Courier">hist()</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				hist(energy$expend)
+			</font>
+		</blockquote>
+		<p>You can control bars and their width with the <font face = "Courier">breaks</font> argument. If you pass a number <i>n</i> to 
+		<font face = "Courier">breaks</font>, it will produce a histogram with about that many bars.  You could also pass a vector
+		of numerical values to <font face = "Courier">breaks</font>, in which case it will draw bars according to the intervals you specify.</p>
+		<center>
+		<a href = "plots/plotting/hist.R"><img src = "plots/plotting/hist.png" width = 70%></a>
+		</center>
+		
+		
+		<h3><a name = "barplot"></a>Bar Chart</h3>
+		<p>Bar charts are exactly what they sound like.  They can take either a vector of numbers to be the bar height, or they can take a table or 
+		matrix to produce grouped bar charts. Here is some data that Dalgaard reproduces:</p>
+		<blockquote>
+			<font face = "Courier">
+				caff.marital<-matrix(c(652,1537,598,242,36,46,38,21,218,327,106,67),nrow = 3, byrow = T)<br>
+				colnames(caff.marital)<-c("0","1-150","151-300",">300")<br>
+				rownames(caff.marital)<-c("Married","Prev.Married","Single")
+			</font>
+		</blockquote>
+		<p>By default, R produces a stacked bar chart.  Define <font face = "Courier">beside</font> as true for side by side bar charts</p>
+		<blockquote>
+			<font face = "Courier">
+				barplot(caff.marital)<br>
+				barplot(caff.marital,beside = T)
+			</font>
+		</blockquote>
+		<p>For this data, it makes more sense for marital status to define the groups, so we'll transpose the matrix with <font face = "Courier">t()</font></p>
+		<blockquote>
+			<font face = "Courier">
+				barplot(t(caff.marital),beside = T)
+			</font>
+		</blockquote>
+		<center>
+			<img src = "plots/plotting/barchart1.png" width = 70%>
+		</center>
+		<p>Now let's beautify it with some colors and a legend.</p>
+		<blockquote>
+			<font face = "Courier">
+				brewer.pal(4,"Set1")->pal<br>
+				barplot(t(caff.marital),beside = T,col = pal,legend.text=colnames(caff.marital))<br>
+				brewer.pal(4,"Blues")->pal<br>
+				barplot(t(caff.marital),beside = T,col = pal,legend.text=colnames(caff.marital))<br>
+				grey((3:0)/3)->pal<br>
+				barplot(t(caff.marital),beside = T,col = pal,legend.text=colnames(caff.marital))
+			</font>
+		</blockquote>
+		<center>
+			<img src = "plots/plotting/barchart2.png" width = 70%>
+		</center>
+		<p>If you want to display the data as percentages per marital group, we can do this with <font face = "Courier">prop.table()</font>, which
+		we'll go over more when we do categorical data.</p>
+		<blockquote>
+			<font face = "Courier">
+				prop.table(caff.marital,1)<br>
+				barplot(t(prop.table(caff.marital,1)),beside = T,col = pal,legend.text=colnames(caff.marital))
+			</font>
+		</blockquote>
+		
+		
+		<h3><a name = "dotchart"></a>Dot Chart</h3>
+		<p>Dot charts are a lot like bar charts, but points along a line represent bar height rather than a bar.  It is a somewhat simpler way of
+		printing the same data.</p>
+		<blockquote>
+			<font face = "Courier">
+				dotplot(t(caff.marital))
+			</font>
+		</blockquote>
+		
+		
+		<h3><a name = "pie"></a>Pie Charts</h3>
+		<p>Don't use <a href="http://www.edwardtufte.com/bboard/q-and-a-fetch-msg?msg_id=00018S&topic_id=1">pie charts</a>.</p>
+		
+		
+		<h3><a name = "interactionplot"></a>Interaction Plot</h3>
+		<p>Interaction plots are a nice way to visualize data across two dimensions across different groups.  Here's an example from 
+		Quam and Swingley (submitted) as available from the MLM reading group page, where they have percentage of looking to a target 
+		for three conditions across 32 subjects.  This'll be a pretty large interaction plot, so we'll just take a subset.</p>
+		<blockquote>
+			<font face = "Courier">
+				deebo<-read.csv("http://www.ling.upenn.edu/~kgorman/papers/deebo.csv")<br>
+				sdeebo<- subset(deebo,Subject %in% 18:27)
+			</font>
+		</blockquote>
+		<p>The arguments <font face = "Courier">interactionplot()</font> take are ordered this way:</p>
+		<ol>
+			<li>x-axis variable</li>
+			<li>groups</li>
+			<li>y-axis variable</li>
+		</ol>
+		<blockquote>
+			<font face = "Courier">
+				pal<-brewer.pal(9,"Set1")<br><br>
+				interaction.plot(sdeebo$Treatment, sdeebo$Subject, sdeebo$LookPercentage, col = pal, lty = 1, lwd = 2, trace.label = "Subject",
+				xlab = "Treatment",ylab = "Look Percentage")
+			</font>
+		</blockquote>		
+		<center>
+			<img src = "plots/plotting/interactionplot.png" height = 70%>
+		</center>
+		
+		
+		<h2><a name = "labels"></a>Legends, Labels, Etc.</h2>
+		<p>There are some functions that will allow you to interact with a plot, either to extract or add points and labels.  You can also 
+		use them to interactively place a legend.</p>
+		
+		
+		<h3><a name = "locator"></a><font face = "Courier">locator()</font></h3>
+		<p>The <font face = "Courier">locator()</font> function can be used for a few purposes.  After having created a plot, calling 
+		<font face = "Courier">locator()</font> with no arguments will return a list of x and y coordinates that you clicked on in a plot before
+		right, or CMD clicking.  If you know a finite number of points you want to extract, you can define this with <font face = "Courier">n</font>.
+		</p>
+		<p>If you pass a <font face = "Courier">type</font> argument (one of "p", "l", or "o"), <font face = "Courier">locator()</font> will
+		actually draw points or lines on the coordinates you click on within a plot.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(1:10)<br>
+				locator() ##right click, or CMD click to end<br><br>
+				plot(1:10)<br>
+				locator(n = 3, type = "o",lwd = 3,lty = 2,pch = 3)
+			</font>
+		</blockquote>
+		
+		
+		<h3><a name = "identify"></a><font face = "Courier">identify()</font></h3>
+		<p>If you want to identify specific points with a label, you can use <font face = "Courier">identify()</font>.  After creating a plot,
+		pass x and y coordinates of points to <font face = "Courier">identify()</font>, a long with the vector you would like to label them with.
+		There are a few other arguments you can specify to control how labels will appear.  I would suggest looking at <font face = "Courier">?identify</font>
+		to see how they work.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(1:10,1:10)<br>
+				identify(1:10,1:10,letters[1:10]) ## right click or CMD click to end
+			</font>
+		</blockquote>
+		
+		
+		<h3><a name = "legend"></a><font face = "Courier">legend()</font></h3>
+		<p>Of course, what would a plot be without a legend? The higher level plots, like <font face = "Courier">interaction.plot()</font>
+		or <font face = "Courier">barplot()</font> have arguments within the plotting call for defining a legend.  For the lower level plots,
+		you need to define the legend yourself. Legends are very cusomizable, but here is the basic use.</p>
+		<p>The first argument to <font face = "Courier">legend()</font> is where it should go.  You can put it on the center of any side of the plot with one
+		of <font face = "Courier">"top", "bottom", "right", "left"</font> or in any corner with one of <font face = "Courier">"topright", "topleft", 
+		"bottomright", "bottomleft"</font>. You could also pass x and y coordinate values for the location of the top-left corner of the legend, but we'll come back
+		to that</p>
+		<p>You next need to provide a character vector for the legend labels to the argument <font face = "Courier">legend</font>. Hopefully you'll
+		have a vector of some sort already lying around.</p>
+		<p>Lastly, you need to determine what kind of symbol should appear next to each label.  If you've used color to distinguish groups, pass 
+		the vector of colors to <font face = "Courier">fill</font>.  If you've used different point characters, pass that vector to 
+		<font face = "Courier">pch</font>.  If you've used different line types, pass that vector to <font face = "Courier">lty</font>.</p>
+		<p>Now, if you want to legend to be located somewhere other than the 4 sides or 4 corners, a nifty trick (from Dalgaard) is to give
+		the first location argument <font face = "Courier">locator(n=1)</font>. The legend will then be plotted wherever you click on the plot.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(1:9,col = brewer.pal(9,"Set1"),pch = 1:9)<br>
+				legend("topleft",legend = letters[1:9], fill = brewer.pal(9,"Set1"))<br>
+				legend("bottomright",legend = c("one","two","three","four","five","six","seven","eight","nine"),pch = 1:9)<br>
+				legend(locator(n=1),legend = c("not present"),fill = "green")
+			</font>
+		</blockquote>
+		
+		
+		<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

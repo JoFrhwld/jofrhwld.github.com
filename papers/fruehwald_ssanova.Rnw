@@ -1,0 +1,413 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amscd}
+\usepackage[tableposition=top]{caption}
+\usepackage{ifthen}
+\usepackage{fullpage}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+
+\begin{document}
+\SweaveOpts{width=8, height=5}
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{SS ANOVA}
+\author{Josef Fruehwald}
+\maketitle
+
+\section{The Data}
+Here's a little demonstration of how to use and analyze Smoothing Spline ANOVAs. \citet{davidson2006} has a good overview of what SS-ANOVAs are, and an overview of how to analyze them. I was able to follow her executive summary, but can't say I control the math. Here's an example with formant data from /ay/.
+
+<<ay,echo =F>>=
+ay <- read.csv("ay.csv")
+@
+
+I have $\Sexpr{nlevels(ay$Word)}$ tokens of /ay/ here, with pre-voiceless tokens excluded. I extracted the formant data from each vowel at 2 ms intervals from Praat. I then scaled the times for each word proportionally, from 0 to 1. I called this variable {\tt RTime}. Then, I classified the vowels into two groups based on whether their log(Duration) was greater or less than the mean(log(Duration)).
+
+<<table,echo = F,results = tex>>=
+library(xtable)
+t <- log(tapply(ay$Time,ay$Word,max))
+xtable(table(Count = factor(t < mean(t),labels = c("Long","Short"))),table.placement = "htbp",caption = "Long/Short Breakdown",label = "counts")
+@
+
+The tracked formants, colored by Long or Short group membership, are plotted in Figure \ref{tracked}\footnote{I've included the code to produce this plot here.  I'm using the {\tt ggplot2} package \citep{ggplot2}}. As can be seen, there are regions with significant tracking errors. I've measured all of these vowels by hand also, and I recall having a lot of issues with pseudo-formants with high-front vowels, and it looks like the worst tracking errors are also in the glides. The long vowels also seem to have disproportionately bad tracking, and this may be due to the presence of nasal formants. Processing the lpc analysis via Keelan's method would probably improve this kind of analysis.
+
+<<formant,echo = T>>=
+library(ggplot2)
+theme_set(theme_bw())
+formants <- ggplot(ay,aes(x = RTime,groups = Word,colour = LDur))
+formants <- formants + geom_line(aes(y = F1),alpha = 0.8)
+formants <- formants + geom_line(aes(y = F2),alpha = 0.8)
+formants <- formants + ylab("Hz")
+@
+
+<<label = plot1, echo = F>>=
+print(formants)
+@ 
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig1,fig=TRUE,echo=FALSE>>=
+<<plot1>>
+@
+\caption{Formant Tracks for $\Sexpr{nlevels(ay$Word)}$ tokens of /ay/}
+\label{tracked}
+\end{center}
+\end{figure}
+
+\section{Smoothing Spline Anovas}
+
+To fit SS-ANOVAs to this data, I'm using the {\tt ssanova} function from the {\tt gss} package \citep{R,gss}.  I believe that \citet{davidson2006} and \citet{nyczdedecker2006} used the {\tt ssr} function from the {\tt assist} package \citep{assist}, and I know for a fact that \citet{baker2006} did. I found {\tt ssr::assist} to be seriously inefficient, and would choke on datasets of about the same size as this one.  {\tt ssanova::gss} seems to work more efficiently, is more straightforward to interact with, and was developed by the author of a few pieces of the primary literature cited by \citet{davidson2006} \citep{gu2002}. Putting aside that appeal to ease and authority, I do not control the mathematics here well enough to judge one package over the other, and I feel as if it won't really matter too much for our purposes.
+
+Here is the R code to fit the ANOVA models for F1 and F2.
+<<ssanova>>=
+library(gss)
+f1.model <- ssanova(F1~LDur + RTime + LDur:RTime,data = ay)
+f2.model <- ssanova(F2~LDur + RTime + LDur:RTime,data = ay)
+@
+
+There are a variety of summaries and diagnostics to judge the model fits that I don't know or understand right now. \citet{gu2002} is very hard to read to a non-statistician. However, I have figured out how to look at the model fits graphically by utilizing the {\tt predict} function.
+
+The way {\tt predict} works is it takes a model (linear regression, logistic regression, ssanova), and gives you the response values predicted by that model for some other (usually simulated) set of data. It can also return standard errors you can use to produce Bayesian 95\% confidence intervals.
+
+First, we need to generate a dummy dataframe to predict fitted values against.  I'll use {\tt expand.grid} to generate a dataframe with 100 points evenly spaced between 0 and 1 for the {\tt RTime} term, for each level of the {\tt LDur} term.
+<<predict1>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+@
+You can print {\tt grid} to see exactly what's been done here (it's 200 rows long).
+
+Next, we use {\tt predict} using {\tt grid} as the new data for each model to get the fitted values for F1 and F2, plus the standard error.
+<<predict2>>=
+grid$F1.Fit <- predict(f1.model,newdata = grid,se = T)$fit
+grid$F1.SE <- predict(f1.model,newdata = grid,se = T)$se.fit
+grid$F2.Fit <- predict(f2.model,newdata = grid,se = T)$fit
+grid$F2.SE <- predict(f2.model,newdata = grid,se = T)$se.fit
+@
+
+Now, you have to plot the data you've stored in {\tt grid} somehow.  There are tons of ways to skin this cat, and I'll use {\tt ggplot2} again (see ssanova.rnw for plotting code).
+
+<<pssanova, echo = F>>=
+formant.comparison <- ggplot(grid,aes(x = RTime,colour = LDur,group = LDur))
+formant.comparison<-formant.comparison + geom_line(aes(y = F1.Fit),alpha = 1,colour = "grey20")
+formant.comparison<-formant.comparison + geom_line(aes(y = F2.Fit),alpha = 1, colour = "grey20")
+formant.comparison<-formant.comparison + geom_ribbon(aes(ymin = F1.Fit-(1.96*F1.SE), ymax = F1.Fit+(1.96*F1.SE),fill = LDur ),alpha = 0.5,colour = "NA")
+formant.comparison<-formant.comparison + geom_ribbon(aes(ymin = F2.Fit-(1.96*F2.SE), ymax = F2.Fit+(1.96*F2.SE),fill = LDur),alpha = 0.5,colour = "NA")
+formant.comparison<-formant.comparison + ylab("Hz")
+
+@
+
+<<label = plot2, echo = F>>=
+print(formant.comparison)
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig2,fig=TRUE,echo=FALSE>>=
+<<plot2>>
+@
+\caption{Smoothing Spline ANOVAs with 95\% Confidence intervals}
+\label{ssanova}
+\end{center}
+\end{figure}
+
+Figure \ref{ssanova} is nicely informative. I think we can tell the following things from this plot:
+\begin{itemize}
+	\item Long [ay]'s have significantly more peripheral offglides. This isn't too surprising, since we would probably expect short [ay]'s to experience significant undershoot.
+	\item Duration differences seem to have a more extreme effect on F2 dynamics than F1. Both short and long [ay]'s F1s seem to have a steady state, but short [ay]'s F2s seem to be all transition.  The consequences for measurement would be that short [ay]'s would appear to be, and maybe are, significantly fronter. 
+\end{itemize}
+
+
+\subsection{Analysis of the terms}
+It is also possible to inspect the individual contributions each term makes to the shape of the spline. I don't exactly control this part either, but as best as I understand it, every term contributes something to the overall shape of the spline:
+\begin{description}
+	\item[1] This is the intercept, just an additive constant.
+	\item[RTime] An abstract shape of the formants, without any group effects.
+	\item[LDur] This will also be a constant, additive effect of group.
+	\item[LDur:RTime] This is the really interesting effect that makes each group's spline different, beyond simple upward or downward shifts of the same shape.
+\end{description}
+
+Let's look at the abstract formant shapes first. We can think of this as the underlying shapes of the formants.  Group membership (here, Long or Short) essentially does transformations on these shapes. We'll tell {\tt predict} that we want it to predict fitted values and standard errors for the Intercept and RTime terms\footnote{I've included the intercept here so that the curves we eventually plot are in a familiar, interpretable space.}.
+<<grids,keep.source=T>>=
+## create prediction grid
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+## Predict for certain terms
+## The "inc" argument to predict is key here
+grid$F1.Fit <- predict(f1.model,grid,se = T,inc = c("1","RTime"))$fit
+grid$F1.SE <- predict(f1.model,grid,se = T,inc = c("1","RTime"))$se.fit
+grid$F2.Fit <- predict(f2.model,grid,se = T,inc = c("1","RTime"))$fit
+grid$F2.SE <- predict(f2.model,grid,se = T,inc = c("1","RTime"))$se.fit
+@
+The resulting plot is in Figure \ref{RTime}.
+<<label = main1,echo = F>>=
+eff <- ggplot(grid, aes(x = RTime))
+eff <- eff + geom_line(aes(y= F1.Fit))
+eff <- eff + geom_line(aes(y= F2.Fit))
+eff <- eff + geom_ribbon(aes(ymax= F1.Fit+(1.96*F1.SE),ymin= F1.Fit-(1.96*F1.SE)),alpha = 0.5)
+eff <- eff + geom_ribbon(aes(ymax= F2.Fit+(1.96*F2.SE),ymin= F2.Fit-(1.96*F2.SE)),alpha = 0.5)
+@
+
+
+<<label = effprint, echo  =F>>=
+print(eff)
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig3,fig=TRUE,echo=FALSE>>=
+<<effprint>>
+@
+\caption{Abstract Formant Splines (Intercept and RTime Terms)}
+\label{RTime}
+\end{center}
+\end{figure}
+
+So far, so good.  Now, we want to know if group membership significantly warps these abstract formant curves. To do that, we'll predict fitted values and standard errors for the group and interaction terms: LDur and LDur:RTime.  This differs from the analysis in \citet{davidson2006}, and importantly so.  Davidson only looked at the interaction effect, which looks appropriate for her data after eyeballing it. It looks as if she had non-significant group effects, and significant interaction terms. For our dataset, we have {\it both} significant group effects and significant interaction effects. 
+
+
+
+<<label = ldur1,echo = F>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+grid$Fit <- predict(f1.model,grid,se = T,inc = "LDur")$fit
+grid$SE <- predict(f1.model,grid,se = T,inc = "LDur")$se.fit
+eff <- ggplot(grid, aes(x = RTime))
+eff <- eff + geom_line(aes(y = Fit))
+eff <- eff + geom_ribbon(aes(ymax = Fit+(1.96*SE),ymin = Fit-(1.96*SE)),alpha = 0.5)
+eff <- eff + facet_wrap(~LDur)
+eff <- eff + stat_abline(slope = 0,intercept = 0,lty = 2)
+eff <- eff + ylab("Difference in Hz")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig5,fig=TRUE,echo=FALSE>>=
+<<effprint>>
+@
+\caption{F1 Group effects}
+\label{ldur1}
+\end{center}
+\end{figure}
+
+<<label = ldur2,echo = F>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+grid$Fit <- predict(f2.model,grid,se = T,inc = "LDur")$fit
+grid$SE <- predict(f2.model,grid,se = T,inc = "LDur")$se.fit
+eff <- ggplot(grid, aes(x = RTime))
+eff <- eff + geom_line(aes(y = Fit))
+eff <- eff + geom_ribbon(aes(ymax = Fit+(1.96*SE),ymin = Fit-(1.96*SE)),alpha = 0.5)
+eff <- eff + facet_wrap(~LDur)
+eff <- eff + stat_abline(slope = 0,intercept = 0,lty = 2)
+eff <- eff + ylab("Difference in Hz")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig6,fig=TRUE,echo=FALSE>>=
+<<effprint>>
+@
+\caption{F2 Group Effects}
+\label{ldur2}
+\end{center}
+\end{figure}
+Figures \ref{ldur1} and \ref{ldur2} show the group effects with 95\% confidence intervals.  Notice that the confidence intervals do not contain 0, so the group effects are significant.  It is these group effects, plus the interaction effects, which constitute the overall effect of group membership on the transformation of the abstract formant curves in Figure \ref{RTime}.  Failing to include these significant group effects in our prediction would result in uninterpretable plots. What's there to lose by also including group effects when they're non-significant? I don't really know, but I might guess that the confidence intervals would be larger.
+
+At any rate, here is the code to predict the group and interaction effects for F1:
+
+<<label = intgr1,echo = T>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+grid$Fit <- predict(f1.model,grid,se = T,inc = c("LDur","LDur:RTime"))$fit
+grid$SE <- predict(f1.model,grid,se = T,inc = c("LDur","LDur:RTime"))$se.fit
+@
+
+<<label = pintgr1, echo = F>>=
+eff <- ggplot(grid, aes(x = RTime))
+eff <- eff + geom_line(aes(y = Fit))
+eff <- eff + geom_ribbon(aes(ymax = Fit+(1.96*SE),ymin = Fit-(1.96*SE)),alpha = 0.5)
+eff <- eff + facet_wrap(~LDur)
+eff <- eff + geom_hline(y = 0,lty = 2)
+eff <- eff + ylab("Difference in Hz")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig9,fig=TRUE,echo=FALSE>>=
+<<effprint>>
+@
+\caption{F1 Group + Interaction Effects}
+\label{intgr1}
+\end{center}
+\end{figure}
+
+The results are plotted in Figure \ref{intgr1}. In this plot, the values along the y-axis indicate the difference between the splines of the two groups (which is why they're mirror images). It looks as if F1 is not significantly different between the two groups until about 60\% into their duration, at which point Long [ay]'s have significantly lower F1 values. This is essentially the same information given in the plot in Figure \ref{ssanova}, but it's somewhat easier to see the size of the differences here.
+
+Let's do the same thing for F2:
+<<label = intgr2,echo = T>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+grid$Fit <- predict(f2.model,grid,se = T,inc = c("LDur","LDur:RTime"))$fit
+grid$SE <- predict(f2.model,grid,se = T,inc = c("LDur","LDur:RTime"))$se.fit
+@
+<<pintgr2,echo = F>>=
+eff <- ggplot(grid, aes(x = RTime))
+eff <- eff + geom_line(aes(y = Fit))
+eff <- eff + geom_ribbon(aes(ymax = Fit+(1.96*SE),ymin = Fit-(1.96*SE)),alpha = 0.5)
+eff <- eff + facet_wrap(~LDur)
+eff <- eff + geom_hline(y = 0,lty = 2)
+eff <- eff + ylab("Difference in Hz")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig10,fig=TRUE,echo=FALSE>>=
+<<effprint>>
+@
+\caption{F2 Group + Interaction Effects}
+\label{intgr2}
+\end{center}
+\end{figure}
+
+Figure \ref{intgr2} plots the F2 group and interaction effects. Again, contrary to F1, F2 has significantly different formant dynamics between the long and short groups. In the area of the nucleus, the long group reaches a significantly lower F2 than the short group, and then in the glide, it reaches a significantly higher F2.
+
+\section{Movement through formant space}
+
+I've also plotted the ``gestures'' through formant space for each group. The coordinates for the x and y axes come from the fitted spline values. I've also tried to add confidence intervals, based on the standard errors of the x and y values at every point. It's obvious what I've done is not exactly right.  There exist methods for plotting a sort of bubble area around the fitted values that represents the 95\% confidence intervals in the 2D space, but I don't know how to do that yet.
+
+<<gest, echo = F>>=
+grid <- expand.grid(RTime = seq(0,1,length = 100),LDur = c("Long","Short"))
+grid$F1.Fit <- predict(f1.model,newdata = grid,se = T)$fit
+grid$F1.SE <- predict(f1.model,newdata = grid,se = T)$se.fit
+grid$F2.Fit <- predict(f2.model,newdata = grid,se = T)$fit
+grid$F2.SE <- predict(f2.model,newdata = grid,se = T)$se.fit
+gest <- ggplot(grid,aes(x = -F2.Fit,y = -F1.Fit,colour = RTime))
+gest <- gest + geom_path(lwd = 2)
+gest <- gest + geom_path(aes(x = -F2.Fit+(1.96*F2.SE),y = -F1.Fit+(1.96*F1.SE)))
+gest <- gest + geom_path(aes(x = -F2.Fit-(1.96*F2.SE),y = -F1.Fit-(1.96*F1.SE)))
+gest <- gest + facet_wrap(~LDur)
+
+maxes1 <- tapply(grid$F1.Fit, grid$LDur, max)
+maxes2 <- tapply(grid$F2.Fit, grid$LDur, max)
+mins2 <- tapply(grid$F2.Fit, grid$LDur, min)
+gest <- gest + geom_point(data = grid[grid$F1.Fit %in% maxes1,], col = "black",size = 3)
+gest <- gest + geom_point(data = grid[grid$F2.Fit %in% maxes2,], col = "black",size = 3)
+gest <- gest + geom_point(data = grid[grid$F2.Fit %in% mins2,], col = "black",size = 3)
+
+thirds <- expand.grid(RTime = 1/3, LDur = c("Long","Short"))
+thirds$F1.Fit <- predict(f1.model,thirds)
+thirds$F2.Fit <- predict(f2.model,thirds)
+
+gest<- gest + geom_point(data = thirds, col = "black", size = 3, pch = 17)
+
+@
+
+<<pgest,echo = F>>=
+print(gest)
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig11,fig=TRUE,echo=FALSE>>=
+<<pgest>>
+
+@
+\caption{``Gestures" Through Formant Space}
+\label{gest}
+\end{center}
+\end{figure}
+
+The paths in Figure \ref{gest} are colored based on the timing of the gesture.  They're completely blue at 0\% through, completely red at 100\% through, and purple at 50\%. I've also plotted filled black dots at F1 maximum, and at F2 minimum and F2 maximum, since these are usually given as important landmarks in vowels for measurement. There's a filled black triangle at 1/3 through each gesture, reflecting where Keelan's automation would have measured.
+
+\section{Thoughts and Directions}
+I could do a better job of determining whether the significant differences in F1 and F2 dynamics between Long and Short groups is really the result of duration.  I have not, in any way, controlled for contextual effects. The effects we saw of duration here may actually be linked some other important allophonic conditioning (my guess would be word final vs checked position) that is also correlated with duration.
+
+My plan would be to first regress log(duration) against the various contextual factors of interest, and use the residuals from that regression as a standardized duration measure.  Then, I would fit another ssanova model for each formant, probably with a formula like \\
+{\tt F1 $\sim$ Time + Context + ResidDuration + Context:Time + ResidDuration:Time}\\
+and then inspect the ResidDuration+ResidDuration:Time effects. Fitting the ssanova model this way would have two benefits:
+\begin{itemize}
+	\item Contextual effects would be controlled for, so remaining duration effects would (probably) be caused strictly by duration
+	\item Fitting the duration element as a continuous variable ensures that not only would the formant curves over time be smooth, but so would the way they change as duration increases.
+\end{itemize}
+
+\subsection{Bigger Questions}
+Accounting for dependancies in formant values would also be invaluable for this kind of analysis. Ideally, the result of doing this would be a normalized, square formant space.  I have no ideas for how to go about doing this now.
+
+A more practical question is one of methodology.  Currently, when we want to analyze a person's vowel system, we measure one or two time points in every vowel.  The distributions of these individual points are typically important for research.  Then, when we want to see mean values for these vowels, we take the mean F1 and F2 values of these point measurements.  Would it be a better methodology to fit an ssanova for every vowel class, producing some kind of fitted average formant trajectory, and then take some measurement point from that spline as the mean value?
+
+I do that here, briefly.  First, for every vowel class, I compute a spline. The  tracked formants and the splines computed for them (in red) are shown in Figure \ref{spformants}.  As can be seen, there is considerable allophony not accounted for, especially in /oh/ and /ow/, and there are also considerable tracking errors, especially in /ey/.
+<<domeans>>=
+jean2<-read.csv("jean2.csv")
+grid <- expand.grid(RTime = seq(0,1,length = 100), VClass = levels(jean2$VClass))
+grid3<- expand.grid(RTime = 1/3, VClass = levels(jean2$VClass))
+grid$F1.Fit <- NA
+grid$F2.Fit <- NA
+grid3$F1.Fit <- NA
+grid3$F2.Fit <- NA
+
+
+for(i in levels(jean2$VClass)){
+	mod1 <- ssanova(F1~RTime, data = jean2[jean2$VClass == i,])
+	mod2 <- ssanova(F2~RTime, data = jean2[jean2$VClass == i,])
+	
+	grid[grid$VClass == i,]$F1.Fit <- predict(mod1,grid[grid$VClass == i,])
+	grid[grid$VClass == i,]$F2.Fit <- predict(mod2,grid[grid$VClass == i,])
+	grid3[grid3$VClass == i,]$F1.Fit <- predict(mod1,grid3[grid3$VClass == i,])
+	grid3[grid3$VClass == i,]$F2.Fit <- predict(mod2,grid3[grid3$VClass == i,])
+}
+@
+
+<<vformants, echo = F>>=
+formants<-ggplot(jean2,aes(x = RTime,group = Word))
+formants <- formants + geom_line(aes(y = F1),alpha = 0.5)
+formants <- formants + geom_line(aes(y = F2),alpha = 0.5)
+formants <- formants + geom_line(aes(y = F1.Fit, group = 1),data = grid, col = "red")
+formants <- formants + geom_line(aes(y = F2.Fit, group = 1),data = grid, col = "red")
+formants <- formants + facet_wrap(~VClass)
+@
+<<pformants, echo = F>>=
+print(formants)
+@
+
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig12,fig=TRUE,echo=FALSE>>=
+<<pformants>>
+@
+\caption{Tracked Formants with Splines}
+\label{spformants}
+\end{center}
+\end{figure}
+
+Next, I compare the mean values we get from averaging point measurements at 1/3 of every vowel, vs 1/3 of the smoothed spline for the vowel class.  The comparison is given in Figure \ref{means}. It should be noted that the vowel classes where the two measurements are directly on top of eachother (/oy/,/iyr/,/uwr/) are the most {\it un}impressive examples, because there was only one token for those vowels, therefor the spline exactly matched the observed formant values.
+
+<<thirds>>=
+jean2$third <- abs(jean2$RTime -(1/3))
+thirds <- NULL
+for(i in levels(jean2$Word)){
+	m<- min(jean2[jean2$Word == i,]$third)
+	thirds <- rbind(thirds, jean2[jean2$Word == i & jean2$third == m,])
+}
+mF1<-tapply(thirds$F1,thirds$VClass, mean)
+mF2<-tapply(thirds$F2,thirds$VClass, mean)
+means <- data.frame(VClass = levels(thirds$VClass),mF1,mF2)
+@
+
+<<pmeans, echo = F>>=
+pmean <- qplot(-mF2,-mF1, data =means,geom = "text",label = VClass,colour = I("red"))
+pmean <- pmean+geom_text(aes(x = -F2.Fit,y = -F1.Fit,label = VClass),data = grid3,colour = I("blue"))
+print(pmean)
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<label=fig13,fig=TRUE,echo=FALSE>>=
+<<pmeans>>
+@
+\caption{Comparison of Averaged 1/3 measurements(red) and 1/3 of splines(blue)}
+\label{means}
+\end{center}
+\end{figure}
+
+Is the spline method to mean values worth it?  I don't know yet, but it at least doesn't give {\it bad} results.
+
+\bibliographystyle{linquiry2}
+\bibliography{ssanova1}
+\end{document}

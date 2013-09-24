@@ -1,0 +1,388 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; General: Data Structure</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+				<h1>Summer 2010 &mdash; General: Data Structure</h1>
+				<p>
+					<table>
+						<tr>
+							<td><a href="summer2010_intro.html"><- Intro</a></td><td><a href = "r-study.html">Home</a> </td> <td><a href="summer2010_basics.html">R: Basics</a>-></td>
+						</tr>
+					</table>
+				</p>
+		
+				<h2>Contents</h2>
+				<ol>
+					<li><a href = "#goals">Goals</a></li>
+					<li><a href = "#collection_and_storage">Data Collection and Storage</a></li>
+						<ol>
+							<li><a href = "#collection_principles">General Principles of Data Collection</a></li>
+							<li><a href = "#storing_data">Storing Data</a></li>
+						</ol>
+					<li><a href = "#structuring_data">Structuring Data</a></li>
+						<ol>
+							<li><a href = "#id_and_measure_variables">ID and Measure Variables</a></li>
+							<li><a href = "#organization">Organization</a></li>
+						</ol>
+				</ol>
+				
+				<h2><a name = "goals"></a>Goals</h2>
+					<p>
+						I understand the goal of this part of the study group to be getting off the spreadsheet mindset. That is, I will be trying to convince
+						you to convince yourselves that the best and most flexible format for our data is not one where we can easily visually inspect its entirety.
+					</p>
+		
+				<h2><a name = "collection_and_storage"></a>Data Collection and Storage</h2>
+					<h3><a name = "collection_principles"></a>General Principles of Data Collection</h3> 
+						<p>This advice applies mostly to researchers working with observational data.</p> 
+	
+						<p><b>Over-collect:</b> When collecting data in the first place, over-collect if at all possible. The world is a very complex place,
+							so there is no way you could cram it all into a bottle, but give it your best shot! If during the course of your data analysis, you
+							find that it would have been really useful to have data on, say, duration, as well as formant frequencies, it becomes very costly to 
+							recollect that data, especially if you haven't laid the proper trail for yourself. </p> 
+		
+						<p><b>Preserve HiD Info</b> If, for instance, you're collecting data on the effect of voicing on preceding vowel duration, preserve 
+							high dimensional data coding, like Lexical Item, or the transcription of the following segment. These high dimensional codings probably 
+							won't be too useful for your immediate analysis, but they will allow you to procedurally exract additional features from them at a 
+							later time. By preserving your high dimensional information, you're preserving the data's usefulness for your own later reanalysis, 
+							as well as for future researchers.</p> 
+
+						<p><b>Leave A Trail of Crumbs</b> Be sure to answer this question: How can I preserve a record of this observation in such a way that I 
+							can quickly return to it and gather more data on it if necessary? If you fail to successfully answer this question, then you'll be 
+							lost in the woods if you ever want to restudy, and the only way home is to replicate the study from scratch.</p> 
+		
+						<p><b>Give Meaningful Names</b> Give meaningful names to both the names of predictor columns, as well as to labels of nominal observations. 
+							Keeping a readme describing the data is still a good idea, but at least now the data is approachable at first glance.</p>
+						
+						<p><b>Distinguish between 0 and NA</b> Just do it.</p>
+						
+					<h3><a name = "storing_data"></a>Storing Data</h3>
+						<p>
+							When we store data, it should be:
+						</p>
+						<p>
+							<b>Raw:</b> Raw data is the most useful data. It's impossible to move down to smaller granularity from a coarser, summarized
+							granularity. Summary tables etc. are nice for publishing in a paper document, but raw data is what we need for asking novel research
+							questions with old data. Also, it will 
+							<a href="http://www.ted.com/talks/tim_berners_lee_on_the_next_web.html">make Tim Berners-Lee happy</a>.
+						</p>
+						<p>
+							<b>Open formatted:</b> Do <i>not</i> use proprietary database software for long term storage of your data. I have already heard stories
+							about interesting data sets that are no longer accessible for research either because the software they are stored in is defunct, or 
+							current versions are not backwards compatible. At that point, your data is property of Microsoft, or whoever.
+						</p>
+						<p>
+							Store your data as raw text, delimited in some way (I prefer tabs). I am not writing hyperbolically when I say go convert your data
+							<i>right now</i> from a proprietry format to an open format.
+						</p>
+						<p>
+							<b>Consistent:</b> I think this is most important when you may have data in many separate files. Each file and its headers should be
+							consistently named and formatted. They should be consistently delimited and commented also. There is nothing worse than inconsistent
+							headers and erratic comments, labels, headers or NA characters in a corpus.
+						</p>
+						<p>
+							<b>Documented:</b> Produce a readme describing the data, how it was collected and processed, and describe every variable and 
+							its possible values.
+						</p>
+				<h2><a name = "structuring_data"></a>Structuring Data</h2>
+					<p>
+						It is the way we structure data which will differ the most from the spreadsheet based thinking. In fact, working out how to effectively use
+						the <rcode>reshape</rcode>(<a href="http://cran.r-project.org/web/packages/reshape/index.html">Cran</a>, 
+						<a href="http://had.co.nz/reshape/">website</a>) package has really changed the way I think about data, and hopefully it will for you too. I said 
+						<a href="http://www.ling.upenn.edu/~joseff/rstudy/week3.html#Organization">here</a> that the ideal data structure is one where 
+						every row is an observation. Here, I'll be refining what counts as an observation.
+					</p>
+					<h3><a name = "id_and_measure_variables"></a>ID and Measure Variables</h3>
+						<p>
+							For any given data set there will be two kinds of variables.
+						</p>
+						<p>
+							<b>ID Variables:</b> These variables are identifiers or features of each unique observation. Essentially anything
+							you are testing to see if it has an effect on outcomes will be an ID variable.
+						</p>
+						<p>
+							<b>Measure Variables:</b> These variables record your measurement of each unique observation. 
+						</p>
+						<p>What counts as an ID Variable or a Measure Variable will depend upon the study. For instance, in most studies sex
+						of the subject will usually be an ID Variable, and something about the subject's response will be a Measure Variable. However,
+						if you're doing a study as to whether men or women are more likely to show up to your experiment, sex of subject would be a 
+						Measurement Variable.</p>
+					<h3><a name = "organization"></a>Organization</h3>
+						<p>
+							There are two ways to organize your ID and Measure variables which I'll focus on here. I'll call them the
+							ideal way, and the flexible way. 
+						</p>
+						<p>
+							The ideal way to organize your table is with a row for every unique combination of ID variables. This will produce 
+							a column for every ID variable, and then a column for every kind of measurement. If you were doing a study keeping track
+							of how many apples and oranges subjects bought, and then how many of those apples and oranges subjects ate, the ideal data
+							format would look like Table 1.
+						</p>
+					<center>
+					<table>
+						<td>
+							<table border = 1 rules = rows frame = box cellpadding = 3>
+								<thead>
+									<td colspan = "2" align = "center">ID Variables</td?
+								</thead>
+								<tr>
+									<td><b>Fruit</b></td><td><b>Person</b></td>
+								</tr>
+								<tr>
+									<td>Apple</td><td>John</td>
+								</tr>
+								<tr>	
+									<td>Orange</td><td>John</td>
+								</tr>
+								<tr>
+									<td>Apple</td><td>Mary</td>
+								</tr>
+								<tr>
+									<td>Orange</td><td>Mary</td>
+								</tr>
+							</table>
+						</td>
+						<td>
+							<table border = 1 rules = cols frame = box cellpadding = 3>
+								<thead>
+									<td colspan = "3" align = "center">Measure Variables</td>
+								</thead>
+								<tr>
+									<td><b>Bought</b></td><td><b>Ate</b></td>
+								</tr>
+								<tr>
+									<td>5</td><td>1</td>
+								</tr>
+								<tr>
+									<td>5</td><td>3</td>
+								</tr>
+								<tr>
+									<td>3</td><td>2</td>
+								</tr>
+								<tr>
+									<td>4</td><td>3</td>
+								</tr>
+							</table>
+						</td>
+						<caption><b>Table 1<br>Ideal data format</b></caption>
+					</table>
+					
+					</center>
+					<p>
+						Frequently, you will see data published looking like Table 2. This is a fine summary table format for publication in a paper, 
+						but it does not have the proper structure for rapid and easy statistical analysis, or graphical representation. Notice that the levels
+						of the Fruit ID variable are represented in the columns, rather than in the rows.
+					</p>
+				
+					<center>
+					<table border = 1 rules = groups frame = box cellpadding =3>
+						<colgroup span = 1></colgroup>
+						<colgroup span = 2></colgroup>
+						<colgroup span = 2></colgroup>
+						<thead>
+							<tr>
+								<td></td><td colspan = "2" align = center><b>Apples</b></td><td colspan = "2" align = center><b>Oranges</b></td>
+							</tr>
+							<tr>
+								<td><b>Person</b></td><td><b>Bought</b></td><td><b>Ate</b></td><td><b>Bought</b></td><td><b>Ate</b></td>
+							</tr>
+						</thead>
+					
+						<tbody>
+							<tr>
+								<td>John</td><td>5</td><td>1</td><td>5</td><td>3</td>
+							</tr>	
+							<tr>
+								<td>Mary</td><td>3</td><td>2</td><td>4</td><td>3</td>
+							</tr>
+							
+						</tbody>
+						<caption><b>Table 2<br>Summary Table</b></caption>
+					</table>
+					</center>
+					
+					<p>
+						If you already have data stored in only this summary format, or some other summary format, don't worry. By using the 
+						<rcode>reshape::melt()</rcode><sup><a id = "footnote" href = "#footnote1">*</a></sup> function, we can get from the summary format 
+						to the ideal format. I would encourage you not to store data in summary formats anymore, however.
+					</p>
+					
+					<p>
+						The ideal data format is probably the one you will use the most for statistical analysis, graphical representation, and data storage.
+						However, we're going to focus a lot on what I'm calling the flexible format. For the most part, we'll be reformatting data from the
+						ideal format to the flexible format, and then manipulating it using functions from the <rcode>reshape</rcode>
+						(<a href="http://cran.r-project.org/web/packages/reshape/index.html">Cran</a>, 
+						<a href="http://had.co.nz/reshape/">website</a>) package.
+					</p>
+					<p>
+						The flexible data format has a row for every unique combination of ID variable <i>and measurement type</i>, with a column for the
+						value of the measurement. For the apples and oranges data, it would look this way.
+					</p>
+					<center>
+					<table border = 1 rules = groups frame = box cellpadding = 3>
+						<thead>
+							<tr>
+								<td><b>Fruit</b></td><td><b>Person</b></td><td><b>Variable</b></td><td><b>Value</b></td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Apple</td><td>John</td><td>Bought</td><td>5</td>
+							</tr>
+							<tr>
+								<td>Apple</td><td>John</td><td>Ate</td><td>1</td>
+							</tr>
+							<tr>	
+								<td>Orange</td><td>John</td><td>Bought</td><td>5</td>
+							</tr>
+								<td>Orange</td><td>John</td><td>Ate</td><td>3</td>
+							</tr>
+							<tr>
+								<td>Apple</td><td>Mary</td><td>Bought</td><td>3</td>
+							</tr>
+							<tr>
+								<td>Apple</td><td>Mary</td><td>Ate</td><td>2</td>
+							</tr>
+							<tr>	
+								<td>Orange</td><td>Mary</td><td>Bought</td><td>4</td>
+							</tr>
+								<td>Orange</td><td>Mary</td><td>Ate</td><td>3</td>
+							</tr>
+						
+						</tbody>
+						<caption><b>Flexible data format</b></caption>
+					</table>
+					</center>
+					
+					<p>
+						At this point, you might be incredulous. We are, in fact, mixing different measurement types in the Value column. If you're not
+						incredulous, this flexible format for vowel measurements might make you so.
+					</p>
+					<center>
+					<table border = 1 rules = groups frame = box cellpadding = 4>
+						<col align = center>
+						<col align = center>
+						<col align = center>
+						<col align = center>
+					
+						<thead>
+							<tr>
+								<td><b>Vowel</b></td> <td><b>ObsID</b></td> <td><b>Variable</b></td> <td><b>Value</b></td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>ae</td> <td>1</td> <td>F1.hz</td> <td>595</td>
+							</tr>
+							<tr>
+								<td>oh</td> <td>2</td> <td>F1.hz</td> <td>759</td>
+							</tr>
+							<tr>
+								<td>ey</td> <td>3</td> <td>F1.hz</td> <td>531</td>
+							</tr>
+							
+							<tr>
+								<td>ae</td> <td>1</td> <td>F2.hz</td> <td>2421</td>
+							</tr>
+							<tr>
+								<td>oh</td> <td>2</td> <td>F2.hz</td> <td>1120</td>
+							</tr>
+							<tr>
+								<td>ey</td> <td>3</td> <td>F2.hz</td> <td>2401</td>
+							</tr>
+							
+							<tr>
+								<td>ae</td> <td>1</td> <td>Duration.msec</td> <td>80</td>
+							</tr>
+							<tr>
+								<td>oh</td> <td>2</td> <td>Duration.msec</td> <td>100</td>
+							</tr>
+							<tr>
+								<td>ey</td> <td>3</td> <td>Duration.msec</td> <td>120</td>
+							</tr>
+						</tbody>
+						<caption><b>Flexible data format</b></caption>
+					</table>
+					</center>		
+					<p>
+						As you can see, we are mixing values in hertz with values in miliseconds in a single column. This <i>should</i> offend your
+						data sensibilities. However, with clever use of the <rcode>reshape::cast()</rcode> function, the flexible format is not only one 
+						line of code away from the ideal format, but from the summary format, and all other manners of aggregation.
+					</p>
+				
+					<p>
+						<a name = "footnote1">*</a>This notation indicates which package a particular function comes from. Its format is 
+						<rcode>package::function()</rcode>
+					</p>
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

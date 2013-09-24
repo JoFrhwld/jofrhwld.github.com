@@ -1,0 +1,711 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 7</title><h1>Week 7</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week5.html"><- Week 5-6</a></td><td>Week 8-></td>
+				</tr>
+			</table>
+		</p>
+		
+		<h2>Contents<a name = "" ></a></h2>
+		<ol>
+<li><a href = "#categorical" >Categorical Data</a></li>
+
+<li><a href = "#proptests" >Proportion and Independence Tests</a></li>
+	<ol>
+	<li><a href = "#chisq" >Chi-Square</a></li>
+		<ol>
+			<li><a href = "#ing" >ING</a></li>
+		</ol>
+	</ol>
+<li><a href = "#logistic" >Logistic Regression</a></li>
+
+<li><a href = "#polynomial" >Polynomial Regression</a></li>
+
+<li><a href = "#interactions" >Interactions</a></li>
+	<ol>
+	<li><a href = "#td" >-t/d Deletion</a></li>
+	<li><a href = "#polyinteractions" >Interactions and Polynomial Regression</a></li>
+	</ol>
+</ol>
+		
+		<h2>Reference<a name = "" ></a></h2>
+		
+		<h2>To install today<a name = "" ></a></h2>
+		<blockquote>
+			<font face = "Courier">
+				install.packages("gtools")
+			</font>
+		</blockquote>
+		
+		<h2>Categorical Data<a name = "categorical" ></a></h2>
+		<p>When working with categorical data (vs Continuous or Count), the normal distribution is no longer appropriate one for our purposes.  Rather, tests for
+		proportions are based in the binomial distribution. Where the normal distribution gives you 
+		<a href="week3.html#ContinuousMeasurements">the probability of getting a value within a certain range</a>, the binomial distribution gives you the
+		point probabilities of getting x sucessesful trials out of N trials given a probability p of success. So, if you were rolling fair, 6 sided dice 50 times,
+		the probability of rolling a five 10 times is 11.6%, as given by</p>
+		<blockquote>
+			<font face = "Courier">
+				dbinom(x=10,size = 50,prob = 1/6)
+			</font>
+		</blockquote>
+		<p>Here's a plot of all the point probabilities, from rolling 0 fives to rolling 50 fives:</p>
+		<center>
+		<a href = "plots/categorical/binom.R"><img src = "plots/categorical/binom.png" height = 70%></a>
+		</center>
+		<p>The binomial distribution is apparently well approximated by a normal distribution with &mu = Np and a &sigma;<sup>2</sup> = Np(1-p), but only when 
+		Np > 5 and N-Np > 5 (I believe). It's this normal approximation (actually &chi;<sup>2</sup>) that underlies <font face ="Courier">prop.test()</font>, which we'll talk about soon.
+		<font face = "Courier">binom.test()</font> is based on the binomial distribution, and should be used instead when possible, but it can only be used
+		for one-sample type problems (i.e. it can't be used to see if two proportions are significantly different).</p>
+		
+		<p>You can add the normal approximation to the plot above with this code.</p>
+		<blockquote>
+			<font face = "Courier">
+				N <- 50; p <- 1/6<br>
+				mu<-N*p<br>
+				s<-sqrt(mu*(1-p))<br>
+				curve(dnorm(x,mean = mu, sd = s),add = T, col = "red")
+			</font>
+		</blockquote>
+		
+		
+		
+		<h2>Proportion and Independence Tests<a name = "proptests" ></a></h2>
+		<p>If you have one proportion that you would like to test whether it is significantly different from some a priori assumption, you can use
+		<font face = "Courier">prop.test()</font> or <font face = "Courier">binom.test()</font>, much like a one-sample t-test for continuous data. 
+		I think the R help page for <font face = "Courier">binom.test()</font> provides a good example of where you may have an a priori assumption about
+		proportions.</p>
+		<p>Say you were studying genetic inheritance, and your theory predicted that 3/4 of the offspring of two pea plants would be giants, and 1/4 
+		would be dwarves. After breeding them, you end up with 682 giants, and 243 dwarves, for a total of 925 offspring. So, 73.7% of the offspring were giants,
+		but is that significantly different from 75%? To use <font face = "Courier">prop.test()</font> or <font face = "Courier">binom.test()</font>, we need 
+		to give them the number of "success" (number of giants here), the total number of trials (the number of offspring here) and the expected probability. 
+		As a rule, you can't do tests on categorical data with just the proportions, since the confidence interval of those proportions depends upon the sample
+		size. Also keep in mind that <font face = "Courier">binom.test()</font> is the preferred test here.</p>
+		<blockquote>
+			<font face = "Courier">
+				prop.test(682,n=925,p=3/4)
+			</font>
+		</blockquote>
+		<xmp>
+		1-sample proportions test with continuity correction
+
+	data:  682 out of 925, null probability 3/4 
+	X-squared = 0.7297, df = 1, p-value = 0.393
+	alternative hypothesis: true p is not equal to 0.75 
+	95 percent confidence interval:
+	 0.7074391 0.7651554 
+	sample estimates:
+	        p 
+	0.7372973 
+		</xmp>
+		<blockquote>
+			<font face = "Courier">
+				binom.test(682,n=925,p=3/4)
+			</font>
+		</blockquote>
+		<xmp>
+		Exact binomial test
+
+	data:  682 and 925 
+	number of successes = 682, number of trials = 925, p-value = 0.3825
+	alternative hypothesis: true probability of success is not equal to 0.75 
+	95 percent confidence interval:
+	 0.7076683 0.7654066 
+	sample estimates:
+	probability of success 
+	             0.7372973 
+		</xmp>
+		<p>So, we can see that the results of the breeding are not inconsistent with the hypothesis that 3/4 of the offspring would be giants. Notice
+		that <font face = "Courier">prop.test()</font> used the Yates continuity correction by default.  This is really important if either the expected 
+		successes or failures is < 5, but otherwise it has an effect of producing wider confidence intervals.  Here, it would be ok to pass the argument
+		<font face = "Courier">correct = F</font> to <font face = "Courier">prop.test()</font>.</p>
+		<p>You can also use <font face = "Courier">prop.test()</font> to compare two proportions to see if they are significantly different. This kind of
+		test is different in nature from testing whether the distribution of success vs. failures is independent from which group theY are in (a chi-squared test),
+		but the result is about the same.  For this kind of data, just use a chi-squared test (to be discussed). I'm just mentioning it here, because 
+		we'll look at <font face = "Courier">pairwise.prop.test()</font> later on.</p>
+		
+		
+		<h3>Chi-Square<a name = "chisq" ></a></h3>
+		<p>The Chi-Square test is the most commonly used test for the independence of the distribution of some categorical variable into some groups. Say you
+		have some variable which can take categorical values x, y, and z, and you're interested in how groups A, B, and C behave in regards to this variable.
+		Your observations could be fit into a table like this, where xA is the number of x observations for group A, xTot is the total number of x observations, and
+		TotA is the total number of A observations, and so on.</p>
+		<center>
+			<table border = 1>
+				<tr><td></td><th>A</th><th>B</th><th>C</th><th>Total</th></tr>
+				<tr><th>x</th><td>xA</td><td>xB</td><td>xC</td><td>xTot</td></tr>
+				<tr><th>y</th><td>yA</td><td>yB</td><td>yC</td><td>yTot</td></tr>
+				<tr><th>y</th><td>zA</td><td>zB</td><td>zC</td><td>zTot</td></tr>
+				<tr><th>Total</th><td>TotA</td><td>TotB</td><td>TotC</td><td>Total</td></tr>
+			</table>
+		</center>
+		<p>You can calculate how many observations you would see in each cell if the distribution of the categorical variable was independent across groups, with
+		the following formula in each cell:</p>
+		<center>
+			<table border = 1>
+				<tr><td></td><th>A</th><th>B</th><th>C</th><th>Total</th></tr>
+				<tr><th>x</th><td>(xTot*TotA)/Total</td><td>(xTot*TotB)/Total</td><td>(xTot*TotC)/Total</td><td>xTot</td></tr>
+				<tr><th>y</th><td>(yTot*TotA)/Total</td><td>(yTot*TotB)/Total</td><td>(yTot*TotC)/Total</td><td>yTot</td></tr>
+				<tr><th>y</th><td>(zTot*TotA)/Total</td><td>(zTot*TotB)/Total</td><td>(ZTot*TotC)/Total</td><td>zTot</td></tr>
+				<tr><th>Total</th><td>TotA</td><td>TotB</td><td>TotC</td><td>Total</td></tr>
+			</table>
+		</center>		
+		<p>So, where the first table is the Observed and the second table is Expected, you can calculate a &chi;<sup>2</sup> value for this data with
+		&Sigma;(Observed-Expected)/Expected, where you are summing over all cells. Whether a chi-square value is significant depends on the number of
+		degrees of freedom in the data, which is (nrows-1)*(ncols-1). A significant Chi-square value tells us that the distribution of variable observations is 
+		<i>not</i> independant across groups.</p>
+		
+		
+		<h4>ING<a name = "ing" ></a></h4>
+		<p>To illustrate, we'll use some ING data collected from South Philadelphians. The variable of interest here is whether speakers said 
+		-ing (with a velar nasal) or -in (with an apical nasal). The groups across which we'll look at this first are following segments. Are -ing and -in 
+		distributed independently across tokens with a following apical segment vs a following velar segment?</p>
+		<blockquote>
+			<font face = "Courier">
+				fol<-rbind(In=c(181,11),Ing=c(137,26))<br>
+				colnames(fol)<-c("apical","velar")<br>
+				fol
+			</font>
+		</blockquote>
+		<xmp>
+	    apical velar
+	In     181    11
+	Ing    137    26
+		</xmp>
+		<p>There's the data table for in vs ing across these groups.  To see the proportions across groups, we can use <font face = "Courier">prop.table()</font>,
+		which takes a matrix or table as its first argument, and then 1 (for rowwise proportions) or 2 (for columnwise proportions). 
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				prop.table(fol,2)
+			</font>
+		</blockquote>
+		<xmp>
+	       apical     velar
+	In  0.5691824 0.2972973
+	Ing 0.4308176 0.7027027
+		</xmp>
+		<p>The proportions are definitely different, but the Chi-square test will tell us if they are significantly so.  None of the expected values will
+		be < 5, so we'll do it without the Yates correction.
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				chisq.test(fol,correct = F)
+			</font>
+		</blockquote>
+		<xmp>
+		Pearson's Chi-squared test
+
+	data:  fol 
+	X-squared = 9.866, df = 1, p-value = 0.001684
+		</xmp>
+		<p>So, with a very small p-value, the distribution of in and ing across these two groups is significantly different. Since this was just a 
+		2X2 table, the interpretation of the significant chi-square result is very clear. in and ing are distributed signficantly differently with respect 
+		to the following segment.  However, ING data was collected in more contexts than those with following apicals and velars.  Those contexts
+		could also be included in a chi-square test.</p>
+		<blockquote>
+			<font face = "Courier">
+				ing <- read.csv("http://www.ling.upenn.edu/~joseff/rstudy/data/ing2.csv")<br>
+				fol1<-table(ing$DepVar, ing$Following.Seg)<br>
+				fol1<br>
+				prop.table(fol1,2)<br>
+				folchi<-chisq.test(fol1)<br>
+				folchi
+			</font>
+		</blockquote>
+		<p>Again, we get a significant chi-square value, but this time its interpretation is a little less clear.  All we can say as a result of this is that
+		variants of the ING variable are not independently distributed across contexts.  Although we can't be exactly sure which groups have skewed distributions,
+		we could try looking at the table from which &chi;<sup>2</sup> was calculated.
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				O<-folchi$observed<br>
+				E<-folchi$expected<br>
+				(O-E)^2/E
+			</font>
+		</blockquote>
+		<p>By comparing the &chi;<sup>2</sup> table to the proportional table, we can see that a higher than expected rate of /in/ for following
+		apicals, and a higher than expected rate of /ing/ for velars and palatals contributed the most to &chi;<sup>2</sup>.</p>
+		<p>We could also do a pairwise proportion test, much like the pairwise t-test, which would compare every group's proportion, correcting
+		for the fact multiple tests are being done.</p>
+		<blockquote>
+			<font face = "Courier">
+				##we need to transpose fol1 with t()<br>
+				##this takes a matrix with<br>
+				##a column of successes and a column of failures<br>
+				pairwise.prop.test(t(fol1))
+			</font>
+		</blockquote>
+		<xmp>
+		Pairwise comparisons using Pairwise comparison of proportions 
+
+	data:  t(fol1) 
+
+	        0     apical labial palatal velar
+	apical  0.437 -      -      -       -    
+	labial  1.000 0.553  -      -       -    
+	palatal 0.658 0.039  0.658  -       -    
+	velar   0.658 0.042  0.658  1.000   -    
+	vowel   1.000 1.000  1.000  0.146   0.146			
+		</xmp>
+		<p>It looks like palatals and velars are significantly different from apicals, but no other group difference is significant.</p>
+		
+		<p>One thing to keep in mind, especially with this data, is that we may have too finely grained distinctions between groups than there are.  That is, following
+		consonants which are articulated with the tongue may be the only contexts which have effects, and of those, the important distinction is whether they 
+		are articulated with the tongue blade, or with the tongue body. We might try collapsing categories into Apical, Posterior, and Other. </p>
+		<blockquote>
+			<font face = "Courier">
+				fol2<-cbind( other=rowSums(fol1[,c("0","labial","vowel")]),<br>
+				apical = fol1[,"apical"],<br>
+				posterior = rowSums(fol1[,c("palatal","velar")]))<br><br>
+				fol2
+			</font>
+		</blockquote>	
+		<p>Now we can look at some of the same diagnostics.</p>
+		<blockquote>
+			<font face = "Courier">
+				prop.table(fol2,2)<br>
+				folchi2<-chisq.test(fol2)<br>
+				E<-folchi2$expected;O<-folchi2$observed<br>
+				(O-E)^2/E<br>
+				pairwise.prop.test(t(fol2))
+			</font>
+		</blockquote>
+		<p>Before we go on to modeling, we should create a new factor in ing for use later.</p>
+		<blockquote>
+			<font face = "Courier">
+				ing$Tongue<-"other"<br>
+				ing[ing$Following.Seg %in% c("velar","palatal"),]$Tongue <- "posterior"<br>
+				ing[ing$Following.Seg =="apical",]$Tongue <- "apical"<br>
+				ing$Tongue<-as.factor(ing$Tongue)<br>
+				ing$Tongue<-relevel(ing$Tongue,"other")
+			</font>
+		</blockquote>
+		
+		<h2>Logistic Regression<a name = "logistic" ></a></h2>
+		<p>These methods with contingency tables are alright for looking at the effect of one predictor on one response variable, but typically you'll
+		want to look at multiple predictors' effects on a response.  For this purpose, we'll use a logistic regression, which is one of a number of models
+		called generalized linear models, or GLMs.</p>
+		<p>The idea behind a logisic regression is nearly the same as behind a linear regression.  The difference is that the fitted values it
+		returns should be probabilities success.  However, we wouldn't want to fit some kind of linear model against raw probabilities. Probabilites 
+		cannot be greater than 1, or less than 0, and a linear model fit against raw probabilities could produce fitted values outside this range.
+		What's more, when a categorical variable changes across a continuous variable, it does so with an S shape, like the logistic curve below. </p>
+		<center>
+		<a href = "plots/categorical/scurve.R"><img src = "plots/categorical/scurve.png" height = 70%></a>
+		</center>
+		<p>On a raw proportional scale, differences between proportions isn't additive.  That is, the difference between 50% and 55% is not the same as the 
+		difference between 90% and 95%.  For this reason, a logistic regression uses a logistic "link," returning a linear function of the following form:
+		<center>logit(p) = &alpha;+&beta;x<br>logit(p)=log(p/(1-p))</center></p>
+		<p>On a logit scale, changes in proportion look like this:</p>
+		<center>
+		<a href = "plots/categorical/logitp.R"><img src = "plots/categorical/logitp.png" height = 70%></a>
+		</center>
+		<p>On this scale, the values of the coefficients are in log-odds (p/(1-p) is the odds, and we take the log of it). These can be pretty easy to
+		interpret with some experience. You can see how they compare to probabilities with this code:</p>
+		<blockquote>
+			<font face = "Courier">
+				library(gtools)<br>
+				p<-c(0.99,0.95,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.05,0.01)<br>
+				cbind(p,logit(p))
+			</font>
+		</blockquote>
+		<xmp>
+	         p           
+	 [1,] 0.99  4.5951199
+	 [2,] 0.95  2.9444390
+	 [3,] 0.90  2.1972246
+	 [4,] 0.80  1.3862944
+	 [5,] 0.70  0.8472979
+	 [6,] 0.60  0.4054651
+	 [7,] 0.50  0.0000000
+	 [8,] 0.40 -0.4054651
+	 [9,] 0.30 -0.8472979
+	[10,] 0.20 -1.3862944
+	[11,] 0.10 -2.1972246
+	[12,] 0.05 -2.9444390
+	[13,] 0.01 -4.5951199
+		</xmp>
+		<p>The most important thing to notice is that logit(0.5)=0.  This means that if you have a predictor that gets back a value of 0, this means that the 
+		response has a 50% probability of a success given this predictor. Since we're looking at binomial variables here, this predictor effectively has
+		<i>no</i> effect on the response variable, so the 0 value is very meaningful.  Likewise, a negative coefficient indicates a predictor disfavoring 
+		success, and a positive coefficient indicates favoring success. </p>
+		<p><font face = "Courier">glm()</font> is the function for doing logistic regressions in R.  It can take a few different kinds of arguments. First,
+		we'll give it a table of successes and failures.</p>
+		<blockquote>
+			<font face = "Courier">
+				gttable<-table(ing$DepVar,ing$GramStatus,ing$Tongue)<br>
+				ing.obs<-rbind(t(gttable[,,"other"]),t(gttable[,,"apical"]),t(gttable[,,"posterior"]))<br>
+				ing.tbl<-expand.grid(Tongue = levels(ing$Tongue),GramStatus = levels(ing$GramStatus))<br>
+				ing.tbl<br>
+				ing.obs
+			</font>
+		</blockquote>
+		<p><font face = "Courier">ing.tbl</font> is a table of cross conditions of Grammatical Status, and Tongue articulator. 
+		<font face = "Courier">ing.obs</font> is a table of observations for each condition. Let's do a regression using gramatical status
+		and tongue articulator as predictors.  First, we'll want to change the default contrasts for grammatical status to sum contrasts,
+		since we don't know what the no-treatment condition is. We can use a script I wrote for this to make it easy.</p>
+		<blockquote>
+			<font face = "Courier">
+				source("http://www.ling.upenn.edu/~joseff/scripts/recontrast.R")<br>
+				ing.tbl$GramStatus <- recontrast(ing.tbl$GramStatus)<br>
+				##now for the regression<br>
+				ing.mod<-glm(ing.obs~ing.tbl$GramStatus+ing.tbl$Tongue,family = binomial)<br>
+				summary(ing.mod)
+			</font>
+		</blockquote>
+		<p>The output of <font face ="Courier">glm()</font> isn't so different from what we've seen with linear models. You should be cautious if the
+		residuals get too high, because that indicates that some cells are poorly fitted. Otherwise, the regression coefficients are pretty straight forward:</p>
+		<xmp>
+	...
+	Coefficients:
+	                              Estimate Std. Error z value Pr(>|z|)    
+	(Intercept)                    -0.5148     0.1610  -3.197  0.00139 ** 
+	ing.tbl$GramStatusadjective    -1.6237     0.3698  -4.390 1.13e-05 ***
+	ing.tbl$GramStatusduring        1.5840     0.6998   2.264  0.02360 *  
+	ing.tbl$GramStatusgerund       -0.5847     0.2386  -2.451  0.01425 *  
+	ing.tbl$GramStatusnoun         -1.7684     0.3933  -4.496 6.93e-06 ***
+	ing.tbl$GramStatusparticiple    0.8959     0.1796   4.989 6.06e-07 ***
+	ing.tbl$GramStatusprogressive   1.0001     0.1709   5.853 4.83e-09 ***
+	ing.tbl$Tongueapical            0.1836     0.1461   1.256  0.20908    
+	ing.tbl$Tongueposterior        -0.6057     0.2762  -2.193  0.02830 *
+	---  
+	...
+		</xmp>
+		<p>Now, this wasn't the easiest way to fit a logistic regression for this data. However, if you have data of, say, looking times to target vs 
+		distractor, you could structure the data so that every row is a trial, with a column for milliseconds looking at target and a column for miliseconds
+		looking at distractor, with a dataframe of the predictors you have for each trial. You could then fit the model exactly like we just did here.</p>
+		
+		<p>For this data, however, it's easiest to look at it as just a hit or miss per trial, which is just as easy to fit.</p>
+		<blockquote>
+			<font face = "Courier">
+				ing<-recontrast(ing)<br>
+				ing$Tongue<-recontrast(ing$Tongue,type = "treatment")<br>
+				ing.mod<-glm(DepVar~GramStatus+Tongue,data = ing, family = binomial)<br>
+				summary(ing.mod)
+			</font>
+		</blockquote>
+		<p>You'll notice that the signs have changed on the coefficients, but that's just because in this model what counted as a success and a failure 
+		was reveresed from the previous model.  Everything else is the same though, so all you need to keep straight is which probability we're modeling.</p>
+		<p>Let's calculate the effect for the "thing" grammatical class, and sort the grammatical classes from most "in" favoring to most "ing" favoring.</p>
+		<blockquote>
+			<font face = "Courier">
+				thing<-sum(ing.mod$coef[2:7])*-1<br>
+				sort(c(ing.mod$coef[2:7],thing))
+			</font>
+		</blockquote>
+		<p>Here's the very well known grammatical effect on ING variation, which goes all the way back to when the English participial morpheme was "inde"
+		and the gerundive morpheme was "inge" (Labov 1989, Houston 1985).</p>
+		<p>The analysis of deviance table is also rather important for evaluating logistic models.</p>
+		<blockquote>
+			<font face = "Courier">
+				anova(ing.mod, test = "Chisq")
+			</font>
+		</blockquote>
+		<xmp>
+	Analysis of Deviance Table
+
+	Model: binomial, link: logit
+
+	Response: DepVar
+
+	Terms added sequentially (first to last)
+
+
+	             Df Deviance Resid. Df Resid. Dev P(>|Chi|)
+	NULL                          1138    1578.79          
+	GramStatus    6   174.80      1132    1404.00  4.32e-35
+	Tongue        2     7.70      1130    1396.30      0.02
+		</xmp>
+		<p>Every row in the table tells us how much every term reduces deviance in the model, and the chi-square test tells us if it is significant.
+		you need to pass <font face = "Courier">test = "Chisq"</font> to <font face = "Courier">anova()</font> in order to get these significance values. Again,
+		the order of predictors will affect whether others are significant in the analysis of deviance.</p>
+		<p>In the grand tradition of sociolinguistics, let's do a stepwise regression!</p>
+		<blockquote>
+			<font face = "Courier">
+				ing.mod1<-step(glm(DepVar~1,data = ing,family = binomial), DepVar~Style+GramStatus+Sex+Age+Tongue)<br>
+				summary(ing.mod1)<br>
+				anova(ing.mod1,test = "Chisq")
+			</font>
+		</blockquote>
+		
+		<h2>Polynomial Regression<a name = "polynomial" ></a></h2>
+		<p>It may be the case that you will have some data that has a polynomial relationship to the response.  This can be true of linear
+		regressions as well, but I have some good data with this kind of relationship with categorical data.</p>
+		<blockquote>
+			<font face = "Courier">
+				donner<-read.csv("http://www.ling.upenn.edu/~joseff/rstudy/data/donner.csv")
+			</font>
+		</blockquote>
+		<p>This is a data set for the <a href="http://en.wikipedia.org/wiki/Donner_Party">Donner Party</a>. We can fit a logistic regression of survival
+		against age easilly enough.</p>
+		<blockquote>
+			<font face = "Courier">
+				don.mod<-glm(NFATE~AGE,data = donner,family =binomial)<br>
+				##more like family = delicious, amiright?<br>
+				summary(don.mod)
+			</font>
+		</blockquote>
+		<p>Not to surprisingly, as age increases, probability of survival decreases.  But this isn't necessarily the best model of the data.
+		We can look at the way survival changes over age by adding a smoothing line to a plot.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(donner$AGE,donner$NFATE)<br>
+				lines(lowess(donner$AGE,donner$NFATE))
+			</font>
+		</blockquote>
+		<center>
+		<img src = "plots/categorical/donnerlowess.png" height = 70%>
+		</center>
+		<p>It looks like younger people and older people are more likely to die than people in between.  We can fit this polynomial relationship directly. We'll
+		use age, and the square of age as predictors. To pass the square of AGE to <font face = "Courier">glm</font>, we'll use the <font face = "Courier">I()</font>
+		operator in the formula. When you used <font face = "Courier">I()</font>, it essentially means "interpret this as the actual mathematical function, not
+		a model formula". </p>
+		<blockquote>
+			<font face = "Courier">
+				don.mod1<-glm(NFATE~AGE+I(AGE^2),data = donner, family = binomial)<br>
+				summary(don.mod1)
+			</font>
+		</blockquote>
+		<xmp>
+	...
+	Coefficients:
+	             Estimate Std. Error z value Pr(>|z|)  
+	(Intercept) -0.163558   0.525499  -0.311   0.7556  
+	AGE          0.105413   0.059048   1.785   0.0742 .
+	I(AGE^2)    -0.002995   0.001371  -2.184   0.0289 *
+	---
+	...
+		</xmp>
+		<p>Now, this output is a little more difficult to immediately interpret, because this is formula for a second order equation. What we can see right off
+		the bat is that the sign of the second order term is singificantly negative, which means that younger and older people are significantly more likely
+		to die than people in the middle.</p>
+		<p>The easiest way to intepret the output of this equation is to plot it.</p>
+		<blockquote>
+			<font face = "Courier">
+				pred<-expand.grid(AGE= 1:65)<br>
+				pred$Fit<-predict(don.mod1,newdata = pred,type = "resp")<br>
+				plot(donner$AGE,donner$NFATE)<br>
+				lines(pred$AGE,pred$Fit)
+			</font>
+		</blockquote>
+		<center>
+			<img src = "plots/categorical/donner2.png" height = 70%>
+		</center>
+		<p>We can also solve for the peak age of survival, by taking the first derivative of the equation, and solving for 0.</p>
+		<center>logit(ProbFate) = &beta;<sub>i</sub>AGE+&beta;<sub>j</sub>(AGE<sup>2</sup>)+Intercept<br>
+				slope(logit(ProbFate)) = 2&beta;<sub>j</sub>AGE+&beta;<sub>i</sub><br>
+				0 = 2&beta;<sub>j</sub>PeakAGE+&beta;<sub>i</sub><br>
+				PeakAGE = -&beta;<sub>i</sub>/2&beta;<sub>j</sub></center>
+		<blockquote>
+			<font face = "Courier">
+				don.mod1$coef<br>
+				peak.age<- -don.mod1$coef[2]/(2*don.mod1$coef[3])<br>
+				abline(v = peak.age)<br>
+				peak.age<br>
+				inv.logit(sum(c(1,peak.age,peak.age^2)*don.mod1$coef))
+			</font>
+		</blockquote>
+		<p>Which comes to about 17.5 year olds having about 68% probability of survival, and then it's downhill on either side of them.</p>
+		
+		<h2>Interactions<a name = "interactions" ></a></h2>
+		<p>Every model we've fitted so far has been strictly additive.  That is, PredictorX has an effect, and PredictorY has an effect, and they
+		are simply added.  But maybe X and Y can have an interaction effect as well. Typically, you'll want to see if membership to some group
+		has an interaction effect with some other grouping, or along some continuous variable.</p>
+		<p>For example, something we might look at in sociolinguistics might be whether Gender interacts with socioeconomic class, or with stylistic shifting.
+		It is probable, depending on the variable being studied, that men will style shift differently, but maybe not divergently, from women. Or, it may be the case
+		that people in different experimental groups might have different sensitivities to some variable you are controlling for. </p>
+		
+		
+		<h3>-t/d Deletion<a name = "td" ></a></h3>
+		<p>I happen to have some good data for looking at interactions involving the effect of frequency and grammatical class on the rate of -t/d deletion in
+		English.</p>
+		<p>In English, word final consonant clusters, especially those with a final /t/ or /d/ are likely to be simplified by deleting the final /t/ or /d/. There are
+		at least 4 grammatical classes which are affected by this simplification:</p>
+		<ul>
+			<li>Regular Past Tense: "passed","missed"</li>
+			<li>Irregular Past Tense: "swept","kept"</li>
+			<li>Monomorphemes: "past","mist"</li>
+			<li>not-contraction: "don't", "can't"</li>
+		</ul>
+		<p>It's been noted for a long time that there is a grammatical effect on -t/d deletion.  The order of grammatical classes in order of least to 
+		most deletion is Regular &lt; Irregular &lt; Monomorpheme &lt; not-contraction. Recently, more attention has begun to be paid to the 
+		effect of frequency on deletion.</p>
+		<p>Here is a subset of a data set drawn from the Buckeye corpus, with every token coded for deletion, grammatical class, and log(frequency) in the 
+		corpus.</p>
+		<blockquote>
+			<font face = "Courier">
+				sbuck<-read.csv("http://www.ling.upenn.edu/~joseff/rstudy/data/sbuck.csv")<br>
+				sbuck$Gram<-relevel(sbuck$Gram,"Past")<br>
+				sbuck<-recontrast(sbuck)<br>
+				summary(sbuck)
+			</font>
+		</blockquote>
+		<p>So, let's fit a regression against log(frequency).</p>
+		<blockquote>
+			<font face = "Courier">
+				bmod<-glm(DepVar~Log_Freq, data = sbuck,family = binomial)<br>
+				summary(bmod)
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	             Estimate Std. Error z value Pr(>|z|)    
+	(Intercept)  1.367225   0.048282   28.32   <2e-16 ***
+	Log_Freq    -0.302360   0.008919  -33.90   <2e-16 ***
+	---
+		</xmp>
+		<p>So as log(frequency) increases by 1, the log-odds of having a /t/ or /d/ decreases by 0.30, and a word with log(frequency) = 0, or a frequency of 1
+		will have log-odds of having a /t/ of 1.37. Let's plot this result:</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(sbuck$Log_Freq, sbuck$DepVar,type = "n")<br>
+				pred<-expand.grid(Log_Freq = seq(min(sbuck$Log_Freq),max(sbuck$Log_Freq),length = 50))<br>
+				pred$fit<-predict(bmod,newdata = pred, type = "response")<br>
+				lines(pred$Log_Freq, pred$fit)
+			</font>
+		</blockquote>
+		<p>Now, membership in a grammatical class may have an additive effect on deletion, meaning that each grammatical class may have a different
+		intercept, but parallel slopes over frequency.  Let's fit that model.</p>
+		<blockquote>
+			<font face - "Courier">
+				<font face = "Courier">
+					bmod1<-glm(DepVar~Gram+Log_Freq, data = sbuck,family = binomial)<br>
+					summary(bmod1)
+				</font>
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	            Estimate Std. Error z value Pr(>|z|)    
+	(Intercept)  1.14625    0.05521  20.762  < 2e-16 ***
+	GramPast     0.67070    0.05461  12.283  < 2e-16 ***
+	GramIrreg    0.03522    0.07985   0.441    0.659    
+	GramMono    -0.18472    0.03601  -5.129 2.91e-07 ***
+	Log_Freq    -0.22309    0.01018 -21.920  < 2e-16 ***
+	---
+		</xmp>
+		<blockquote>
+			<font face = "Courier">
+				anova(bmod1,test = "Chisq")
+			</font>
+		</blockquote>
+		<xmp>
+	            Df Deviance Resid. Df Resid. Dev  P(>|Chi|)
+	NULL                        13413    18521.1           
+	Gram         3   1027.7     13410    17493.4 1.750e-222
+	Log_Freq     1    503.9     13409    16989.5 1.322e-111
+		</xmp>
+		<center>
+			<a href="plots/categorical/buck1.R"><img src = "plots/categorical/buck1.png" height = 70%></a>
+		</center>
+		<p>But the effect of frequeny might not be uniform across grammatical classes.  To test this, we'll an interaction effect.</p>
+		<blockquote>
+			<font face = "Courier">
+				bmod2<-glm(DepVar~Gram*Log_Freq, data = sbuck,family = binomial)<br>
+				summary(bmod2)
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	                   Estimate Std. Error z value Pr(>|z|)    
+	(Intercept)         1.02505    0.13204   7.763 8.26e-15 ***
+	GramPast           -0.04894    0.15544  -0.315   0.7529    
+	GramIrreg           0.46444    0.36556   1.270   0.2039    
+	GramMono            0.07007    0.13906   0.504   0.6143    
+	Log_Freq           -0.17020    0.03382  -5.033 4.83e-07 ***
+	GramPast:Log_Freq   0.25511    0.04376   5.830 5.54e-09 ***
+	GramIrreg:Log_Freq -0.13560    0.09539  -1.422   0.1552    
+	GramMono:Log_Freq  -0.08021    0.03480  -2.305   0.0212 *  
+	---
+		</xmp>
+		<p>What this returns is a function, essentially of the form 
+		<center>
+			logit(p.td) = (Int + Int<sub>gram</sub>)+(&beta;+&beta;<sub>gram</sub>)*AGE
+		</center>
+		Of primary interest to us here is the size of &beta;<sub>gram</sub>.  If membership to a grammatical class significantly effects the slope
+		or probability over frequency, then one or more of the &beta;<sub>gram</sub> values will be significantly different from 0. In fact, we can see that
+		the coefficient for &beta;<sub>past</sub> is significant, and very large. We might be able to say, then, that the interaction effect is significant</p>
+		<p>To see if the interaction really does significantly improve the fit of the model, we should look at the analysis of deviance table:</p>
+		<blockquote>
+			<font face = "Courier">
+				anova(bmod2,test = "Chisq")
+			</font>
+		</blockquote>
+		<xmp>
+	                 Df Deviance Resid. Df Resid. Dev  P(>|Chi|)
+	NULL                             13413    18521.1           
+	Gram              3   1027.7     13410    17493.4 1.750e-222
+	Log_Freq          1    503.9     13409    16989.5 1.322e-111
+	Gram:Log_Freq     3     66.3     13406    16923.2  2.660e-14
+		</xmp>
+		<center>
+			<a href="plots/categorical/buck2.R"><img src = "plots/categorical/buck2.png" height = 70%></a>
+		</center>
+		<blockquote>
+			<font face = "Courier">
+				puck<-sbuck[sbuck$Gram != "Past",]<br>
+				drop.levels(puck)->puck<br>
+				recontrast(puck)->puck<br>
+				bmod3<-glm(DepVar~Gram*Log_Freq, data = puck,family = binomial)<br>
+				summary(bmod3)<br>
+				anova(bmod3,test = "Chisq")
+			</font>
+		</blockquote>
+		<blockquote>
+			<font face = "Courier">
+				sbuck$Gram2 <- "other"<br>
+				sbuck[sbuck$Gram == "Past",]$Gram2<-"past"<br>
+				as.factor(sbuck$Gram2)->sbuck$Gram2<br>
+				bmod4<-glm(DepVar~Gram+Log_Freq:Gram2,data = sbuck,family = binomial)<br>
+				summary(bmod4)
+			</font>
+		</blockquote>
+		<center>
+			<a href="plots/categorical/buck4.R"><img src = "plots/categorical/buck4.png" height = 70%></a>
+		</center>
+
+
+		<h3>Interactions and Polynomial Regression<a name = "polyinteractions" ></a></h3>
+		<blockquote>
+			<font face = "Courier">
+				don.mod2<-glm(NFATE~GENDER*AGE+GENDER*I(AGE^2),data = donner, family = binomial)<br>
+				summary(don.mod2)
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	                  Estimate Std. Error z value Pr(>|z|)   
+	(Intercept)      -0.607165   0.785480  -0.773  0.43953   
+	GENDERM           0.481233   1.055091   0.456  0.64831   
+	AGE               0.331791   0.124792   2.659  0.00784 **
+	I(AGE^2)         -0.008177   0.002942  -2.779  0.00545 **
+	GENDERM:AGE      -0.293385   0.140695  -2.085  0.03705 * 
+	GENDERM:I(AGE^2)  0.006809   0.003221   2.114  0.03453 * 
+	---
+		</xmp>
+		<blockquote>
+			<font face = "Courier">
+				 f.age <- -don.mod2$coef[3]/(2*don.mod2$coef[4])<br>
+				 m.age <- -(don.mod2$coef[3]+don.mod2$coef[5])/(2*(don.mod2$coef[4]+don.mod2$coef[6]))<br>
+				 f.age<br>
+				 m.age
+			</font>
+		</blockquote>
+		<center>
+			<a href="plots/categorical/donnerint.R"><img src = "plots/categorical/donnerint	.png" height = 70%></a>
+		</center>
+		<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

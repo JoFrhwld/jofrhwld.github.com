@@ -1,0 +1,608 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 2</title><h1>Week 2</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week1.html"><- Week 1</a></td><td><a href="week3.html">Week 3-></a></td>
+
+				</tr>
+			</table>
+		</p>
+		<h2>Contents</h2>
+		<p>
+			
+			<ol><li>	<a href = "#References">References</a></li>
+				<li><a href="#Factors">Factors</a></li>
+				<ol>
+					<li><a href="#levels()"><font face = "Courier">levels()</font></a></li>
+					<li><a href = "#relevel"><font face = "Courier">relevel()</font></a></li>
+				</ol>
+				<li><a href="#Convert">Converting Types</a></li>
+				<ol>
+					<li><a href="#ConChar">Converting Characters to...</a></li>
+					<ol>
+						<li><a href="#chartofac">...factors</a></li>
+						<li><a href="#chartonum">...numerical</a></li>
+					</ol>
+					<li><a href ="#ConFac">Converting Factors to...</a></li>
+					<ol>
+						<li><a href="#factochar">...character</a></li>
+						<li><a href="#factonum">...numerical</a></li>
+					</ol> 
+					<li><a href = "#cut"><font face = "Courier">cut()</font></a></li>
+				</ol>
+				<li><a href="#IO">Data Input and Output</a></li>
+				<ol>
+					<li><a href="#Input">Input</a></li>
+					<li><a href="#Output">Output</a></li>
+				</ol>
+				<li><a href="#DataFrame">Data Frames</a></li>
+				<ol>
+					<li><a href="#index">Data Frame Indexing and Subsetting</a></li>
+					<li><a href="#Summary">More Summary Techniques</a></li>
+				</ol>
+				
+			</ol>
+		
+		</p>
+	<h2><a name = "References">References</a></h2>
+		<p><b>Introductory Statistics with R</b>: Chapter 1
+		<br><b>Analyzing Linguistic Data: A practical introduction to statistics</b>: Chapter 1</p>
+	<h2>While we settle</h2>
+	<p>Install and load the ISwR and languageR libraries.</p>
+	<blockquote>
+		<font face = "Courier">
+			> install.packages(c("ISwR","languageR"),dependencies = T)<br>
+			> library(ISwR)<br>
+			> library(languageR)
+		</font>
+	</blockquote>
+	<p>Also, download the zip file containing data from Johnson 2008's chapter on Phonetics: 
+	<a href="http://media.wiley.com/product_ancillary/46/14051442/DOWNLOAD/3phonetics.zip">here</a> [ZIP]</p>
+	<h2><a name = "Factors">Factors</a></h2>
+		<p>For the most part, if we're using data which has some variable coded as a character string, it is actually a <em>factor</em> with
+		specific <em>levels</em>.</p>  
+		<p>A good way to grasp the structure of factors is to build one from scratch.  Say we had collected class data in a study, 
+		and coded lower working class, upper working class, and lower middle class with numeric codes, 1, 2, and 3, repectively.
+		First, lets simulate a sample of 10 speakers.  <font face = "Courier">sample()</font> will simulate such a sample.  See
+		<font face = "Courier">?sample</font> for more details.
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				> class <- sample(1:3, 10, replace = T)<br>
+				> class<br>
+				 [1] 3 1 1 2 3 3 3 2 3 3<br>
+			</font>
+		</blockquote>
+		<p>Your numbers will probably be different.  Right now, <font face = "Courier">class</font> is a numerical vector.  The 
+		<font face = "Courier">factor()</font> function will convert it to a factor vector.</p>
+		<blockquote>
+			<font face = "Courier">
+				> factor(class)<br>
+				 [1] 3 1 1 2 3 3 3 2 3 3<br>
+				Levels: 1 2 3<br>
+			</font>
+		</blockquote>
+		<p>We can also add meaninful labels to the factor levels.</p>
+		<blockquote>
+			<font face = "Courier">
+				> class.f<-factor(class,labels = c("LWC","UWC","LMC"))<br>
+				> class.f<br>
+				 [1] LMC LWC LWC UWC LMC LMC LMC UWC LMC LMC<br>
+				Levels: LWC UWC LMC<br>
+			</font>
+		</blockquote>
+		<p>In essence, the factor vector has a representation like this:</p>
+		<center>
+			<table border = 1>
+				<tr><th>Vector</th><th>Dictionary</th></tr>
+				<tr><td>3</td><td>1 = "LWC"</td></tr>
+				<tr><td>1</td><td>2 = "UWC"</td></tr>
+				<tr><td>1</td><td>3 = "LMC"</td></tr>
+				<tr><td>2</td></tr>
+				<tr><td>3</td></tr>
+				<tr><td>3</td></tr>
+				<tr><td>3</td></tr>
+				<tr><td>2</td></tr>
+				<tr><td>3</td></tr>
+				<tr><td>3</td></tr>
+			</table>
+		</center>
+		<p>Compare the following printed output</p>
+		<blockquote>
+			<font face = "Courier">
+				> class<br>
+				 [1] 3 1 1 2 3 3 3 2 3 3<br>
+				> class.l<-c("LWC","UWC","LMC")<br>
+				> class.l<br>
+				 [1] "LWC" "UWC" "LMC"<br>
+				> class.l[class]<br>
+				 [1] "LMC" "LWC" "LWC" "UWC" "LMC" "LMC" "LMC" "UWC" "LMC" "LMC"<br>
+				> class.f<br>
+				 [1] LMC LWC LWC UWC LMC LMC LMC UWC LMC LMC<br>
+				Levels: LWC UWC LMC<br>
+			</font>
+		</blockquote>
+		<p>The factor vector that we built is unordered.  That is, the factor levels define groups rather than an ordering.  It is possible to also
+		define ordered factors, which will strongly affect model fitting.  I haven't used ordered factors much myself, so I don't really understand how 
+		they work (but I should).</p>
+		
+		<h3><font face = "Courier"><a name="levels()">levels()</a></font></h3>
+		<p>
+			The <font face = "Courier">levels()</font> command accesses the levels of a factor.  It will either produce a character vector
+			of the current levels, or allow you to edit the levels by assigning a new character vector to it.
+			<blockquote>
+				<font face = "Courier">
+					> levels(class.f)<br>
+					[1] "LWC" "UWC" "LMC"<br>
+					> old.levels<-levels(class.f)<br>
+					> old.levels<br>
+					[1] "LWC" "UWC" "LMC"<br>
+					> new.levels <- c("LowerWorkingClass","UpperWorkingClass","LowerMiddleClass")<br>
+					> levels(class.f)<-new.levels<br>
+					> class.f<br>
+					 [1] LowerMiddleClass  LowerWorkingClass LowerWorkingClass UpperWorkingClass LowerMiddleClass  LowerMiddleClass  LowerMiddleClass  UpperWorkingClass LowerMiddleClass 
+					LowerMiddleClass <br>
+					Levels: LowerWorkingClass UpperWorkingClass LowerMiddleClass
+				</font>
+			</blockquote> 
+		</p>
+		
+		<h3><a name = "relevel"><font face = "Courier">relevel()</font></a></h3>
+		<p>Don't use <font face = "Courier">levels()</font> to try to change the order of levels. Here's a demonstration of what will happen</p>
+		<blockquote>
+			<font face = "Courier">
+				> x <- factor(1:3, labels = c("one","two","three"))<br>
+				> x<br>
+				[1] one   two   three<br>
+				Levels: one two three<br>
+				> levels(x) <- c("two","one","three")<br>
+				> x<br>
+				[1] two   one   three<br>
+				Levels: two one three<br>
+			</font>
+		</blockquote>
+		<p>All we've done is change the labels of each level, which ends up scrambling their meaningful labels. If we really wanted
+		"two" to be the first level (this will be important for fitting regression models), we should use <font face = "Courier">relevel()</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				> x <- factor(1:3, labels = c("one","two","three"))<br>
+				> x<br>
+				[1] one   two   three<br>
+				Levels: one two three<br>
+				> x <- relevel(x, "two")<br>
+				> x<br>
+				[1] one   two   three<br>
+				Levels: two one three
+			</font>
+		</blockquote>		
+		<p><font face = "Courier">relevel()</font> has reordered the levels, making "two" the first one, but has kept the labels for each level the same.</p>
+		
+		
+	<h2><a name="Convert">Converting Data Types</a></h2>
+		<h3><a name="ConChar">Converting Characters to..,</a></h3>
+		<h4><a name="chartofac">...factors</a></h4>
+		<p>Character vectors cannot be used in most statistical functions in R, since they don't define groups.  If a character vector is 
+		given to one of these R functions, it will automatically be converted to a factor. Here's what conversion of a character vector to a 
+		factor looks like:</p>
+		
+		<blockquote>
+			<font face = "Courier">
+				> class.c <- sample(c("LWC","UWC","LMC"),10,replace = T)<br>
+				> class.c<br>
+				 [1] "UWC" "UWC" "LWC" "LWC" "LMC" "UWC" "LMC" "UWC" "UWC" "UWC"<br>
+				> as.factor(class.c)<br>
+				 [1] UWC UWC LWC LWC LMC UWC LMC UWC UWC UWC<br>
+				Levels: LMC LWC UWC<br>
+			</font>
+		</blockquote>
+		<p>It's basically the same kind of result as above <em>except</em> for the ordering of levels.  Here, the levels are ordred alphabetically,
+		wheras above they were ordered as we specified them.  For our purposes, this doesn't matter too much until we get to model fitting.
+		</p>
+		<h4><a name="chartonum">...numerical</a></h4>
+		<p>To convert a character vector to a numeric vector, use <font face = "Courier">as.numeric()</font>.  It is important to do this before
+		using the vector in any statistical functions, since the default behavior in R is to convert character vectors to factors.  Be careful that there are
+		no characters included in any strings, since  <font face = "Courier">as.numeric()</font> will return <font face = "Courier">NA</font>'s for these.</p>
+		<blockquote>
+			<font face = "Courier">
+				> age.c<-as.character(sample(18:30),10,replace = T)<br>
+				> age.c<br>
+				 [1] "29" "18" "21" "24" "30" "23" "26" "27" "19" "28" "25" "20" "22"<br>
+				> as.numeric(age.c)<br>
+				 [1] 29 18 21 24 30 23 26 27 19 28 25 20 22<br>
+				><br>
+				> percentages.c<-c(1,0.2,"5%",0.05)<br>
+				> percentages.c<br>
+				[1] "1"    "0.2"  "5%"   "0.05"<br>
+				> as.numeric(percentages.c)<br>
+				[1] 1.00 0.20   NA 0.05<br>
+				Warning message:	<br>
+				NAs introduced by coercion
+			</font>
+		</blockquote>
+		
+	<h3><a name ="ConFac">Converting Factors to...</a> </h3>
+	<p>Factors behave differently when being converted to characters vs. numbers</p>
+	<h4><a name="factochar">...character</a></h4>
+	<p>When a factor is passed to <font face="Courier">as.character()</font>, it returns the character label for the level.</p>
+	<blockquote>
+		<font face = "Courier">
+			> yob.f<-as.factor(sample(c(1969,1979,1989),10,replace = T))<br>
+			> yob.f<br>
+			 [1] 1989 1969 1979 1969 1969 1989 1969 1989 1969 1979<br>
+			Levels: 1969 1979 1989<br>
+			> as.character(yob.f)<br>
+			 [1] "1989" "1969" "1979" "1969" "1969" "1989" "1969" "1989" "1969" "1979"<br>
+		</font>
+	</blockquote>
+	<h4><a name="factonum">...numerical</a></h4>
+	<p>However, when passed to <font face = "Courier">as.numeric()</font>, it returns the numerical index of the level.</p>
+	<blockquote>
+		<font face = "Courier">
+			> as.numeric(yob.f)<br>
+			 [1] 3 1 2 1 1 3 1 3 1 2
+		</font>
+	</blockquote>
+	<p>To correctly convert factors to numbers, you could first convert it to a character vector, then convert that to a numeric vector.</p>
+	<blockquote>
+		<font face = "Courier">
+			> as.numeric(as.character(yob.f))<br>
+			 [1] 1989 1969 1979 1969 1969 1989 1969 1989 1969 1979
+		</font>
+	</blockquote>
+	<p>Or, you could do this, which the help pages says is more efficient, but a little more confusing conceptually.</p>
+	<blockquote>
+		<font face = "Courier">
+			> as.numeric(levels(yob.f))[yob.f]<br>
+			 [1] 1989 1969 1979 1969 1969 1989 1969 1989 1969 1979
+		</font>
+	</blockquote>
+	<h3><a name = "cut"><font face = "Courier">cut()</font></a></h3>
+	<p>This is technically not a conversion of types, but a useful way to reorganize continuous numerical data into factor data. Occasionally,
+	you may want to split a continuous variable into a categorical, or ordered one (ages into age groups, years into epochs, etc.).
+	<font face = "Courier">cut()</font> is the tool for this job. Lets generate a sample again:</p>
+	<blockquote>
+		<font face = "Courier">
+			> x <- sample(1:100, 100, replace = T)<br>
+			> x
+		</font>
+	</blockquote>
+	<p>So now we have a random sample of 100 samples with values between 1 and 100. What there wasn't actually an important continuous feature
+	of x, but rather all that mattered was whether the value was low, medium or high? We could split the data into three groups like this this way</p>
+	<blockquote>
+		<font face = "Courier">
+			> x.f <- cut(x, breaks = 3)<br>
+			> x.f
+		</font>
+	</blockquote>
+	<p>We've created a new factor based on the numeric value of x. The argument <font face = "Courier">breaks</font> defined how many bins to create.
+	The cut points for the bins were determined by the range of x divided by the number of breaks. </p>
+	<p>The labels of each bin indicate how each boundry was defined. </p>
+	<center>
+			<table border=1>
+			<tr><th>Name</th>  <th>Definition</th></tr>
+			<tr><td>(A,B]</td>  <td>x &gt; A and x &le; B</td></tr>
+			<tr><td>[A,B]</td>  <td>x &ge; A and x &le; B</td></tr>
+			<tr><td>[A,B)</td>  <td>x &ge; A and x &lt; B</td></tr>
+			</table>
+	</center>
+	<p>By default, <font face = "Courier">cut()</font> resorts to a (A,B] definition of levels. If you want to reverse it, to [A,B), pass False to
+	the argument <font face = "Courier">right</font>. To have the definition [A,B] for the lowest level, past True to the argument
+	<font face = "Courier">include.lowest</font>.</p>
+	<blockquote>
+		<font face = "Courier">
+			> x.f <- cut(x, breaks = 3,right = F)<br>
+			> x.f<br>
+			> x.f <- cut(x, breaks = 3,include.lowest = T)<br>
+			> x.f
+		</font>
+	</blockquote>
+	<p>We can also give meaningful names to each level. </p>
+		<blockquote>
+		<font face = "Courier">
+			> x.f <- cut(x, breaks = 3,labels = c("low","medium","high"))<br>
+			> x.f
+		</font>
+	</blockquote>
+	<p>If you had theoretical reasons to assume where the cutpoints should be, you can define those by hand. (<font face = "Courier">include.lowest</font>
+	will probably be very handy here.</p>
+		<blockquote>
+		<font face = "Courier">
+			> x.f <- cut(x, breaks = c(1,25,44,100), include.lowest= T)<br>
+			> x.f<br>
+			> x.f <- cut(x, breaks = c(1,25,44,100), include.lowest= T,labels = c("low","medium","high"))<br>
+			> x.f
+		</font>
+	</blockquote>	
+	
+	
+	<h2><a name="IO">Data Input-Output</a></h2>
+	<p>Here, we'll talk about how to load data into R, and how to write data back out to a data file.  When loading a data file into R, you are just
+	loading it into the R workspace.  Any alterations or modifications you make to the data frame will <em>not</em> be reflected in the file in your system,
+	<em>just</em> in the copy in the R workspace.</p>
+	
+	<h3><a name="Input">Input</a></h3>
+	<p>For the most part, data that will be loaded into R will be in the form of data tables.  Ideally, they will be plain text, and delimited either by tabs
+	or other whitespace, or by commas (.csv files).  I'll also briefly mention how to load Excel tables (.xls) into R.</p>
+	
+	<p>The two most likely commands to be used will be <font face = "Courier">read.delim()</font> or <font face = "Courier">read.csv()</font>.
+	<font face = "Courier">read.delim()</font> is used to read in files delimited by tabs, and <font face = "Courier">read.csv()</font> for files
+	delimited by commas.  Both of these functions assume that the first line is a header.  If this is not the case, then set the option 
+	<font face = "Courier">header = F</font>.  If the file you are looking at is delimited neither by tabs nor by commas, you should try 
+	<font face="Courier">read.table()</font> (which the first two are based on) with the option <font face = "Courier">sep</font> given the appropriate delimiter.
+	As always see <font face = "Courier">?read.table</font> for more info on all of these functions.</p>
+	
+	<p>These <font face = "Courier">read.table</font> commands will read in the data as a data frame, a particular data structure in R that we'll talk about below.
+	Be sure to assign the output of <font face = "Courier">read.table()</font> to a variable, or else it will just print the file, and that's no good to no one.</p>
+	
+	<p>For example, we could read in the data in cherokeeVOT from Johnson 2008 (
+	<a href="http://media.wiley.com/product_ancillary/46/14051442/DOWNLOAD/3phonetics.zip">here again</a> [ZIP])as follows.</p>
+	<blockquote>
+		<font face = "Courier">
+			> vot <- read.delim("PATH/cherokeeVOT.txt")<br>
+			> #or<br>
+			> vot <- read.table("PATH/cherokeeVOT.txt",sep = "\t",header = T)
+		</font>
+	</blockquote>
+	<p>It appears that on Windows machines, the proper file delimiter is still "/", even though if you copy the path, it will be delimited by "\".  
+	If you're copying a path into the prompt with the "\" delimiter, change them all to "/" to successfully load the file. </p>
+	<p>To load an excel file into R, you'll have to install load the <font face ="Courier">gdata</font> library for access to the 
+	<font face = "Courier">read.xls()</font> function.  Once you've installed and loaded <font face ="Courier">gdata</font>, see 
+	<font face = "Courier">?read.xls</font> for more details.  One thing to note is that <font face = "Courier">read.xls()</font> will require
+	that Perl is properly installed and configured on your system.  All in all, it's probably easier just to save your excel file as a .csv file for 
+	loading into R. It's also probably advisable to store your data, long term, in a non-proprietary format, like raw text. </p>
+	
+	<h3><a name="Output">Output</a></h3>
+	<p>If you want to save data a data frame that you've edited or enriched, use <font face = "Courier">write.csv()</font> or 
+	<font face = "Courier">write.table()</font>.  As the name suggests, <font face = "Courier">write.csv()</font> writes the data frame to a comma separated file.
+	Note, if one of your variables has a comma in it (like "City,State"), do <em>not</em> write to a csv, because it will ruin your life.
+	I personally don't like a few of the defualt settings to these commands, so here's what I change:
+	<dl>
+		<dt><font face="Courier">sep</font></dt><dd>-- If using <font face = "Courier">write.table()</font>, I set this to "\t", which writes a 
+						tab delimied file.  The default is a single space: " "</dd>
+		<dt><font face = "Courier">quote</font></dt><dd>-- I set this to F.  By default, character strings, and the character labels for factors will
+													be closed in quotes.  I don't like this so much, and it makes it harder to read by eye or for some
+													other script.</dd>
+		<dt><font face = "Courier">row.names</font></dt><dd>-- I set this to F. By default, it will write a column for the row names in the data frame.
+															These are usually meaningless, just being the row number.</dd>
+	</dl>
+	The final command will usually look something like this:
+	</p>
+	<blockquote>
+		<font face = "Courier">
+			> write.delim(vot,file = "PATH/vot.txt",sep = "\t",quote = F,row.names = F)
+		</font>
+	</blockquote>
+	<p>Again, on a Windows machine, use "/" even though the standard file delimiter is "\".</p>
+	
+	<p>There does not appear to be a <font face = "Courier">write.xls()</font> command of any variety.
+	<br>**Oops!  Spoke too soon.  As with almost anything R, if you ever say "There is no command for X," That probably just means you didn't 
+	<a href="http://www.google.com/#hl=en&q=r+write.xls&aq=0p&oq=R+write&aqi=g%3Ap1g9&fp=RSigrpzoeQc">Google for it</a>.</p>
+	
+	<h2><a name = "DataFrame">Data Frames</a></h2>
+	<p>Data Frames are the format you are most likely to access data from in R.  Columns of a data frame represent different variables, and ideally every
+	row will represent a different observation.</p>
+	
+	<p>A note on data formatting: R really prefers to have data in a long format. I was recently working with someone on managing and visualizing data
+	they had from an experiment. They had it formatted so that every row was a trial, and the columns indicated subject and trial information, and then
+	a long list of columns to the side recording observations for every timebin of the trial. This is not an ideal format. Every row should represent
+	a different observation, and in this case every timebin counted as a different observation.</p>
+	
+	<p>Lets focus on the Cherokee VOT data from Johnson 2008. To see how many rows and columns it has, use <font face="Courier">nrow()</font> 
+	and <font face="Courier">ncol()</font>.</p>
+	<blockquote>
+		<font face = "Courier">
+			> ncol(vot)<br>
+			[1] 3<br>
+			> nrow(vot)<br>
+			[1] 44<br>
+			</font>
+	</blockquote>
+	<p>There are 3 variables coded for 44 observations in the data.  To see the column names, which are the same as the variable names here, use
+	<font face ="Courier">colnames()</font>.</p>
+	<blockquote>
+		<font face = "Courier">
+			> colnames(vot)<br>
+			[1] "VOT"       "year"      "Consonant"
+		</font>
+	</blockquote>
+	<p>To see the first 6, or last 6 observations, use <font face = "Courier">head()</font>
+	and <font face = "Courier">tail()</font></p>
+	<blockquote>
+		<font face = "Courier">
+			> head(vot)<br>
+		</font>
+	</blockquote>
+	<xmp>
+  VOT year Consonant
+1  67 1971         k
+2 127 1971         k
+3  79 1971         k
+4 150 1971         k
+5  53 1971         k
+6  65 1971         k
+	</xmp>
+	<blockquote>
+			<font face = "Courier">
+			> tail(vot)<br>
+			</font>
+	</blockquote>
+	<xmp>
+   VOT year Consonant
+39 106 2001         t
+40  54 2001         t
+41  49 2001         t
+42  56 2001         t
+43  58 2001         t
+44  97 2001         t
+	</xmp>
+	<p>To get 5 number summaries of numerical data in a data frame and counts for factors, use <font face = "Courier">summary()</font>. (<font face = "Courier">summary()</font> 
+	is a general purpose function, and generates unique and interesting output for many different objects.) </p>
+	<blockquote>
+		<font face = "Courier">
+			> summary(vot)<br>
+		</font>
+	</blockquote>
+	<xmp>
+      VOT              year      Consonant
+ Min.   : 45.00   Min.   :1971   k:21     
+ 1st Qu.: 71.50   1st Qu.:1971   t:23     
+ Median : 81.50   Median :2001            
+ Mean   : 96.45   Mean   :1989            
+ 3rd Qu.:120.25   3rd Qu.:2001            
+ Max.   :193.00   Max.   :2001   
+	</xmp>
+	<p>It looks like the year variable has been read into R as a numeric variable.  On further inspection, this doesn't seem appropriate.  To access
+	any variable in a data frame, you can use <font face = "Courier">$</font> followed by the variable name.</p>
+	<blockquote>
+		<font face = "Courier">
+			> vot$year<br>
+			 [1] 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 1971 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001
+				2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001 2001
+		</font>
+	</blockquote>
+	<p>It looks like measurements were takend at two dates, one in 1971, and one in 2001 (this is, in fact, the description of the data in Johnson 2008,Ch 1)
+	This data would be more appropriately represented as a factor.  Convert types this way.</p>
+	<blockquote>
+		<font face = "Courier">
+			> vot$year <- as.factor(vot$year)<br>
+			> summary(vot)
+		</font>
+	</blockquote>
+	<p>You'll see now that the summary for the year variable is now a count, rather than a 5 number summary.</p>
+	
+	<p>The juul dataset in the library ISwR is another great exercise in properly formatting data, as discussed in Dalgaard 2008.  
+	If you look at a summary of juul, you'll see that a number of categorical variables have been coded with numeric codes, specifically 
+	menarche (which should be Yes/No/NA), Sex (which should be male/female/NA) and tanner (which should be I/II/III/IV/V/NA).  The following
+	code will convert them to meaningully named factors.</p>
+	<blockquote>
+		<font face = "Courier">
+			> juul$sex<-factor(juul$sex,labels = c("male","female"))<br>
+			> juul$menarche<-factor(juul$menarche,labels = c("No","Yes"))<br>
+			> juul$tanner <- factor(juul$tanner, labels = c("I","II","III","IV","V"))<br>
+			> summary(juul)
+		</font>
+	</blockquote>
+	<p>It's also a good idea to inspect data frames to see if tokens which should be coded with NA are actually coded 0.  This is pretty bad for
+	categorical variables, and just awful for numerical variables.</p>
+	
+	<h3><a name="index">Data Frame Indexing and Subsetting</a></h3>
+	<p>Indexing in data frames can work almost exactly like it does in matrices.  To see the first 6 rows of a data frame, you can use
+	<font face = "Courier">head()</font> -or- <font face="Courier">data[1:6,]</font> </p>
+	<blockquote>
+		<font face = "Courier">
+			> vot[1:6,]<br>
+			> juul[1:6,]
+		</font>
+	</blockquote>
+	<p>Likewise, you can see a column either by using <font face = "Courier">$</font>, or giving the column index.</p>
+	
+	<p>Frequently, you might want to pull out subets of the data frame, or subsets of variables based on certain conditons.  There are a few ways to do this.
+	First, you could generate a vector of boolean values, and use this as an index for the data frame.</p>
+	<blockquote>
+		<font face = "Courier">
+			> vot$VOT > 100<br>
+			> vot[vot$VOT > 100,]<br>
+			> vot[vot$Consonant == "t",]
+		</font>
+	</blockquote>
+	<p>If you just want to see variable values for a given factor level, there are at least two ways to do this.</p>
+	<blockquote>
+		<font face = "Courier">
+			> vot[vot$year == 1971,]$VOT<br>
+			> #or<br>
+			> vot$VOT[vot$year == 1971]
+		</font>
+	</blockquote>
+	<p>The first selects a subset of the data frame, then takes the VOT variable from that subset.  The second takes the variable first, the takes a subset of that.
+	I'm not sure if one approach is more efficient, common or preferable than the other.</p>
+	
+	<p>You could also use <font face = "Courier">subset()</font> function.  It takes a data frame as its first argument, a conditional expression as its,
+	second, and an optional selection argument, which takes a vector of variable names to return as an argument</p>
+	<blockquote>
+		<font face = "Courier">
+			> subset(vot,VOT>100 & Consonant == "k")<br>
+			> subset(vot,VOT>100 & Consonant == "k",select = c("VOT","year"))<br>
+			> subset(vot,VOT>100 & Consonant == "k")$VOT
+		</font>
+	</blockquote>
+	
+	<p>If you want to save time by not needing to do the <font face = "Courier">$</font> reference for a data frame you're working with a lot,
+	you can use the <font face = "Courier">attach()</font> command, which will allow you to directly reference the variable names.  Note, however,
+	that any type conversions you make to a data frame's variable will not be reflected in the attached version.  Once you've finished using the data frame,
+	you can remove it from the search path with <font face = "Courier">detach()</font>.</p>
+	
+	<h3><a name="Summary">More Summary Techniques</a></h3>
+	<p>There are a few more kinds of summary statistics you may want to know, involving counts, crosstabulations and means.</p>
+	
+	<p>The <font face = "Courier">table()</font> function will produce counts for any factor it is given.</p>
+	<blockquote>
+		<font face = "Courier">
+			> table(class.f)<br>
+			> table(vot$year)<br>
+			> table(vot$Consonant)
+		</font>
+	</blockquote>
+	<p>You can also use <font face = "Courier">table()</font> to generate crosstabulations.  The function <font face = "Courier">xtabs()</font> does the same
+	thing, but takes a formula (which we haven't talked about) as an argument.</p>
+	<blockquote>
+		<font face = "Courier">
+			> table(vot$Consonant,vot$year)<br>
+			> xtabs(~vot$Consonant+vot$year)
+		</font>
+	</blockquote>
+	<p>For multiway tables, the formatting of <font face = "Courier">table()</font> and <font face = "Courier">xtabs()</font> gets kind of ugly.  You could try
+	<font face = "Courier">ftable()</font> for these.</p>
+	<blockquote>
+		<font face = "Courier">
+			> table(juul$sex,juul$menarche,juul$tanner)<br>
+			> xtabs(~juul$sex+juul$menarche+juul$tanner)<br>
+			> ftable(juul$sex,juul$menarche,juul$tanner)
+		</font>
+	</blockquote>
+	
+	<p>If you'd like to see a percentage breakdown of a crosstabulation, pass the output of <font face="Courier">table()</font> to 
+	<font face="Courier">prop.table()</font>. You'll also need to define along which dimension you want the percentages to be calculated. 1 = row-wise,
+	2 = column-wise</p>
+	<blockquote>
+		<font face = "Courier">
+			> prop.table(table(vot$Consonant, vot$year),1)<br>
+			> prop.table(table(vot$Consonant, vot$year),2)
+		</font>
+	</blockquote>
+	<p>If there is some other metric you would like to see, like mean VOT per consonant or per year, use <font face= "Courier">tapply()</font>.
+	It takes as its first argument a numeric vector, for its second a factor, and for its third an arithmetic function. </p>
+	<blockquote>
+		<font face = "Courier">
+			> tapply(vot$VOT,vot$year,mean)<br>
+    		> tapply(vot$VOT,vot$year,median)<br>
+			> tapply(vot$VOT,vot$year,sd)<br>
+			> tapply(vot$VOT,vot$year,max)<br>
+			> tapply(vot$VOT,vot$Consonant,mean)<br>
+			> tapply(vot$VOT,vot$Consonant,median)<br>
+			> tapply(vot$VOT,vot$Consonant,sd)<br>
+			> tapply(vot$VOT,vot$Consonant,max)<br>
+		</font>
+	</blockquote>
+	<p>If you give a list (another data structure we haven't talked about) as the second argument to tapply, you'll get back a tabular response.</p>
+	<blockquote>
+		<font face = "Courier">
+			> tapply(vot$VOT,list(vot$Consonant,vot$year),mean)
+		</font>
+	</blockquote>
+	<p>It looks like something strange happened to the VOT of /k/ between 1971 and 2001.</p>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+	
+</html>

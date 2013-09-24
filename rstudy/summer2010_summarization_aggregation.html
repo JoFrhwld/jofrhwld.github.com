@@ -1,0 +1,510 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; R: Indexing and Subsetting</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+			<h1>Summer 2010 &mdash; R: Summarization and Aggregation</h1>
+				<table>
+					<tr>
+						<td><a href="summer2010_basics.html"><- R: Basics</a></td><td><a href = "r-study.html">Home</a> </td> <td> <a href="summer2010_functions.html">R: Functions</a>-></td> 
+					</tr>
+				</table>
+				<h2>Contents</h2>
+					<ol>
+						<li><a href = "#intro">Intro</li>
+						<li><a href = "#basics">Basics</li>
+							<ol>
+								<li><a href = "#table"> <rcode>table()</rcode></a></li>
+								<li><a href = "#tapply"> <rcode>tapply()</rcode></a></li>
+							</ol>
+						<li><a href = "#split_apply_combine">Split Apply Combine</a></li>
+						<li><a href = "#transform_summarize"> <rcode>transform()</rcode> and <rcode>summarize()</rcode></a></li>
+							<ol>
+								<li><a href = "#transform"> <rcode>transform()</rcode></a></li>
+								<li><a href = "#summarize"> <rcode>summarize()</rcode> </a></li>
+							</ol>
+						<li><a href = "#arbitrary_functions">Arbitrary Functions</a></li>
+							<ol>
+								<li><a href = "#repetition">Repetition Example</a></li>
+								<li><a href = "#normalization">Normalization Example</a></li>
+								<li><a href = "#models">Models example</a></li>
+							</ol>
+					</ol>	
+				<h2><a name = "intro"></a>Intro</h2>
+					<p>
+						Raw data is usually useful in its static state. Therefore, it's important to have a good toolset for summarizing and 
+						aggregating data.
+					</p>
+				<h2><a name = "basics"></a>Basics</h2>
+				<p>
+					There are quite a few good summarization functions in base R. The simplest are <rcode>table()</rcode> and <rcode>tapply()</rcode>.
+					I'll be demonstrating their use with a dataset of recorded telephone numbers,
+					 <a href="http://www.ling.upenn.edu/~joseff/rstudy/data/Joe.Durr1.txt">here</a>.
+				</p>
+				<p>
+					Briefly, I read 93 strings of 7 numbers formatted as telephone numbers (e.g. 123-4567). <rcode>Begin</rcode> and <rcode>End</rcode>
+					contain the begin and end time of the number in the recording in seconds. <rcode>Duration</rcode> is 
+					<rcode>End</rcode>-<rcode>Begin</rcode>. <rcode>Label</rcode> is the number which was read, <rcode>Num</rcode> is an ID for each
+					number sequence, and <rcode>Pos</rcode> represents the position in the number sequence.
+				</p>
+				<p>
+					The data is tab delimited, so we can load it with the following code.
+				</p>
+				<blockquote>
+					<rcode>
+						dur <- read.delim("http://www.ling.upenn.edu/~joseff/rstudy/data/Joe.Durr1.txt")<br>
+					</rcode>
+				</blockquote>
+				
+				<h3><a name = "table"></a> <rcode>table()</rcode></h3>
+				<p>
+					The <rcode>table()</rcode> function creates a table of counts of observations of values in factors you pass to it. 
+				</p>
+				<blockquote>
+					<rcode>
+						## How many of each number?<br>
+						table(dur$Label)<br>
+						<br>
+						##How many of each position?<br>
+						table(dur$Pos)<br>
+						<br>
+						##How many of each number in each position?<br>
+						table(dur$Label, dur$Pos)<br>
+						##Add some meaningful names to that table?<br>
+						table(Label = dur$Label, Position = dur$Pos)
+					</rcode>
+				</blockquote>
+				<p>
+					To get proportions in each cell of a table, wrap the <rcode>table()</rcode> function in <rcode>prop.table()</rcode>.
+					If you pass <rcode>1</rcode> to the <rcode>margin</rcode> argument, it will calculate proportions row-wise, and if you pass
+					<rcode>2</rcode>, it will calculate proportions column-wise. If you don't pass any value to the <rcode>margin</rcode>
+					argument, it will calculate grand proportions.
+				</p>
+				<blockquote>
+					<rcode>
+						table(Label = dur$Label, Position = dur$Pos)<br>
+						<br>
+						## Row-wise<br>
+						prop.table(table(Label = dur$Label, Position = dur$Pos),1)<br>
+						<br>
+						## Column-wise<br>
+						prop.table(table(Label = dur$Label, Position = dur$Pos),2)<br>
+						<br>
+						## Grand proporiton<br>
+						prop.table(table(Label = dur$Label, Position = dur$Pos))<br>
+					</rcode>
+				</blockquote>
+				
+				<h3><a name = "tapply"></a> <rcode>tapply()</rcode></h3>
+				<p>
+					The <rcode>tapply()</rcode> function will "apply" an arbitrary function to subsets of data. I'll be calculating means over
+					the log of duration, since duration tends to be lognormally distributed.
+				</p>
+				<blockquote>
+					<rcode>
+						## Geometric mean duration by number<br>
+						exp(tapply(log(dur$Duration), dur$Label, mean))<br>
+						<br>
+						## Median duration by number<br>
+						tapply(dur$Duration, dur$Label, median)<br>
+						<br>
+						## Total seconds spent on each number<br>
+						tapply(dur$Duration, dur$Label, sum)
+					</rcode>
+				</blockquote>
+				<p>
+					The nifty thing about <rcode>tapply()</rcode> is that you can also apply the function to cross-classified data.
+				</p>
+				<blockquote>
+					<rcode>
+						## Geometric mean duration by number by position<br>
+						exp(tapply(log(dur$Duration), list(dur$Label, dur$Pos), mean))<br>
+						<br>
+						## Sum of durations by number by position<br>
+						tapply(dur$Duration, list(dur$Label, dur$Pos), sum)
+					</rcode>
+				</blockquote>
+				
+				<h2><a name = "split_apply_combine"></a>Split Apply Combine</h2>
+				<p>
+					Frequently, you'll want to do something a bit more complex than <rcode>tapply()</rcode> can offer you, or you might
+					want the output formatted a little differently. For these purposes, I'd suggest using the <rcode>plyr</rcode> package.
+					The <rcode>plyr</rcode> website is here: <a href="http://had.co.nz/plyr/">http://had.co.nz/plyr/</a>. I would highly recommend
+					checking it out, and reading through the <a href="http://had.co.nz/plyr/plyr-intro-090510.pdf">documentation</a>[PDF].
+				</p>
+				<p>
+					As the <rcode>plyr</rcode> documentation discusses, when you want to aggregate or summarize data, what you really want to do
+					is <b>split</b> the data up into meaningful subsets, <b>apply</b> the same function or operation to every subset, then 
+					<b>combine</b> the results of every application into a single output. There already exist a bunch of functions in base R for this 
+					approach to aggregation (like <rcode>aggregate()</rcode>). What <rcode>plyr</rcode> offers is consistent naming conventions 
+					and syntax for the various approaches.
+				</p>
+				<p>
+					The core of <rcode>plyr</rcode> functionality is its series of <rcode>__ply()</rcode> functions, which all take the form of
+					<rcode>xyply()</rcode>, where <rcode>x</rcode> stands for the input data structure, and <rcode>y</rcode> stands for the desired output
+					data structure. The most common inputs and outputs are:
+				</p>
+				<center>
+				<table rules = groups>
+					<thead>
+						<td></td><td>Structure</td>
+					</thead>
+					<tbody>
+						<tr>
+							<td><rcode>a</rcode>:</td><td>array</td>
+						</tr>
+						<tr>
+							<td><rcode>d</rcode>:</td><td>data frame</td>
+						</tr>
+						<tr>
+							<td><rcode>l</rcode>:</td><td>list</td>
+						</tr>
+					</tbody>
+				</table>
+				</center>
+				
+				<p>
+					Most of the data structures we work with are data frames, and usually we'll want to keep working with data frames, so
+					<rcode>ddply()</rcode> is the <rcode>plyr</rcode> function we'll use the most.
+				</p>
+				<p>
+					<rcode>ddply()</rcode> takes three main arguments. 
+				</p>
+				<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing the data.</dd>
+					<dt><rcode>variables</rcode></dt>
+						<dd>The variables to split the data frame up by.</dd>
+					<dt><rcode>fun</rcode></dt>
+						<dd>The function to apply to the data frame subsets.</dd>
+				</dl>
+				<p>
+					The simplest function we can apply to an entire data frame and get meaningful results is <rcode>nrow()</rcode>. Let's
+					apply <rcode>nrow()</rcode> to subsets defined by <rcode>Label</rcode>, <rcode>Pos</rcode>, and <rcode>Label</rcode> and <rcode>Pos</rcode>.
+					<rcode>d*ply()</rcode> functions have a few different ways of specifiying the variables you want to split by. They're all equivalent, so
+					choose the one that you feel most comfortable with (see documentation for details).
+				</p>
+				<blockquote>
+					<rcode>
+						## Split by Label<Br>
+						ddply(dur, .(Label), nrow)<br>
+						<br>
+						## Split by Pos<br>
+						ddply(dur, .(Pos), nrow)<br>
+						<br>
+						## Split by label and Pos <br>
+						ddply(dur, .(Label, Pos), nrow)
+					</rcode>
+				</blockquote>
+				<p>
+					You can also create variables on the fly to split the data frame by. For example, I could split the data on various binnings
+					of <rcode>Duration</rcode> 
+				</p>
+				<blockquote>
+					<rcode>
+						## cut() Duration into 10 bins<br>
+						ddply(dur, .(DurBins = cut(Duration, 10)), nrow)<br>
+						<br>
+						## round() Duration to the nearest 1/10th second<br>
+						ddply(dur, .(DurBins = round(Duration, 1)), nrow)
+					</rcode>
+				</blockquote>
+				
+				
+				<h2><a name = "transform_summarize"></a> <rcode>transform()</rcode> and <rcode>summarize()</rcode></h2>
+				<p>
+					Some other useful out-of-the-box functions to use with <rcode>ddply()</rcode> are <rcode>transform()</rcode> and <rcode>summarize()</rcode>.
+					These functions operate over entire data frames. We can see how they work by applying them to a manual subset of the duration data.
+				</p>
+				
+				
+				<h3><a name = "transform"></a> <rcode>transform()</rcode></h3>
+				<blockquote>
+					<rcode>
+						## Subset of just "zero" in first position<br>
+						sub01 <- subset(dur, Label == 0 & Pos == 1)<br>
+						<br>
+						## transform duration to log centered<br>
+						sub01 <- transform(sub01, Dur_center = log(Duration) - mean(log(Duration)))
+					</rcode>
+				</blockquote>
+				<p>
+					After using <rcode>transform()</rcode>, <rcode>sub01</rcode> now has a new column called <rcode>Dur_center</rcode> 
+					which has values which are the log of <rcode>Duration</rcode> minus the mean of the log of <rcode>Duration</rcode>.
+				</p>
+				<p>
+					What if you wanted to apply this transformation to every subset of the data defined by unique combinations of 
+					<rcode>Label</rcode> and <rcode>Pos</rcode>? One way you could do it is to write a loop that takes every unique subset,
+					applies the transformation, then pastes it all together again at the end. Or, you could use <rcode>ddply()</rcode> as follows.
+				</p>
+				<blockquote>
+					<rcode>
+						## Log center every subset defined by Label:Duration<br>
+						dur <- ddply(dur, .(Label,Pos), transform, Dur_center = log(Duration) - mean(log(Duration)))
+					</rcode>
+				</blockquote>
+				<p>
+					Having applied this transformation, we could see how atypical a given recitation of a number in a given position is compared
+					to some other variable (ideally, we'd use z-scores, or residuals for this). For example, how did my speech rate vary over the length of the recording?
+				</p>
+				
+				<center>
+					<a href = "plots/aggregation/logcentered.R"><img src = "plots/aggregation/logcentered.png" width = 70%></a>
+				</center>
+				
+				<h3><a name = "summarize"></a> <rcode>summarize()</rcode> </h3>
+				<p>
+					<rcode>summarize()</rcode> is actually a function from the <rcode>plyr</rcode> package. Its behavior is somewhat different from 
+					<rcode>transform()</rcode>. First, let's look at what it does with the same subset of the data as above.
+				</p>
+				<blockquote>
+					<rcode>
+						## summarise dur<br>
+						summarise(sub01, Dur_mean = mean(Duration), Dur_sum = sum(Duration), Dumb = mean(end) - mean(Begin))
+					</rcode>
+				</blockquote>
+				<p>
+					Rather than returning the entire original data frame with additional columns, <rcode>summarize()</rcode> returns 
+					only the derived columns. So, let's apply the same summarization to every subset of the data with <rcode>ddply()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						dur_summary <- ddply(dur, .(Label, Pos), summarize, Dur_mean = mean(Duration), Dur_sum = sum(Duration), Dumb = mean(end) - mean(Begin))
+					</rcode>
+				</blockquote>
+				
+				
+				<h2><a name = "arbitrary_functions"></a>Arbitrary Functions</h2>
+				<h3><a name = "repetition"></a>Repetition Example</h3>
+				<p>
+					You can also write your own arbitrary functions that take data frames as arguments, and pass them as arguments to <rcode>ddply()</rcode>.
+				</p>
+				<p>
+					What if I wanted to test the hypothesis that if I read a number sequence where one of the numbers is immediately repeated (e.g. 123-4566), 
+					the second repetition of the number will be shorter. Let's write a special function to be passed to <rcode>ddply()</rcode> to code the
+					data properly.
+				</p>
+				<pre>
+codeRepeat <- function(df){
+  ## Make sure the dataframe is properly ordered
+  df <- df[order(df$Pos),]
+  
+  ## If the difference between two adjacent labels
+  ## is 0, they are the same label. The first label
+  ## cannot have been a repeat. 
+  df <- transform(df, Repeat = c(NA, diff(df$Label) == 0))
+	
+  return(df)
+}
+				</pre>
+				<p>
+					Now, pass the <rcode>codeRepeat()</rcode> function to <rcode>ddply</rcode>. We want to apply <rcode>codeRepeat()</rcode> to
+					every unique sequence of numbers.
+				</p>
+				<blockquote>
+					<rcode>
+						## apply the codeRepeat() function for every<br>
+						## string of numbers, identified by Num<br>
+						dur <- ddply(dur, .(Num), codeRepeat)
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Now that we've got the data coded, it's only a matter of running the proper analysis.
+				</p>
+				<blockquote>
+					<rcode>
+						mod <- lm(log(Duration) ~ factor(Pos)*factor(Label)*Repeat, data = dur)<br>
+						anova(mod)
+					</rcode>
+				</blockquote>
+				<p>
+					<a href="http://florianschwarz.net/">Florian Schwarz</a> had an excellent suggestion for doing this same analysis quickly with data
+					that is coded as a factor. If <rcode>Label</rcode> had coded as "one", "two", etc, we could not have used <rcode>diff()</rcode> in the
+					<rcode>codeRepeat()</rcode> function the same way. However, we could easilly reformat the factor to numeric indices with
+					<rcode>as.numeric()</rcode>, then used <rcode>codeRepeat()</rcode> in the same way.
+				</p>
+				
+				
+				
+				<h3><a name = "normalization"></a>Normalization Example</h3>
+				<p>
+					 I wrote this function to normalize formant data according to the ANAE method (there is also an ANAE normalization function in the 
+					 <rcode>vowels</rcode> R package).  
+				</p>
+				<pre>
+AnaeNormalize <- function(df, G = 6.896874, formants = c("F1","F2")){
+  m <- length(formants)
+  n <- nrow(df)
+  
+  S <-  sum( log(df[ , formants]) ) / (m*n)
+  
+  F <- exp(G - S)
+  
+  norm_formants <- paste(formants, "norm", sep = "_")
+  
+  for(i in seq(along = formants)){
+    df[[ norm_formants[i] ]] <- df[[ formants[i] ]] * F  
+  }
+  
+  return(df)
+}
+				</pre>
+				<p>
+					We can test this function out using some data from the <a href="http://ncslaap.lib.ncsu.edu/tools/">SLAAP</a> project's 
+					<a href="http://ncslaap.lib.ncsu.edu/tools/norm/norm1_help.php">NORM sample data sets</a>.
+				</p>
+				<blockquote>
+					<rcode>
+						## read in the data<br>
+						samp <- read.delim("http://ncslaap.lib.ncsu.edu/tools/norm/downloads/CentralOhioAndTyrone.txt")<br>
+						<br>
+						## apply the function<br>
+						samp_norm <- ddply(samp, .(speaker), AnaeNormalize)<br>
+						<br>
+						## Examine normalization efficacy<br>
+						## Step 1: Produce means<br>
+						samp_means <- ddply(samp_norm, .(speaker, vowel.frame), summarize, MF1 = mean(F1),
+							MF2 = mean(F2), MF1_norm = mean(F1_norm), MF2_norm = mean(F2_norm))<br>
+						<br>
+						## Step 2: Plot them<br>
+						unnorm <- qplot(-MF2, -MF1, data = samp_means, geom = "text", label = vowel.frame, size = I(2), main = "Unnormalized")+
+									facet_wrap(~speaker)<br>
+						<br>
+						norm <- qplot(-MF2_norm, -MF1_norm, data = samp_means, geom = "text", label = vowel.frame, size = I(2), main = "Normalized")+
+									facet_wrap(~speaker)<br>
+						<br>
+						print(unnorm)<br>
+						print(norm)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = "plots/aggregation/unnorm.png" width = 49.5%>
+					<img src = "plots/aggregation/norm.png" width = 49.5%>
+				</center>
+				<h3><a name = "models"></a>Models example</h3>
+				<p>
+					As a demonstration of the various things you can do with <rcode>plyr</rcode> functions, I'll fit a logistic regression
+					for every speaker in my buckeye td deletion data, predicting td deletion by word frequency.
+				</p>
+				<p>
+					First, I need to define a function.
+				</p>
+				<pre>
+fitBuckModels <- function(df){
+  mod <- glm(DepVar ~ Freq.z, data = df, family = binomial)
+  return(mod)
+}
+				</pre>
+				<p>
+					Next, load the buckeye data.
+				</p>
+				<blockquote>
+					<rcode>
+						buck <- read.csv("http://www.ling.upenn.edu/~joseff/rstudy/data/sbuck.csv")<br>
+						<br>
+						## zscore the frequency<br>
+						buck$Freq.z <- (buck$Log_Freq - mean(buck$Log_Freq)) / sd(buck$Log_Freq)
+					</rcode>
+				</blockquote>
+				<p>
+					I'll store every model fit in a list, so I'll need to use <rcode>dlply()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						buck_models <- dlply(buck, .(Speaker), fitBuckModels, .progress = "text")<br>
+						<br>
+						buck_models[1]
+					</rcode>
+				</blockquote>
+				<p>
+					Now, I'll access each of those models, and extract their coefficients.
+				</p>
+				<blockquote>
+					<rcode>
+						buck_coefs <- ldply(buck_models, coef)
+					</rcode>
+				</blockquote>
+				<h3>Hadley Wickham's Suggestions</h3>
+				<p>
+					Hadley Wickham (author of he <rcode>plyr</rcode> package) suggests the following workflow in the <rcode>plyr</rcode> 
+					documentation.
+				</p>
+				<ol>
+					<li>Extract a subset of the data for which it is easy to solve the problem.</li>
+					<li>Solve the problem by hand, checking results as you go. </li>
+					<li>Write a function that encapsulates the solution. </li>
+					<li>Use the appropriate plyr function to split up the original data, apply the function 
+					to each piece and join the pieces back together.</li> 
+				</ol>
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

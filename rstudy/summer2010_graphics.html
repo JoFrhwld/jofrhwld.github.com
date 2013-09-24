@@ -1,0 +1,402 @@
+sa<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; General: Graphics</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			perceived{
+				color: #832424;
+			}
+			actual{
+				color: #3A3A98;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+			<h1>Summer 2010 &mdash; General: Graphics</h1>
+				<table>
+					<tr>
+						<td><a href="summer2010_reshape.html"><- R: Reshaping	</a></td>
+						<td><a href = "r-study.html">Home</a> 
+						</td> <!--<td>Week 2-></td> -->
+					</tr>
+				</table>
+				<h2>Contents</h2>
+					
+				
+				<h2><a name = "intro"></a>Intro</h2>
+				<p>
+					The field of information design is already huge, and growing. 
+				</p>
+				<h2><a name = "background_reading"></a> Background Reading</h2>
+				<p>
+					When it comes to reading about information design, it all starts with Edward Tufte's <i>The Visual Display of Quantitative Information</i>.
+					I have found that insights from this and other Tufte works have greatly influenced my own approaches to data visualization, specifically
+					in terms of maintaining graphical integrity, and minimizing use of non-data "ink".
+				</p>
+				<p>
+					Another classic book in the area is John Tukey's <i>Exploratory Data Analysis</i>. I haven't read this, but I've heard it's very good.
+				</p>
+				<p>
+					I also suggest subscribing to a few blogs on data visualization. I find that nothing inspires me to try new and better visualizations like
+					seeing new excellent examples. The two blogs I'd suggest most highly are <a href="http://eagereyes.org/">Eager Eyes</a> and 
+					<a href="http://junkcharts.typepad.com/">Junk Charts</a>. Eager Eyes is maintained by Robert Kosara, who is an academic focusing on 
+					information visualization. Apparently they have conferences and everything. Junk Charts is maintained by Kaiser Fung, who is a professional
+					statistician.
+				</p>
+				<p>
+					A few other blogs which are pretty good, if not more broadly construed (that is, I don't always think they showcase useful or excellent
+					graphics) are <a href="http://flowingdata.com/">Flowing Data</a>, and <a href="http://chartporn.org/">Chart Porn.</a>
+				</p>
+				<p>
+					When it eventually comes time to produce graphics with <rcode>ggplot2</rcode>, two blogs I would highly suggest are 
+					<a href="http://learnr.wordpress.com/">Learning R</a>,
+					 and <a href="http://blog.diegovalle.net/">Diego Valle's Blog</a>. Learning R doesn't post very frequently, but its archives are an
+					 invaluable resource. Most of the posts are of the form "Here's plot A. Let's recreate it in <rcode>ggplot2</rcode>." It also has an 
+					 excellent series of posts corresponding to every chapter of the <rcode>lattice</rcode> book, recreating all of the graphics from each 
+					 chapter in <rcode>ggplot2</rcode>. As for Deigo Valle,I'm not sure who he is, but most of his posts involve visualizations of data sets 
+					 that strike his fancy. Most of them involve trends of violence and homicide in Mexico. He usually posts the code he used to create the 
+					 plots to <a href="https://github.com/">github</a>.
+				</p>
+				<h2><a name = "why_plot"></a> Why plot?</h2>
+				<p>
+					It's important to think of graphics you produce as a <i>report</i> of your data. Avoid thinking of a plot as a sketch, drawing, illustration, 
+					cartoon, decoration, or interpretive art piece of your data. They are merely a spacially and temporally more effective means of reporting your
+					raw data than printing all of the raw data in its entirety.
+				</p>
+				<p>
+					As was brought up in the study group, it's impossible to simply "report" data in any format without first interpreting it. In fact, the 
+					raw data you collect in the first place is interpretive. However, insofar as there is a particular or conventional way you would publish
+					numbers in a large table, and insofar as there are natural properties of those numbers, you want your graphic to accurately represent 
+					those properties.
+				</p>
+				<p>
+					When thinking about numerical data, it's important to think about properties of numbers. Numbers have order, magnitude, and what I'll
+					call contextual magnitude. When you read numbers printed in a table, you have an immediate sense of order and magnitude of the numbers
+					in comparison, and your experience with whatever the numbers represent tells you the contextual magnitude. For example, 
+				</p>
+				<center>
+				<table rules = groups cellpadding = 5px>
+					<colgroup></colgroup>
+					<colgroup span = 2></colgroup>
+					<thead>
+						<td>Groups</td><td>A</td><td>B</td>
+					</thead>
+					<tbody>
+						<td>Measure</td><td>2</td><td>5</td>
+					</tbody>
+				</table>
+				</center>
+				<p>
+					You immediately know that the order is 2 &lt; 5, or A &lt; B, and the magnitude is 5 =  2.5 * 2, or B = 2.5 * A. The contextual magnitude
+					depends on what is being measured. If A and B are bars, and the measure is the cost in dollars of a beer, then we know that B is pretty
+					reasonably priced, and A is super cheap (and probably a dive). If A and B are people, and the measure is their number of legs, then A is
+					what you'd expect, and B has an unbelievably large number of legs.
+				</p>
+				<p>
+					A graphic is only useful if it accurately conveys at least the order and magnitude of numbers, and ideally it would also convey the contextual
+					magnitude as well. Here is an accurate, and an inaccurate plot of the data above:
+				</p>
+				<center>
+					<a href= "plots/graphics/accurate_inaccurate.R"><img src = plots/graphics/accurate.png width = 49.5%></a>
+					<a href= "plots/graphics/accurate_inaccurate.R"><img src = plots/graphics/inaccurate.png width = 49.5%></a>
+				</center>
+				<p>
+					The accurate plot has a baseline of 0, the short line goes to 2, and the long line goes to 5. The magnitude of the difference
+					in line height is 2.5x, the same as the data. In the inaccurate plot, the short line still goes to 2, and the long line goes to 5, but the 
+					baseline starts at 1.75. The magnitude of the difference between line heights is now (5 - 1.75) / (2 - 1.75) = 13x.
+				</p>
+				<p>
+					Some people would say, and I agree with them, that the inaccurate plot has misreported the data. I actually think that this is a problem as
+					large as misreported statistical results, or misprinting numbers in a table. Edward Tufte formulates a Lie Factor for graphics, which is given as
+					(Size of the effect in the graphic) / (Size of the effect in the data). For these two graphics, the Lie Factor is 13/2.5 = 5.2.
+				</p>
+				<p>
+					Here's another example. In this case, I think the problem is an honest editorial mistake, where the graphic designer roughed out the 
+					design first, but forgot to update it with the actual data.
+				</p>
+				<center>
+					<a href = "plots/graphics/drugs.png"><img src = plots/graphics/drugs.png width = 40%></a>
+				</center>
+				<p>
+					They got the order right, except for one set of bars. We all might think that this is a ridiculous example, but it's a lot easier to fall into
+					a similar trap than you may think. This graphical designer clearly had a rough notion about the size of the effect they <i>wanted</i> to 
+					illustrate, and we all have a desire to showcase respectable effects in our research. If the designer so wished, once faced with the actual data,
+					they could have monkeyed with the y-axes of each small multiple, and produced the same exact plot (with the exception of the one order 
+					difference). We also have that capacity when generating plots of our own data. My assertion is that the plot here would not be more "honest" 
+					or accurate if the axes were labeled, just like it's not more honest or accurate because the data is printed directly on it. If the plot is only
+					accurately interpretable if the data or axes are carefully read, then a reader will understand the plot better if they ignore its graphical 
+					elements all together.
+				</p>
+				<p>
+					Here's the drug data, replotted accurately.
+				</p>
+				<center>
+					<a href = "plots/graphics/drug_new.R"><img src = plots/graphics/drug_new.png width = 60%></a>
+				</center>
+				<p>
+					It just so happens that this data is difficult to plot well. Some of the perceived and actual rates of usage are very low, while others are
+					very high. I experimented with plotting this data as perceived to actual ratios instead, but again this produced some huge and some infinite
+					 ratios. 48.4 / 0.3 = 161.3 and 2.4 / 0 = &#8734;
+				</p>
+				<p>
+					The challenges of creating a plot for this data, and the relatively few numbers involved suggest to me that the data shouldn't be plotted
+					at all, and should just be presented in a table instead, maybe in a fancier version than this:
+				</p>
+				<center>
+					<table cellpadding = 5px rules = groups>
+						<colgroup></colgroup>
+						<colgroup span = 2 ></colgroup>
+						<colgroup span = 2></colgroup>
+						<colgroup span = 2></colgroup>
+					<thead>
+						<tr>
+						<td></td><th colspan = 6>Frequency</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Drug</th><th colspan = 2>1-9</th><th colspan = 2>2-10</th><th colspan = 2>Daily</th>
+						</tr>
+					</tbody>
+					<tbody>
+						<tr>
+							<td>Opiates</td>
+								<td align = right><actual>0.7%</actual></td><td align = right><perceived>29.4%</perceived></td>
+								<td align = right><actual>0.0%</actual></td><td align = right><perceived>2.4%</perceived></td>
+								<td align = right><actual>0.0%</actual></td><td align = right><perceived>0.4%</perceived></td>
+						</tr>
+						<tr>
+							<td>Alcohol</td>
+								<td align = right><actual>56.9%</actual></td><td align = right><perceived>	30.9%</perceived></td>
+								<td align = right ><actual>21.1%</actual></td><td align = right><perceived>56.3%</perceived></td>
+								<td align = right><actual>1.4%</actual></td><td align = right><perceived>11.2%</perceived></td>
+						</tr>
+						<tr>
+							<td>Cocaine</td>
+								<td align = right><actual>0.3%</actual></td><td align = right><perceived>48.4%</perceived></td>
+								<td align = right><actual>0.2%</actual></td><td align = right><perceived>5.3%</perceived></td>
+								<td align = right><actual>0.0%</actual></td><td align = right><perceived>1.2%</perceived></td>
+						</tr>
+					</tbody>
+					</table>
+				</center>
+				<p>
+					Sometimes, the boldest and best graphical decision is not to make one at all.
+				</p>
+				
+				
+				<h2>Principles</h2>
+				
+				<h3>Be parsimonious</h3>
+				<p>
+					A plot which communicates the same data in many ways is not better than a plot which uses fewer ways, or one way.	To borrow
+					an example from Tufte, this plot is not particularly offensive:
+				</p>
+				<center>
+					<a href = "plots/graphics/ink.R"><img src = plots/graphics/ink.png width = 50%></a>
+				</center>
+				<p>
+					It accurately represents the data. However, it is overly redundant. The size of the measure is indicated
+					in 7 different ways.
+				</p>
+				<ol>
+					<li>The height of the left line.</li>
+					<li>The height of the right line.</li>
+					<li>The height of the top line.</li>
+					<li>The height of the filled color.</li>
+					<li>The height of the number.</li>
+					<li>The value of the number.</li>
+					<li>The axis labeling.</li>
+				</ol>
+				<p>
+					Groups in the data are indicated twice.
+				</p>
+				<ol>
+					<li>The position of the bars on the x-axis.</li>
+					<li>The filled colors of the bars.</li>
+				</ol>
+				<p>
+					A better approach would be to eliminate needless redundancy.
+				</p>
+				<center>
+					<a href = "plots/graphics/ink2.R"><img src = plots/graphics/ink2.png width = 50%></a>
+				</center>
+				
+				<h3>Use the appropriate graphical element for the data</h3>
+				<p>
+					There are certain conventions in data graphics, and readers will assume that there are certain properties of your data given 
+					these properties' conventional representation. Be sure that your graphical elements communicate correctly. For instance,
+					lines indicate changes within some category across a variable with a meaningful order. So, this plot incorrectly uses a line:
+				</p>
+				<center>
+					<a href = "plots/graphics/wrong_line.R"><img src = plots/graphics/wrong_line.png width = 50%></a>
+				</center>
+				<p>
+					Unless the values along the x-axis have a meaningful order, you shouldn't use lines to connect data at all, and think twice about it
+					if they don't have meaningful magnitudes.
+				</p>
+				<p>
+					Another, slightly different use of a line is to connect few, but meaningful groups of data points which are plotted in some other
+					dimensions, like I did in <a href="http://www.ling.upenn.edu/~joseff/rstudy/plots/reshape/edu_income2.png">the last plot</a> of 
+					<a href="http://www.ling.upenn.edu/~joseff/rstudy/summer2010_reshape.html#gender_gap">this <rcode>reshape</rcode> section</a>.
+				</p>
+				
+				<p>
+					You'll also see silly plots like this a lot, especially in newspapers (re: the drugs example above), where the incorrect number
+					of dimensons are utilized. This data plots median income of men and women from Philadelphia and its three immediately neighboring counties
+					in Pennsylvania, broken down by educational attainment.
+				</p>
+				<center>
+					<a href = "plots/graphics/phila_bar.R"><img src = plots/graphics/phila_bar.png width = 80%></a>
+				</center>
+				<p>
+					To read this plot, you need to compare every grouped blue and salmon bar, see that the blue bar is larger than the salmon bar, 
+					and make some sort of judgment about how much larger it is given the county and educational level. What's silly  is that there
+					are two main dimensions of comparison for each point (Female income and Male income), and we happen to have a simple graphical convention
+					for representing that.
+				</p>
+				<center>
+					<a href = "plots/graphics/phila_line.R"><img src = plots/graphics/phila_line.png width = 90%></a>
+				</center>
+				<p>
+					Some people didn't find this graphic immediately intuitive. I think the reason for this is because both axes are measures of the same
+					thing, but across different groups. Usually a two dimensional graphic represents two different kinds of measurements. I think, 
+					however, that this plot is a great way to compare different groups which vary in one dimension across many categories, but more familiarity
+					is necessary with this kind of plot before they can be quickly read.
+				</p>
+				<p>
+					Another way to plot the data is to take the ratio of women's income to men's income, then plot that along education.
+				</p>
+				<center>
+					<a href = "plots/graphics/phila_ratio.R"><img src = plots/graphics/phila_ratio.png width = 90%></a>
+				</center>
+				<p>
+					This plot represents the same data that women make less than men, but the ratio is better in Philadelphia County. However,
+					it loses the information that this is largely because men's income is greater in the suburban counties. My conclusion is the Male
+					Income by Female Income is the best way to plot the most information.
+				</p>
+				
+				<p>
+					Finally, don't make pie charts. There are few instances when pie charts are appropriate, and many more where they are very 
+					inappropriate. <a href="http://en.wikipedia.org/wiki/Pie_chart#Use.2C_effectiveness_and_visual_perception">This section</a> 
+					of <a href="http://en.wikipedia.org/wiki/Pie_chart">the pie charts wikipedia article</a> sums up the issues nicely.
+					3D pie charts are never appropriate, and are an enemy of truth and clarity. 
+					<a href="http://val-systems.blogspot.com/2010/06/dwindling-whites.html">This blog</a> post sums up those issues.
+				</p>
+				
+				<h3>Check for self sufficiency</h3>
+				<p>
+					Self sufficiency of a graphic is a notion I've read most about on Junk Charts. Like I mentioned above, if the graphic
+					isn't acurately interpretable unless all the data is printed on it, it's not self sufficient, and a table would be a more
+					spacially economic.
+				</p>
+				
+				<h3>Use appropriate and consistent scales and scaling</h3>
+				<p>
+					Sometimes, your data may not be linearly distributed. The most frequent non-linear distribution I see is logarithmic. Things like
+					population sizes, incomes (see the above plot), durations etc., which all have a fairly hard lower bound, tend to be logarithmic.
+					The best way to plot this data is either to plot the <rcode>log()</rcode> of the values, or to adjust the scales of the axes, which 
+					I did above.
+				</p>
+				<p>
+					Consistency of scales is also very important. Readers will probably immedately interpret all plots as having the same scaling, and
+					if your scaling varies, either in the range of the axes or the aspect ratio of the plot, comparing plots of similar data will become
+					very difficult.
+				</p>
+				<center>
+					<a href = "plots/graphics/scale1_scale2.R"><img src = plots/graphics/scale1.png width = 49%></a>
+					<a href = "plots/graphics/scale1_scale2.R"><img src = plots/graphics/scale2.png width = 49%></a>
+				</center>
+				<p>
+					Finally, sometimes the way you scale your plot elements will affect their accuracy. An amateur, but not infrequent error to make
+					in a bubble plot is to scale the radius of a circle to the magnitude of the data. However, people don't see a radius when they look at a circle,
+					they see an area. You should scale the area by the magnitude of the data, or the radius to the square of the data.
+				</p>
+				<p>
+					Here, I've calculated the face areas of U.S. coins. One sensible way to plot this data is as a set of circles. But, the first plot
+					is wildly inaccurate when the radius is scaled to the face area.
+				</p>
+				<center>
+					<a href = "plots/graphics/right_wrong_circle.R"><img src = plots/graphics/wrong_circle.png width = 80%></a>
+				</center>
+				<p>
+					Is the difference between a dime and a quarter really that extreme? A square root y scale does the trick.
+				</p>
+				<center>
+					<a href = "plots/graphics/right_wrong_circle.R"><img src = plots/graphics/right_circle1.png width = 80%></a>
+				</center>
+				<p>
+					Or, we could do the really right thing, and scale the radius to the radius.
+				</p>
+				<center>
+					<a href = "plots/graphics/right_wrong_circle.R"><img src = plots/graphics/right_circle2.png width = 80%></a>
+				</center>
+			
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

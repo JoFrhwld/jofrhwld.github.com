@@ -1,0 +1,130 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 Week 1</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+
+			-->
+		</style>
+	</head> 
+	</head>
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+				<h1>Summer 2010: Intro</h1>
+				<p>
+					<table>
+						<tr>
+							<td><a href = "r-study.html">Home</a> </td><td><a href="summer2010_general_data_structure.html">General: Data Structure -></a></td>
+						</tr>
+					</table>
+				</p>
+				
+				<h2>Info</h2>
+					<p>This is the website for the Summer 2010 meetings of the UPenn R Study Group. It has been organized by
+					Josef Fruehwald and attended mostly by researchers affiliated with the Linguistics and Psychology Departments
+					at Penn.</p>
+					
+					<p>Check out the Google Group for e-mail updates:<br>
+					<a href="http://groups.google.com/group/penn-r-study-2010">http://groups.google.com/group/penn-r-study-2010</a></p>
+		
+				<h2>Agenda for the R Study Group 2010</h2>
+					<p>
+						Hopefully, this Study Group will operate more like a workshop. That is, it should be maximally flexible and participatory.
+						It would be most useful if we brought datasets which we care about to work with. 
+					</p>
+
+					<h3>Goals for Data Structure and Manipulation</h3>
+						<p>
+							The first half of the workshop will devoted to structuring, manipulating and aggregating your data. Time spent figuring out how
+							to do these things on your own for the first time constitutes an enormous time suck. I think that improving our abilities in these
+							areas will vastly improve our data analysis efficiency.
+						</p>
+						<ul>
+							<li>General: Discuss the ideal and most flexible formats for data.</li>
+							<li>General: Discuss data collection and storage.</li>
+							<li>R: Reshaping Data. (<rcode>reshape</rcode> package)</li>
+							<li>R: Manipulating And Subsetting Data.</li>
+							<li>R: Data Aggregation. (<rcode>reshape</rcode> and <rcode>plyr</rcode> packages)</li>
+							<li>R: Efficient workflows.</li>
+						</ul>
+
+					<h3>Goals for Graphical Display</h3>
+						<p>
+							The second half of the workshop will be devoted to generating appropriate and effective graphics,
+							focusing especially on using the <rcode>ggplot2</rcode> package.
+						</p>
+						<ul>
+							<li>General: Discuss appropriate kinds and designs of graphics.</li>
+							<li>R: Designing graphics in <rcode>ggplot2</rcode></li>
+							<li>R: Fine tuning graphics in <rcode>ggplot2</rcode></li>
+						</ul>
+				<h2>Sources and References</h2>
+					<h3>Data Manipulation</h3>
+					<ul>
+						<li><i>Data Manipulation with R</i>, Phil Spector<br>
+							This is a pretty good, and broad book on how to do data manipulation</li>
+						<li><a href = "http://had.co.nz/plyr/">Plyr webpage</a><br>
+								<a href = "http://had.co.nz/plyr/09-user/">A plyr course</a><br>
+								<a href = "http://had.co.nz/plyr/plyr-intro-090510.pdf">Plyr documentation</a>[pdf]<br>
+								Plyr is an excellent data aggregation package, and also allows for powerful batch application
+								of a function over subsets of your data.</li>
+						<li><a href = "http://had.co.nz/reshape/">Reshape webpage</a><br>
+							<a href = "http://www.jstatsoft.org/v21/i12">Intro to Reshape</a><br>
+							Reshape is a package for reshaping your data. </li>
+					</ul>
+					<h3>Graphical Display</h3>
+					<ul>
+						<li><i>The Visual Display of Quantitiative Information</i>, Edward Tufte<br>
+							A classic. Sometimes called the Strunk and White of data visualization, 
+							but <a href="http://www.npr.org/templates/story/story.php?storyId=103171738">they always mean it as 
+							a compliment</a>. </li>
+						<li><a href = "http://junkcharts.typepad.com/junk_charts/">Junk Charts</a><br>A blog on what not to do</li>
+						<li><a href = "http://eagereyes.org/blog">Eager Eyes:Blog</a><br>An Infoviz Blog</li>
+						<li><a href = "http://had.co.nz/ggplot2/">ggplot2 website</a></li>
+					</ul>
+				<h2>Calendar</h2>
+					<iframe src="http://www.google.com/calendar/embed?showCalendars=0&amp;mode=AGENDA&amp;height=600&amp;wkst=2&amp;bgcolor=%23FFFFFF&amp;src=m7a2isqk7vi38pug1ir4v1dko4%40group.calendar.google.com&amp;color=%23853104&amp;ctz=America%2FNew_York" style=" border:solid 1px #777 " width="600" height="600" frameborder="0" scrolling="no"></iframe>
+			</div>
+		</div>
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

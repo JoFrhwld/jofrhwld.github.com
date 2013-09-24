@@ -1,0 +1,10 @@
+par(mfrow = c(3,3),mar = c(4,4,2,2))
+plot(1:10, type = "p",main = 'plot = "p"',xlab = "") ##default
+plot(1:10, type = "l",main = 'plot = "l"',xlab = "")
+plot(1:10, type = "b",main = 'plot = "b"',xlab = "")
+plot(1:10, type = "c",main = 'plot = "c"',xlab = "")
+plot(1:10, type = "o",main = 'plot = "o"',xlab = "")
+plot(1:10, type = "h",main = 'plot = "h"',xlab = "")
+plot(1:10, type = "s",main = 'plot = "s"',xlab = "")
+plot(1:10, type = "S",main = 'plot = "S"',xlab = "")
+plot(1:10, type = "n",main = 'plot = "n"',xlab = "")

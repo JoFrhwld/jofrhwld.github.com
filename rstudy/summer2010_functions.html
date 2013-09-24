@@ -1,0 +1,196 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; R: Data Goals</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+			<h1>Summer 2010 &mdash; R: Functions</h1>
+				<table>
+					<tr>
+						<td><a href="summer2010_summarization_aggregation.html"><- R: Summarization and Aggregation</a></td>
+							<td><a href = "r-study.html">Home</a> </td> 
+							<td><a href="summer2010_reshape.html">R: Reshaping</a> -></td>
+					</tr>
+				</table>
+				<h2>Contents</h2>
+				<ol>
+					<li><a href = "#intro">Intro</a></li>
+					<li><a href = "#function"><rcode>function()</rcode></a></li>
+					<li><a href = "#argument_interpretation">Argument Interpretation</a></li>
+					<li><a href = "#defaults">Defaults</a></li>
+				</ol>
+				
+				<h2><a name = "intro"></a>Intro</h2>
+				<p>
+					If you have a series of commands that you intend to run many times on many pieces of similar data (say, in combination with the
+					<rcode>plyr</rcode> package), then you will want to write a function.
+				</p>
+				<h2><a name = "function"></a><rcode>function()</rcode></h2>
+				<p>
+					You define a new function with the <rcode>function()</rcode> command. Its arguments are the arguments you want to pass to your 
+					function. 
+				</p>
+				<pre>
+foo <- function(x){
+  x <- x*10
+  return(x)
+}
+				</pre>
+				<p>
+					Run <rcode>foo(1:10)</rcode> and see what you get.
+				</p>
+				<p>
+					Here are some more useful functions, of the sort you're more likely to write.
+				</p>
+				<pre>
+zscore <- function(x){
+  ## Returns z-scored values
+  x.mean <- mean(x)
+  x.sd <- sd(x)
+	
+  x.z <- (x-x.mean)/x.sd
+	
+  return(x.z)
+}
+				</pre>
+				<blockquote>
+					<rcode>
+						x <- rnorm(100, mean = -1)<br>
+						<br>
+						mean(x)<br>
+						mean(zscore(x))
+					</rcode>
+				</blockquote>				
+				<pre>
+zscoreByGroup <- function(x, groups){
+  #Compute zscores within groups
+  out <- rep(NA, length(x))
+  
+  for(i in unique(groups)){
+    out[groups == i] <- zscore(x[groups == i])
+  }
+  return(out)
+}
+				</pre>
+				<blockquote>
+					<rcode>
+						x <- c(rnorm(100, mean = -1), rnorm(100, mean = 1))<br>
+						groups <- c(rep("A",100), rep("B",100))<br>
+						<br>
+						tapply(x, groups, mean)<br>
+						tapply(zscore(x), groups, mean)<br>
+						tapply(zscoreByGroup(x, groups), groups, mean)
+					</rcode>
+				</blockquote>
+				
+				<h2><a name = "argument_interpretation"></a>Argument Interpretation</h2>
+				<p>
+					R is pretty clever in its interpretation of arguments passed to functions. By default, it will assume that the first argument matches
+					the first defined argment, and the second the second, etc.
+				</p>
+				<pre>
+bar <- function(a,b,c){
+  return(c(a = a, b = b, c = c))
+}
+				</pre>
+				<blockquote>
+					<rcode>
+						bar(1,2,3)<br>
+						bar(4,1,9)
+					</rcode>
+				</blockquote>
+				<p>
+					You can also explicitly declare which values get passed to which arguments.
+				</p>
+				<blockquote>
+					<rcode>
+						bar(a = 1, c = 3, b = 2)<br>
+						bar(c = 3, b = 2, a = 1)
+					</rcode>
+				</blockquote>
+				<h2><a name = "defaults"></a>Defaults</h2>
+				<p>
+					You can also define default values for arguments.
+				</p>
+				<pre>
+bar <- function(a=1,b=2,c=3){
+  return(c(a = a, b = b, c = c))
+}
+				</pre>
+				<blockquote>
+					<rcode>
+						bar()<br>
+						bar(5)<br>
+						bar(b = 4)
+					</rcode>
+				</blockquote>
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

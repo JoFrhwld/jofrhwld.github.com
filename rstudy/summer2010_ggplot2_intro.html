@@ -1,0 +1,1236 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; R: ggplot2 Intro</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			perceived{
+				color: #832424;
+			}
+			actual{
+				color: #3A3A98;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+			<h1>Summer 2010 &mdash; R: <rcode>ggplot2</rcode> Intro</h1>
+				<table>
+					<tr>
+						<td><a href="summer2010_graphics.html"><-General: Graphics	</a></td>
+						<td><a href = "r-study.html">Home</a> 
+						</td> <!--<td>Week 2-></td> -->
+					</tr>
+				</table>
+				<h2>Contents</h2>
+					
+				
+				<h2><a name = "intro"></a>Intro</h2>
+				<p>
+					When it comes to producing graphics in R, there are basically three options for your average user.
+				</p>
+				<ol>
+					<li>base graphics</li>
+					<li><rcode>lattice</rcode></li>
+					<li><rcode>ggplot2</rcode></li>
+				</ol>
+				<p>
+					I've written up a pretty comprehensive description for use of base graphics <a href="week4.html">here</a>, and don't intend to extend 
+					beyond that. Base graphics are attractive, and flexible, but when it comes to creating more complex plots, like 
+					<a href="plots/categorical/buck4.png">this one</a>, <a href="plots/categorical/buck4.R">the code to create it</a> become more cumbersome.
+				</p>
+				<p>
+					Both <rcode>lattice</rcode> and <rcode>ggplot2</rcode> make creating plots of multivariate data easier. However, I find it easier
+					to create customized and novel plots with <rcode>ggplot2</rcode> than <rcode>lattice</rcode>, and its syntax is more sensible to me. 
+					This may qualify as a matter of taste, but for this reason we'll focus on creating graphics with <rcode>ggplot2</rcode>.
+				</p>
+				<p>
+					The website for ggplot2 is here: <a href="http://had.co.nz/ggplot2/">http://had.co.nz/ggplot2/</a>. It 
+					
+					I would highly suggest getting a copy of the
+					manual: 
+					<a href="http://www.amazon.com/gp/product/0387981403?ie=UTF8&tag=hadlwick-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=0387981403">
+						Amazon</a> (as of July 2010, it looks like you can buy it new for cheaper than used!). 
+				</p>
+				
+				<h2> <rcode>ggplot2</rcode> Basics</h2>
+				<p>
+					<rcode>ggplot2</rcode> is meant to be an implementation of 
+					<a href="http://books.google.com/books?id=_kRX4LoFfGQC&lpg=PP1&dq=grammar%20of%20graphics&pg=PP1#v=onepage&q&f=false">
+						the Grammar of Graphics</a>, hence gg-plot. The basic notion is that there is a grammar to the composition of graphical components
+					in statistical graphics, and by direcly controlling that grammar, you can generate a large set of carefully constructed graphics tailored
+					to your particular needs. Each component is added to the plot as a layer. 
+				</p>
+				<p>
+					Plots convey information through various aspects of their <b>aesthetics</b>. Some aesthetics that plots use are:
+				</p>
+					<ul>
+						<li>x position</li>
+						<li>y position</li>
+						<li>size of elements</li>
+						<li>shape of elements</li>
+						<li>color of elements</li>
+					</ul>
+				<p>
+					The elements in a plot are <b>geometric</b> shapes, like
+				</p>
+					<ul>
+						<li>points</li>
+						<li>lines</li>
+						<li>line segments</li>
+						<li>bars</li>
+						<li>text</li>
+					</ul>
+				<p>
+					Some of these geometries have their own particular aesthetics. For instance:
+				</p>
+					<ul>
+						<li>points</li>
+						<ul>
+							<li>point shape</li>
+							<li>point size</li>
+						</ul>
+						<li>lines</li>
+						<ul>
+							<li>line type</li>
+							<li>line weight</li>
+						</ul>
+						<li>bars</li>
+						<ul>
+							<li>y minimum</li>
+							<li>y maximum</li>
+							<li>fill color</li>
+							<li>outline color</li>
+						</ul>
+						<li>text</li>
+						<ul>
+							<li>label value</li>
+						</ul>
+					</ul>
+				<p>
+					There are other basics of these graphics that you can adjust, like the <b>scaling</b> of the aesthetics, and the 
+					<b>positions</b> of the geometries.
+				</p>
+				<p>
+					The values represented in the plot are the product of various <b>statistics</b>. If you just plot the raw data, you can think of each
+					point representing the identity statistic. Many bar charts represent the mean or median statistic. Histograms are bar charts where
+					the bars represent the binned count or density statistic.
+				</p>
+				
+				<h3>Layer by Layer</h3>
+				<p>
+					There's a quick plotting function in <rcode>ggplot2</rcode> called <rcode>qplot()</rcode> which is meant to be similar to the
+					<rcode>plot()</rcode> fuction from base graphics. You can do a lot with <rcode>qplot()</rcode>, but I think it's better to 
+					approach the package from the layering syntax.
+				</p>
+				<p>
+					All <rcode>ggplot2</rcode> plots begin with the function <rcode>ggplot()</rcode>. <rcode>ggplot()</rcode> takes two primary arguments:
+				</p>
+				<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing the data to be plotted</dd>
+					<dt><rcode>aes()</rcode></dt>
+						<dd>The aesthetic mappings to pass on to the plot elements</dd>
+				</dl>
+				<p>
+					As you can see, the second argument, <rcode>aes()</rcode>, isn't a normal argument, but another function. Since we'll never use
+					<rcode>aes()</rcode> as a separate function, it might be best to think of it as a special way to pass a list of arguments to the 
+					plot.
+				</p>
+				<p>
+					The next step in creating a plot is to add one or more layers. Let's start with the an example from the 
+					<rcode>ggplot2</rcode> book, with the <rcode>mpg</rcode> data set.
+				</p>
+				<blockquote>
+					<rcode>
+						?mpg<br>
+						summary(mpg)<br>
+						<br>
+						p <- ggplot(mpg, aes(displ, hwy))
+					</rcode>
+				</blockquote>
+				<p>
+					If you just type <rcode>p</rcode> or <rcode>print(p)</rcode>, you'll get back a warning saying that the plot lacks any layers. With
+					the <rcode>ggplot()</rcode> function, we've set up a plot which is going to draw from the <rcode>mpg</rcode>, the <rcode>displ</rcode>
+					variable will be mapped to the x-axis, and the <rcode>hwy</rcode> variable is going to be mapped to the y-axis. However, we have not 
+					determined which kind of geometric object will represent the data. Let's add points, for a scatterplot.
+				</p>
+				<blockquote>
+					<rcode>
+						p + geom_point()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/mpg_scatter.png width = 80%>
+				</center>
+				<p>
+					You add geometries to a plot with one of the <rcode>geom_*()</rcode> functions, using the <rcode>+</rcode> operator. To see a full
+					list of available geometries, look at the <a href="http://had.co.nz/ggplot2/">ggplot2 webpage</a> under "Geoms". It's not necessary to assign
+					the <rcode>ggplot()</rcode> call to an object before adding geoms. This code will produce an equivalent result.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point()
+					</rcode>
+				</blockquote>
+				<p>
+					Notice how we didn't pass any arguments to <rcode>geom_point()</rcode>. In order to map points to values on the x and y axes, 
+					<rcode>geom_point()</rcode> needs to know what variables we're mapping to the x and y axes. It inherited this information from
+					<rcode>ggplot()</rcode>. The aesthetic settings from <rcode>ggplot()</rcode> could be overridden for any geom, and new aesthetics can
+					be defined within any geom, but these won't be passed on to any other. 
+				</p>
+				<p>
+					The best way to demonstrate this is to make a few nonsensical plots. First, we'll create the same plot as above, but also connect all
+					the points with a line.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/nonsense1.png width = 80%>
+				</center>
+				<p>
+					Now, we're representing the x and y variables with points and a line, connecting all the points. This isn't a very meaningful plot for
+					this data.
+				</p>
+				
+				<p>
+					Next, we'll color the points according to the number of cylinders in the engine, treating number of cylinders as a nominal
+					variable. We'll pass this color mapping to <rcode>geom_point()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point(aes(color = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/nonsense2.png width = 80%>
+				</center>
+				<p>
+					The points are colored, the line is not, and a legend has automatically been added.
+				</p>
+				
+				<p>
+					Next, we'll pass the color mapping to the line, not the points.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;geom_line(aes(color = factor(cyl)))
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/nonsense3.png width = 80%>
+				</center>
+				<p>
+					Now the line is colored, and the points are not. It's kind of hard to tell with this plot, but lines which are different colors
+					are not connected. The legend also represents the fact that lines are colored.
+				</p>
+				
+				<p>
+					Finally, we can pass the color mapping to <rcode>ggplot()</rcode>, meaning that <rcode>geom_point()</rcode>, <rcode>geom_line()</rcode>,
+					and any other added geom which has a color aesthetic will inherit that mapping.
+				</p>
+				
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, color = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/nonsense4.png width = 80%>
+				</center>
+				<p>
+					Let's look at some other geoms with other data.
+				</p>
+				<blockquote>
+					<rcode>
+						source("http://www.ling.upenn.edu/~joseff/rstudy/data/coins.R")<br>
+					</rcode>
+				</blockquote>
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value))+<br>
+						&nbsp;&nbsp;geom_point()<br>
+					</rcode>				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin1.png"><img src = plots/ggplotintro/coin1.png width = 30%></a>
+				</center>
+				
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value))+<br>
+						&nbsp;&nbsp;geom_bar()<br>
+					</rcode>				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin2.png"><img src = plots/ggplotintro/coin2.png width = 30%></a>
+				</center>
+				
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value * N))+<br>
+						&nbsp;&nbsp;geom_point()<br>
+					</rcode>				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin3.png"><img src = plots/ggplotintro/coin3.png width = 30%></a>
+				</center>
+				
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value * N))+<br>
+						&nbsp;&nbsp;geom_bar()<br>
+					</rcode>				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin4.png"><img src = plots/ggplotintro/coin4.png width = 30%></a>
+				</center>
+				
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value * N))+<br>
+						&nbsp;&nbsp;geom_bar(aes(color = coin))<br>
+					</rcode>				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin5.png"><img src = plots/ggplotintro/coin5.png width = 30%></a>
+				</center>
+				
+				
+				<blockquote>
+					<rcode>
+						ggplot(coins, aes(coin, value * N))+<br>
+						&nbsp;&nbsp;geom_bar(aes(fill = coin))<br>
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/ggplotintro/coin6.png"><img src = plots/ggplotintro/coin6.png width = 30%></a>
+				</center>
+				
+				
+				<h2>Displaying Statistics</h2>
+				<p>
+					You'll frequently want to add statistical analyses to your plots, or your plots may just be of statistical summaries anyway.
+					<rcode>ggplot2</rcode> has a few built in statistics to make plotting easier.
+				</p>
+				<p>
+					The most frequent statistic I use is a smoothing line with <rcode>stat_smooth()</rcode>. There are a number of different smoothing lines
+					you can add, from local regression lines (loess) to linear or logistic regressions. Let's start with the <rcode>mpg</rcode> data again.
+				</p>
+				<blockquote>
+					<rcode>
+						p <- ggplot(mpg, aes(displ, hwy))<br>
+						<br>
+						p + geom_point() + stat_smooth()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/stat1.png width = 80%>
+				</center>
+				<p>
+					By default, <rcode>stat_smooth()</rcode> has added a loess line with the standard error represented by a semi-transparent ribbon.
+					You could also specify the <rcode>method</rcode> to use to add a different smoothing line.
+				</p>
+				<blockquote>
+					<rcode>
+						p + geom_point() + stat_smooth(method = "lm")<br>
+						<br>
+						library(MASS)<br>
+						p + geom_point() + stat_smooth(method = "rlm")
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Now, statistics are represented with default geometries. For <rcode>stat_smooth()</rcode>, its default geoms are 
+					<rcode>geom_ribbon() + geom_smooth()</rcode>. You could also (inadvisedly) represent the output of the smoothing function
+					with points and errorbars.
+				</p>
+				<blockquote>
+					<rcode>
+						p + stat_smooth(geom = "point")+stat_smooth(geom = "errorbar")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/stat2.png width = 80%>
+				</center>
+				<p>
+					Geoms also have default statistics associated with them. For <rcode>geom_point()</rcode>, the default statistic is 
+					<rcode>stat_identity()</rcode>, but we could also change that.
+				</p>
+				<blockquote>
+					<rcode>
+						## These should produce equivalent plots.<br>
+						p + geom_point(stat = "smooth")<br>
+						p + stat_smooth(geom = "point")
+					</rcode>
+				</blockquote>
+				
+				<p>
+					There exist some stats and geoms which have the same name. Adding either one to a plot will produce the same plot. Take 
+					<rcode>*_boxplot()</rcode>. A boxplot produces a shape, therefore is a particular geom. However, the parameters of each part
+					of a boxplot are determined by various statistics. The middle bar is the 50% percentile, the bottom and top of the box are the
+					25% and 75% percentiles, etc. <rcode>stat_boxplot()</rcode> calculates these statistics, then passes them to <rcode>geom_boxplot()</rcode>.
+					The one would be pretty useless without the other, so adding <rcode>geom_boxplot()</rcode> to a plot automatically calculates the boxplot
+					statistics, and adding <rcode>stat_boxplot()</rcode> to a plot automatically plots the calculated statistics as a boxplot.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(class, hwy))+<br>
+						&nbsp;&nbsp;stat_boxplot()<br>
+						<br>
+						#equivalent to<br>
+						<br>
+						ggplot(mpg, aes(class, hwy))+<br>
+						&nbsp;&nbsp;geom_boxplot()<br>
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/boxplot1.png width = 80%>
+				</center>
+				<p>
+					The same actually goes for <rcode>stat_smooth()</rcode> and <rcode>geom_smooth()</rcode>.
+				</p>
+					<boxplot>
+					<rcode>
+						p + stat_smooth()<br>
+						<br>
+						#equivalent to<br>
+						<br>
+						p + geom_smooth()
+					</rcode>
+				</boxplot>
+				
+				<h3> <rcode>stat_summary()</rcode></h3>
+				<p>
+					One of the statistics, <rcode>stat_summary()</rcode>, is somewhat special, and merits its own discussion. <rcode>stat_summary()</rcode>
+					takes a few different arguments.
+				</p>
+				<dl>
+					<dt><rcode>fun.y</rcode></dt>
+						<dd>A function to produce <rcode>y</rcode> aestheticss</dd>
+					<dt><rcode>fun.ymax</rcode></dt>
+						<dd>A function to produce <rcode>ymax</rcode> aesthetics</dd>
+					<dt><rcode>fun.ymin</rcode></dt>
+						<dd>A function to produce <rcode>ymin</rcode> aesthetics</dd>
+					<dt><rcode>fun.data</rcode></dt>
+						<dd>A function to produce a named vector of aesthetics.</dd>
+				</dl>
+				<p>
+					You pass a function to each of these arguments, and <rcode>ggplot2</rcode> will use the value returned by that function for the corresponding
+					aesthetic. If you pass a function to <rcode>fun.data</rcode>, you can compute many summary statistics and return them as a vector, where each
+					element in the vector is named for the aesthetic it should be used for.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(diamonds, aes(cut, price)) +<br>
+						&nbsp;&nbsp;stat_summary(fun.y = median, geom = "bar")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/summary1.png width = 80%>
+				</center>
+				<pre>
+median.quartile <- function(x){
+	out <- quantile(x, probs = c(0.25,0.5,0.75))
+	names(out) <- c("ymin","y","ymax")
+	return(out) 
+}
+				</pre>
+				<blockquote>
+					<rcode>
+						ggplot(diamonds, aes(cut, price)) +<br>
+						&nbsp;&nbsp;stat_summary(fun.data = median.quartile, geom = "pointrange")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/summary2.png width = 80%>
+				</center>
+				<p>
+					It's not necessary to write our own functions to plot quantile ranges or confidence intervals, however. There are a few summary functions
+					from the <rcode>Hmisc</rcode> package which are reformatted for use in <rcode>stat_summary()</rcode>. They all return aesthetics for 
+					<rcode>y</rcode>, <rcode>ymax</rcode>, and <rcode>ymin</rcode>.
+				</p>
+				<dl>
+					<dt><rcode>mean_cl_normal()</rcode></dt>
+						<dd>Returns sample mean and 95% confidence intervals assuming normality.</dd>
+					<dt><rcode>mean_sdl()</rcode></dt>
+						<dd>Returns sample mean and a confidence interval based on the standard deviation times some constant</dd>
+					<dt><rcode>mean_cl_boot()</rcode></dt>
+						<dd>Uses a bootstrap method to determine a confidence interval for the sample mean without assuming normality.</dd>
+					<dt><rcode>median_hilow()</rcode></dt>
+						<dd>Returns the median and an upper and lower quantiles.</dd>
+				</dl>
+				
+				<p>
+					This code should produce the same pointrange plot as above.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(diamonds, aes(cut, price))+<br>
+						&nbsp;&nbsp;stat_summary(fun.data = median_hilow, conf.int = 0.5)
+					</rcode>
+				</blockquote>
+				<p>
+					We can add confidence intervals to a plot this way.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(reorder(class, hwy, mean), hwy))+<br>
+						&nbsp;&nbsp;stat_summary(fun.y = mean, geom = "bar")+<br>
+						#&nbsp;stat_summary(fun.data = mean_cl_boot, geom = "errorbar")<br>
+						#&nbsp;point ranges are prettier<br>
+						&nbsp;&nbsp;stat_summary(fun.data = mean_cl_boot, geom = "pointrange")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/summary3.png width = 80%>
+				</center>
+				
+				<p>
+					You can also use <rcode>stat_summary()</rcode> with a continuous x varuable. The summary functions will be calculated for all y values by all
+					unique values for x. This immediately seems useful for eye-tracking data, but I would actually suggest calculating these summaries with 
+					<rcode>ddply()</rcode>. For a reasonable amount of data, <rcode>stat_summary()</rcode> will take a while to calculate the summaries. This
+					could get to be aggravating when fine tuning aesthetics and options of the plot.
+				</p>
+				
+				<h2>Grouping</h2>
+				<p>
+					<rcode>ggplot2</rcode> represents data as grouped, and draws geoms and calculates statistics according tho these groupings. We've already
+					seen an example of this, where lines of different colors aren't connected. Groups of data can be defined in two ways: as combinations
+					of aesthetic settings, or explicitly with the argument <rcode>group</rcode>.
+				</p>
+				<p>
+					Let's start by looking at how statistics are calculated by groups. 
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, color = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth(method = "lm")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group1.png width = 80%>
+				</center>
+				<p>
+					We mapped the <rcode>color</rcode> aesthetic to the numbef of cylinders in <rcode>ggplot()</rcode>. When we added points to the plot,
+					their color was set according to their color group. When we added the linear regression lines, a model was fit for each color group, and
+					the fit for each group was added, colored with the same group color, and clipped according to the range of data for that group.
+				</p>
+				<p>
+					If we had decided to map the cylinder grouping to the point shape, rather than the point color, the statistic still would be computed
+					over every subset.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, shape = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth(method = "lm")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group2.png width = 80%>
+				</center>
+				<p>
+					Now, the color of the smoothing lines aren't meaningful anymore, but they've been grouped exactly like we defined with the 
+					<rcode>shape</rcode> aesthetic.
+				</p>
+				<p>
+					We could also group by <rcode>size</rcode>, which is also a meaningful aesthetic for <rcode>geom_smooth()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, size = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth(method = "lm")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group3.png width = 80%>
+				</center>
+				<p>
+					There's a truly silly plot. 
+				</p>
+				<p>
+					We could also define a grouping which is only meaningful for <rcode>geom_smooth()</rcode> and not <rcode>geom_point()</rcode>. This will
+					cause each smoothing line to be calculated and appear separately, but the points will be undifferentiated.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, linetype = factor(cyl)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth(method = "lm")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group4.png width = 80%>
+				</center>
+				<p>
+					If you use multiple grouping variables, groups will be defined as unique combinations of each of the levels.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy, color = factor(cyl), <br>
+						&nbsp;&nbsp;&nbsp;shape = factor(year), <br>
+						&nbsp;&nbsp;&nbsp;linetype = factor(year)))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth(method = "rlm")
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group5.png width = 80%>
+				</center>
+				<p>
+					Grouping isn't only useful for <rcode>stat_smooth()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(class, hwy, fill = factor(year)))+<br>
+						&nbsp;&nbsp;geom_boxplot()<br>
+						<br>
+						#reorder class according to median(hwy)<br>
+						ggplot(mpg, aes(reorder(class, hwy, median), hwy, fill = factor(year)))+<br>
+						&nbsp;&nbsp;geom_boxplot()<br>
+						
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/group6.png width = 80%>
+				</center>
+				
+				<p>
+					Sometimes it will be necessary to properly define the groups in your data in order to plot it. Here's another example from the 
+					<rcode>ggplot2</rcode> book.
+				</p>
+				<blockquote>
+					<rcode>
+						library(nlme)<br>
+						?Oxboys<br>
+						<br>
+						ggplot(Oxboys, aes(age, height)) + <br>
+						&nbsp;&nbsp;geom_point()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/oxpoint.png width = 80%>
+				</center>
+				<p>
+					What if we wanted to draw a line for every subject? Simply adding <rcode>geom_line()</rcode> will make a mess.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(Oxboys, aes(age, height)) + <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/oxlines1.png width = 80%>
+				</center>
+				<p>
+					We need to define <rcode>Subject</rcode> as a grouping variable for drawing the lines. We could do this, like we did above, by defining
+					<rcode>color = Subject</rcode>. However, it's a little overkill to represent every subject with a unique color. First, knowing the 
+					particular subject ID isn't necessarilly relevant or informative for this plot. Given that, having separate lines for each subject should
+					sufficiently indicate the grouping. Having separate lines <i>and</i> unique colors for each line counts as needless redundancy.
+				</p>
+				<p>
+					So, what we'll do is define the <rcode>group</rcode> aesthetic with <rcode>Subject.</rcode>
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(Oxboys, aes(age, height, group = Subject)) + <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/oxlines2.png width = 80%>
+				</center>
+				<p>
+					Here's another example involving formant tracking.
+				</p>
+				<blockquote>
+					<rcode>
+						jean <- read.csv("http://www.ling.upenn.edu/~joseff/data/jean2.csv")<br>
+						ay <- subset(jean, VClass %in% c("ay","ay0"))<br>
+						ay$VClass <- as.factor(as.character(ay$VClass))<br>
+						<br>
+						ay.m <- melt(ay, id = c("Time","RTime", "Word","VClass"), measure = c("F1","F2"))<br>
+						<br>
+						ggplot(ay.m, aes(RTime, value, color = VClass, linetype = variable)) + <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/formant1.png width = 80%>
+				</center>
+				<p>
+					Clearly, this is wrong. We want to see lines for each word that was measured. Now, if we set 
+					<rcode>group = Word</rcode>, we'll get an error. That's because we're actually plotting two lines for each word: F1 and F2. With just
+					<rcode>group = Word</rcode>, <rcode>ggplot2</rcode> is going to draw one line for each word, which would involve mixing line types. Without
+					specifying <rcode>linetype = variable</rcode>, here's what the plot would look like with <rcode>group = Word</rcode>
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(ay.m, aes(RTime, value, color = VClass, group = Word)) + <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/formant2.png width = 80%>
+				</center>
+				<p>
+					This is also clearly awful. Taking into account that we want to plot two lines per word, we can define our groups using the interaction
+					syntax.
+				</p>
+					<blockquote>
+					<rcode>
+						ggplot(ay.m, aes(RTime, value, color = VClass, group = Word:variable)) + <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/formant3.png width = 80%>
+				</center>
+				<p>
+					F1 and F2 are pretty well separated, so it's probably not necessary to distinguish them with different linetypes.
+				</p>
+				
+				<p>
+					If you ever want to draw connected lines over a nominal variable, you must define <rcode>group</rcode>. Even if you uniquely
+					specify groups with aesthetic settings, you still need to define <rcode>group</rcode>. This is actually a good thing, because it will
+					force you think about whether a connected up line across the nominal factor will be meaningful.
+				</p>
+				<p>
+					The Philadelphia counties data we looked at last week is a good example.
+				</p>
+				<blockquote>
+					<rcode>
+						source("http://www.ling.upenn.edu/~joseff/rstudy/plots/graphics/phila_bar.R")
+					</rcode>
+				</blockquote>
+				<p>
+					Let's plot median income by educational attainmet.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(phil, aes(Level, value, color = Name, shape = Gender))+<br>
+						&nbsp;&nbsp;geom_point()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/phila1.png width = 80%>
+				</center>
+				<p>
+					The data's all displayed, but not very readable. Educational attainment has a clear and meaningful order, if not magnitude. We could
+					add lines to this plot in a principled way. However, the following code should produce the same plot as above.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(phil, aes(Level, value, color = Name, shape = Gender))+<br>
+						&nbsp;&nbsp;geom_point()+ <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<p>
+					Since <rcode>Level</rcode> is a nominal variable, we need to define <rcode>group</rcode>. 
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(phil, aes(Level, value, color = Name, shape = Gender, group = Name))+<br>
+						&nbsp;&nbsp;geom_point()+ <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/phila2.png width = 80%>
+				</center>
+				<p>
+					Again, not quite right, because we're plotting a line for every gender for every county.
+				</p>
+				<blockquote>
+					<rcode>
+						#Changing shape = Gender to linetype = Gender<br>
+						ggplot(phil, aes(Level, value, <br>
+						&nbsp;&nbsp;&nbsp;&nbsp;color = Name, <br>
+						&nbsp;&nbsp;&nbsp;&nbsp;linetype = Gender, <br>
+						&nbsp;&nbsp;&nbsp;&nbsp;group = Gender:Name))+<br>
+						&nbsp;&nbsp;geom_point()+ <br>
+						&nbsp;&nbsp;geom_line()
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/phila3.png width = 80%>
+				</center>
+				
+				<h2>Positions</h2>
+				<p>
+					How geoms are positioned relative to eachother is another feature of plots that you might want to adjust. The possible position 
+					adjustments are
+				</p>
+				<ul>
+					<li><rcode>position_dodge()</rcode></li>
+					<li><rcode>position_fill()</rcode></li>
+					<li><rcode>position_identity()</rcode></li>
+					<li><rcode>position_jitter()</rcode></li>
+					<li><rcode>position_stack()</rcode></li>
+				</ul>
+				<p>
+					I'll demonstrate all of these except <rcode>position_jitter()</rcode> with bar plots and density plots. 
+				</p>
+				<blockqute>
+					<rcode>
+						philcit <- subset(phil, Name == "Philadelphia County")<br>
+						<br>
+						## position = "stack"<br>
+						## the default<br>
+						ggplot(philcit, aes(Level, value, fill = Gender)) + <br>
+						&nbsp;&nbsp;geom_bar(position = "stack")
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/barstack.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "dodge"<br>
+						ggplot(philcit, aes(Level, value, fill = Gender)) + <br>
+						&nbsp;&nbsp;geom_bar(position = "dodge")
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/bardodge.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "fill"<br>
+						ggplot(philcit, aes(Level, value, fill = Gender)) + <br>
+						&nbsp;&nbsp;geom_bar(position = "dodge")
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/barfill.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "identity"<br>
+						ggplot(philcit, aes(Level, value, fill = Gender)) + <br>
+						&nbsp;&nbsp;geom_bar(position = "identity", alpha = 0.3)
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/baridentity.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "stack"<br>
+						ggplot(ay, aes(F1, fill = VClass)) + <br>
+						&nbsp;&nbsp;stat_density(aes(y = ..count..), position = "stack", color = "black")
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/densitystack.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "fill"<br>
+						ggplot(ay, aes(F1, fill = VClass)) + <br>
+						&nbsp;&nbsp;stat_density(aes(y = ..count..), position = "fill", color = "black")
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/densityfill.png width = 80%>
+				</center>
+				
+				<blockqute>
+					<rcode>
+						## position = "identity"<br>
+						ggplot(ay, aes(F1, fill = VClass)) + <br>
+						&nbsp;&nbsp;stat_density(aes(y = ..density..), position = "identity", color = "black", alpha = 0.5)
+					</rcode>
+				</blockqute>
+				<center>
+					<img src = plots/ggplotintro/densityidentity.png width = 80%>
+				</center>
+				
+				<p>
+					<rcode>position_jitter()</rcode> is useful for creating things like stripcharts.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(jean, aes(-F2, reorder(VClass, -F2, mean)))+<br>
+						&nbsp;&nbsp;geom_point(position = position_jitter(height = 0.25), alpha = 0.3)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/pointjitter1.png width = 80%>
+				</center>
+				
+				<blockquote>
+					<rcode>
+						ggplot(jean, aes(reorder(VClass, -F1, mean),-F1))+<br>
+						&nbsp;&nbsp;geom_point(position = "jitter", alpha = 0.3)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/pointjitter2.png width = 80%>
+				</center>
+				
+				<p>
+					You can also use jittered points as a kind of rug for plots of categorical data.
+				</p>
+				
+				<blockquote>
+					<rcode>
+						donner<-read.csv("http://www.ling.upenn.edu/~joseff/data/donner.csv")<br>
+						<br>
+						ggplot(donner, aes(AGE, NFATE, color = GENDER))+<br>
+							&nbsp;&nbsp;geom_point(position = position_jitter(height = 0.02, width = 0)) + <br>
+							&nbsp;&nbsp;stat_smooth(method = "glm", family = binomial, formula = y ~ poly(x,2))
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/donner.png width = 80%>
+				</center>
+				<p>
+					The jittered points are an ok built-in way to get this rug, but they're a little messy. I figured out a way to add cleaner points this way.
+				</p>
+				<blockquote>
+					<rcode>
+						donner <- arrange(donner, GENDER)<br>
+						donner <- ddply(donner, .(AGE, NFATE), transform, stack = (0:(length(AGE)-1))*0.015)<br>
+						<br>
+						ggplot(donner, aes(AGE, NFATE, color = GENDER))+<br>
+							&nbsp;&nbsp;geom_point(aes(y = abs(NFATE - stack))) + <br>
+							&nbsp;&nbsp;stat_smooth(method = "glm", family = binomial, formula = y ~ poly(x,2))
+					</rcode>
+				</blockquote>
+				
+				<h2>Faceting</h2>
+				<p>
+					A very useful kind of visualization technique is the small multiple. In a small multiple visualization, you create many of the same
+					plot for multiple subsets of the data. <rcode>ggplot2</rcode> has two ways to create small multiples: <rcode>facet_wrap()</rcode>
+					and <rcode>facet_grid()</rcode>.
+				</p>
+				<p>
+					<rcode>facet_wrap()</rcode> creates and labels a plot for every level of a factor which is passed to it. Its primary argument takes 
+					the form of a one sided formula: <rcode>~Factor</rcode>. It will then try to efficiently "wrap" these plots into a 2d grid.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;stat_smooth()+<br>
+						&nbsp;&nbsp;facet_wrap(~year)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/facet1.png width = 80%>
+				</center>
+				
+				<blockquote>
+					<rcode>
+						ggplot(mpg, aes(displ, hwy))+<br>
+						&nbsp;&nbsp;geom_point()+<br>
+						&nbsp;&nbsp;facet_wrap(~manufacturer)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/facet2.png width = 80%>
+				</center>
+				<p>
+					Two things should be clear right off the bat. First, facets create further subsets for computing statistics over. Second, the x and y scales
+					of each plot are the same in each facet. This is something that can be toggled, but doing so will usually eliminate the usefulness of 
+					creating a small multiple in the first place.
+				</p>
+				<p>
+					You can aslo facet by two variables using <rcode>facet_grid()</rcode>. Let's demonstrate with the <rcode>tips</rcode> dataset.
+				</p>
+				<blockquote>
+					<rcode>
+						?tips<br>
+						<br>
+						ggplot(tips, aes(size, tip/total_bill))+<br>
+						&nbsp;&nbsp;geom_point(position = position_jitter(width = 0.2, height = 0)) + <br>
+						&nbsp;&nbsp;facet_grid(time ~ sex)
+					</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/ggplotintro/facet3.png width = 80%>
+				</center>
+				<p>
+					It looks like it was a male bill payer in a dinner party of two who tipped 70%. I'll leave all possible sociological analyses up to the reader.
+				</p>
+				<h3>Facet Scales</h3>
+				<p>
+					Usually you will want all of your facets to have the same x and y scales. If you're plotting the same data in each facet, having free
+					scales on each of the facets will ruin comparability across facets. However, sometimes it will be appropriate to have free scales. For instance,
+					when we plotted <a href="summer2010_reshape.html#gender_gap">international data for men and women</a> on a few different measures, 
+					it was necessary to have free scales. I did this by passing <rcode>scales = "free"</rcode> to <rcode>facet_wrap()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						ggplot(data = gender.comp, aes(Male, Female))+<br>
+						&nbsp;&nbsp;geom_abline(colour = "grey80")+<br>
+						&nbsp;&nbsp;geom_point(alpha = 0.6)+<br>
+						&nbsp;&nbsp;facet_wrap(~Measure, scales = "free")
+	  				</rcode>
+				</blockquote>
+				<center>
+					<img src = plots/reshape/gendercompare.png width = 80%>
+				</center>
+				<p>
+					Income, LifeExpectancy, Literacy and Education are all measured on different scales with widely varying magnitude. If I hadn't
+					passed <rcode>scales = "free"</rcode> to <rcode>facet_wrap()</rcode>, the plot would have looked like this.
+				</p>
+				<center>
+					<img src = plots/ggplotintro/facet4.png width = 80%>
+				</center>
+				<p>
+					The income scale completely overwhelms he others.
+				</p>
+				<p>
+					Sometimes, you'll only want one or the other scales to be free. To do this, pass <rcode>"free_y"</rcode> or <rcode>"free_x"</rcode> to
+					<rcode>scales</rcode>. I found a nice example for this recently on 
+					<a href="thttp://www.r-chart.com/2010/07/bp-oil-and-gas-recovery.html">this blog</a>, looking at the amount of recovered oil (measured in barrels)
+					and gas (measured in millions of cubic feet) from the Deepwater Horizon.
+				</p>
+				<blockquote>
+					<rcode>
+						bp <- read.csv("http://github.com/ezgraphs/R-Programs/raw/master/BP_Oil_Recovery.csv")<br>
+						<br>
+						bp$End.Period <- as.Date(bp$End.Period)<br>
+						<br>
+						#Use with facet_wrap()<br>
+						ggplot(bp, aes(End.Period, Recovery.Rate)) + <br>
+						&nbsp;&nbsp;geom_area()+<br>
+						&nbsp;&nbsp;facet_wrap(~Type, scales = "free_y")<br>
+						<br>
+						<center>
+							<img src = plots/ggplotintro/facet5.png width = 80%>
+						</center>
+						#Doesn't work if you facet vertically with facet_grid()<br>
+						ggplot(bp, aes(End.Period, Recovery.Rate)) + <br>
+						&nbsp;&nbsp;geom_area()+<br>
+						&nbsp;&nbsp;facet_grid(.~Type, scales = "free_y")<br>
+						<br>
+						<center>
+							<img src = plots/ggplotintro/facet6.png width = 80%>
+						</center>
+						#Facet horizontally<br>
+						ggplot(bp, aes(End.Period, Recovery.Rate)) + <br>
+						&nbsp;&nbsp;geom_area()+<br>
+						&nbsp;&nbsp;facet_grid(Type~., scales = "free_y")<br>
+						<center>
+							<img src = plots/ggplotintro/facet7.png width = 80%>
+						</center>
+					</rcode>
+				</blockquote>
+				<p>
+					For those interested in these numbers, I'd suggest listening to <a href="http://www.onthemedia.org/transcripts/2010/06/18/01">this On The 
+					Media story</a> about how the commonly reported volume of
+					spilled oil in the Exxon Valdez disaster was possibly drastically underestimated.
+				</p>
+				<h2>Scales</h2>
+				<p>
+					Every aesthetic which is mapped to the data expresses the magnitude if its value along some scale. You can adjust these scales 
+					using the <rcode>scale_*()</rcode> functions.
+				</p>
+				<p>
+					Almost all scales have a common set of arguments.
+				</p>
+				<dl>
+					<dt><rcode>name</rcode></dt>
+						<dd>The text label for the scale</dd>
+					<dt><rcode>limits</rcode></dt>	
+						<dd>The maximum and minimum values to be included in the scale</dd>
+					<dt><rcode>breaks</rcode></dt>
+						<dd>The labeled breaks for the data</dd>
+					<dt><rcode>labels</rcode></dt>
+						<dd>Labels for the breaks</dd>
+					<dt><rcode>trans</rcode></dt>
+						<dd>Transformation to use on the data.</dd>
+				</dl>
+				<p>
+					The function calls for various scales are formatted like this: <rcode>scale_[NAME.OF.AESTHETIC]_[NAME.OF.SCALE]()</rcode>
+				</p>
+				
+				<h3>x and y scales</h3>
+				<p>
+					The most common scale adjustments I do are for the <rcode>x</rcode> and <rcode>y</rcode> scales. The most basic way to adjust the 
+					<rcode>x</rcode> and <rcode>y</rcode> scales for continuous data is with <rcode>scale_x_continuous()</rcode> or 
+					<rcode>scale_y_continuous()</rcode>. However, for most adjustments you would want to make to the x and y scales, there are also aliased 
+					functions. That is, there are functions which are called something simpler and more descriptive, but really are just particular calls to
+					<rcode>scale_*_continuous()</rcode>.
+				</p>
+				<p>
+					Here are some examples of identical scale manipulations.
+				</p>
+				<blockquote>
+					<rcode>
+						p <- ggplot(mpg, aes(displ, hwy)) + geom_point()<br>
+						<br>
+						p + scale_x_continuous(label = "Engine Displacement in Liters")<br>
+						#or<br>
+						p + xlab("Engine Displacement in Liters")<br>
+						<br>
+						p + scale_x_continuous(limits = c(2,4))<br>
+						#or<br>
+						p + xlim(2, 4)<br>
+						<br>
+						p + scale_x_continuous(trans = "log10)<br>
+						#or<br>
+						p + scale_x_log10()
+					</rcode>
+				</blockquote>
+				<p>
+					An important thing to take into account is that adjustments to scales also transforms or throws away data for statistics. So for instance,
+					if you don't like that <rcode>stat_summary()</rcode> will plot data in the range of the original data values, <i>don't</i> use 
+					<rcode>xlim()</rcode> to zoom in. You're actually throwing away all the data outside of the range defined in <rcode>xlim()</rcode> and 
+					calculating the summary over the resulting subset. Likewise, if you log transform a scale, smoothing lines will be fit to the log
+					transformed data, not the original scale.
+				</p>
+				
+				<h3>color and fill Scales</h3>
+				<p>
+					The second most common scale adjustment I use is to the <rcode>color</rcode> and <rcode>fill</rcode> aesthetics.
+				</p>
+				<p>
+					Usually, you map either continuous or discrete data to colors in a plot. The default scale for discrete data is 
+					<rcode>scale_color_hue()</rcode>. One useful adjustment you can make to <rcode>scale_color_hue()</rcode> is to <rcode>
+					name </rcode>, which adjusts the legend title for color.
+				</p>
+				<blockqute>
+					<rcode>
+						p <- p + aes(color = factor(cyl))<br>
+						p + scale_color_hue(label = "Cylinders")
+					</rcode>
+				</blockqute>
+				<p>
+					Some people don't like the default discrete colors. With <rcode>scale_color_brewer()</rcode> you can set the color pallete to
+					one of the <rcode>RColorBrewer</rcode> palletes. To see the possible options
+				</p>
+				<blockquote>
+					<rcode>
+						library(RColorBrewer)<br>
+						display.brewer.all()
+					</rcode>
+				</blockquote>
+				<p>
+					I personally like <rcode>Set1</rcode> for qualitative differences.
+				</p>
+				<blockquote>
+					<rcode>
+						p + scale_color_brewer(pal = "Set1")
+					</rcode>
+				</blockquote>
+				<p>
+					However, for this data we should probably consider one of the sequential palletes. The number of cylinders in an engine <i>is</i> an
+					ordered variable after all.
+				</p>
+				<blockquote>
+					<rcode>
+						p + scale_color_brewer(pal = "Blues")<br>
+						<br>
+						p + scale_color_brewer(pal = "OrRd")
+					</rcode>
+				</blockquote>
+				
+				<p>
+					The range of possibilities with continuous color variables is huge. The default continuous color scale is 
+					<rcode>scale_color_gradient()</rcode>. This scale produces a smooth interpolation from the color indcated at the bottom of the
+					scale to the the color indicated at the top of the scale. By default this is a a gradient from blue to red.
+				</p>
+				<blockquote>
+					<rcode>
+						p <- ggplot(diamonds, aes(carat, price, fill = )) +<br>
+						&nbsp;&nbsp;stat_density2d(aes(fill = ..density..), contour = F, geom = "tile") + <br>
+						&nbsp;&nbsp;scale_x_log2()+<br>
+						&nbsp;&nbsp;scale_y_log10()<br>
+						<br>
+						p + scale_fill_gradient(high = "black", low = "white")
+						
+					</rcode>
+				</blockquote>
+				
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

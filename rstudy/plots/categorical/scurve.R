@@ -1,0 +1,6 @@
+time<-seq(-6,6,length=50)
+p <- 1/(1+exp(1)^-time)
+plot(time,p,type = "l",axes = F,lwd = 2)
+axis(1,labels = c("begin","end"),at = c(-6,6))
+axis(2)
+box()

@@ -1,0 +1,38 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 1</title><h1>Week 1</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "rstudy.html">Home</a> </td>
+
+				</tr>
+			</table>
+		</p>
+	<h2>References</h2>
+		<p><b>Introductory Statistics with R</b>: Chapter 1
+		<br><b>Analyzing Linguistic Data: A practical introduction to statistics</b>: Chapter 1</p>
+	<h2>Installing R</h2>
+	<p>If you haven't already installed R, you can do so at the <a href="http://cran.r-project.org/">Comprehensive R Archive Network</a> (CRAN).</p>
+	
+	<h2>Basic Calculations</h2>
+		<p>R can be used for any kind of basic calculation.</p>
+		<blockquote>
+			<font face = "Courier">
+				> 3+3 <br>
+				[1] 6<br>
+				> 2*4<br>
+				[1] 8<br>
+				> (369-1)/6<br>
+				[1] 61.33333
+			</font>
+		</blockquote>
+		<p>The <font face = "Courier">></font> symbol is the prompt for input.  The output is preceded by <font face = "Courier">[1]</font> to
+		indicate that it is the first element in a vector.</p>
+		<p>Vectors are one of the basic data structures in R.  </p>
+	
+	</body>
+	
+</html>

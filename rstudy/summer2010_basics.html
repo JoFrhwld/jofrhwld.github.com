@@ -1,0 +1,784 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; R: Basics</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			p #rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				margin: 40px;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+				
+				<h1>Summer 2010 &mdash; R: Basics</h1>
+				
+				<p>
+					<table>
+						<tr>
+							<td><a href="summer2010_general_data_structure.html"><- General: Data Structure</a></td>
+							<td><a href = "r-study.html">Home</a> </td>
+							 <td><a href="summer2010_summarization_aggregation.html">R: Summarization and Aggregation</a>-></td>
+						</tr>
+					</table>
+				</p>
+				<h2>Content</h2>
+				<ol>
+					<li><a href = "#intro">Intro</a></li>
+					<li><a href = "#vectors_and_assignment">Vectors and Assignment</a></li>
+						<ol>
+							<li><a href = "#vectors">Vectors</a></li>
+							<li><a href = "#assignment">Assignment</a></li>
+							<li><a href = "#vector_arithmetic">Vector Arithmetic</a></li>
+							<li><a href = "#indexing">Indexing</a></li>
+							<li><a href = "#vectorfunctions">Handy Vector Functions</a></li>
+						</ol>
+					<li><a href = "#logical_operators">Logical Operators</a></li>
+						<ol>
+							<li><a href = "#in"><rcode>%in%</rcode></a></li>
+						</ol>
+					<li><a href = "#IO">Data Input-Output</a></li>
+						<ol>
+							<li><a href = "#Input">Input</a></li>
+							<li><a href = "#Output">Output</a></li>
+						</ol>
+					<li><a href = "#DataFrame">Data Frames</a></li>
+						<ol>
+							<li><a href = "#dataframe_index">Data Frame Indexing and Subsetting</a></li>				
+						</ol>
+					<li><a href = "#Factors">Factors</a></li>
+						<ol>
+							<li><rcode><a href = "#levels()"><rcode>levels()</rcode></a></rcode></li>
+							<li><a href = "#relevel"><rcode>relevel()</rcode></a></li>
+							<li><a href = "#reorder"><rcode>reorder()</rcode></a></li>
+						</ol>
+				</ol>
+				
+				<h2><a name = "intro"></a>Intro</h2>
+				<p>
+					The goal for this section will be to get you comfortable with futzing through R. For the most part, these notes are pulled together from
+					<a href="week1.html">Week 1</a> and <a href="week2.html">Week 2</a> of the previous R Study Group notes. I'll only be going through this
+					material for one week, so that we can get directly to the more advanced stuff.
+				</p>
+				
+				<p>
+					To practice data input-output from your local computer, download and unzip the data from Keith Johnson's book <i>Quantitative Methods
+					in Linguistics.</i> <a href="http://media.wiley.com/product_ancillary/46/14051442/DOWNLOAD/3phonetics.rar">Here</a>[ZIP]
+				</p>
+				
+				<h2><a name = "vectors_and_assignment"></a>Vectors and Assignment</h2>
+				<p>
+					Vectors are the most basic data types you'll work with in R, and assignment of values to variables is the most basic operation
+					you'll utilize.
+				</p>
+					<h3><a name = "vectors"></a>Vectors</h3>
+					<p>
+					 	Vectors are essentially lists of data, and can contain characters, numbers, or TRUE FALSE values, but not mixed types.
+						There are a number of ways to create vectors in R, and frequently doing data manipulation will produce subvectors of data. 
+						The table below has some commands for creating vectors.</p>
+						<center>
+						<table border = 1>
+							<tr>
+								<td><rcode>1:10</rcode></td><td>This produces a vector of integers from 1 to 10.<br>
+																				Reversing the order of the numbers will produce a vector of decreasing values</td>
+							</tr>
+							<tr>
+								<td><rcode>c(...)</rcode></td><td>This produces a vector of whatever is passed as an argument to 
+																				<rcode>c()</frcode>.<br>
+																				e.g. <rcode>c(1,2,3,4)</rcode></td>
+							</tr>
+							<tr>
+									<td><rcode>seq(from,to,...)</rcode></td><td>This produces a sequence of numbers either by a given
+																					increment or evenly spaced to a given length.<br>
+																					<rcode>seq(1,10,by=0.5)<br>
+																					seq(1,10,length=11)<rcode></td>
+							</tr>
+							<tr>
+								<td><rcode>rep(x,...)</rcode></td><td>This produces a vector of repetitions of <rcode>x</rcode> by
+																						a given number of times.<br>
+																						<rcode>rep(1,6)<br>
+																						rep(1:3,2)<br>
+																						rep("hello world",4)</frcode></td>
+							</tr>
+						</table>
+						</center>
+						<p> 
+							Mixed type vectors will automatically be simplified to the least restrictive type.  Boolean logical values will be simplified to 
+							numerical 1's and 0's in a mixed vector with numbers, and everything will be simplified to chracter strings in a mixed vector with 
+							characters.  This problem will usually need to be addressed when loading poorly fomatted data into R. (For more marginal problems of 
+							dealing with integers vs. floating points, see 
+							<a href="http://blog.revolution-computing.com/2009/03/when-is-a-zero-not-a-zero.html">here</a>.)
+						</p>
+						
+						<p>
+							Here's a tip for converting a vector of <rcode>True False</rcode> values to 1's and 0's (sometimes people want to do this).
+						</p>
+						
+						<blockquote>
+							<rcode>
+								x <- sample(c(T,F), 20, replace = T)</br>
+								x*1
+							</rcode>
+						</blockquote>
+						
+						<h3><a name = "assignment"></a>Assignment</h3>
+						<p>The assignment operator in R is <rcode><-</rcode> or <rcode>-></rcode>
+							The following are equivalent assignments:
+							<blockquote>
+								<rcode>
+									x <- 1:10 <br>
+									1:10 ->x<br>
+								</rcode>
+							</blockquote>
+							The variable <rcode>x</rcode> now represents the vector of integers from 1 to 10.  Variables in R are case sensitive, 
+							so if you assign something to <rcode>x</rcode> you have not assigned it to <rcode>X</rcode>.
+						</p>
+						<p>
+							Also note that functions and operations never directly modify variables.  Below we discuss some vector arithmetic.  The operation
+							<rcode>x*2</rcode> does not modify <rcode>x</rcode>, but rather produces output which can be assigned to
+							a new variable, or back to the original variable.  Without assigning the output of a function or operation to some variable, 
+							that output is not available in any way to further computation.
+							<blockquote>
+							<rcode>
+								x<br>
+								x*3<br>
+								x*3->x<br>
+								x<br>
+							</rcode>
+							</blockquote> 
+						</p>
+						
+						<h3><a name = "vector_arithmetic"></a>Vector Arithmetic</h3>
+						<p>
+							Just like you can carry out arithmetic functions on numbers, you can do the same to vectors. In fact, single numbers are treated 
+							as vectors of length 1, so all arithmetic is actually vector arithmetic. The arithmetic functions in R 
+							(even <rcode>* /</rcode>) are all element-wise.
+							<blockquote>
+								<rcode>
+									x <- 1:10 <br>
+									x<br>
+									x+1<br>				
+									x*2<br>				 
+									x^2<br>				
+									x/3<br>				 
+									log(x)<br>
+								</rcode>
+							</blockquote>
+						You can also do arithmetic operations on two multilength vectors.  R will repeat the smaller vector so it is the same length as the 
+						larger vector.
+						<blockquote>
+							<rcode>
+								x*x<br>
+								x+x<br><br>
+								y<-c(1,2)<br>
+								x*y<br>
+							</rcode>
+						</blockquote>
+						If the smaller vector is not a multiple of the larger vector, you will still get output, but R will print a warning.
+						<blockquote>
+							<rcode>
+								x<-rep(1,10)<br>
+								y <- c(1,2,3)<br>
+								x*y<br>
+							</rcode>
+						</blockquote>
+					</p>
+				
+					<h3>Indexing<a name = "indexing"></a></h3>
+					<p>Elements in a vector are indexed, and can be referenced by their index. **Note** In R, unlike many languages, indexing begins with 1.
+					<blockquote>
+						<rcode>
+							LETTERS<br>
+							LETTERS[1]<br>
+							LETTERS[1:4]<br>
+							LETTERS[c(1,3,5)]<br>
+						</rcode>
+					</blockquote>
+					</p>
+					<p>
+						You can also access subvectors using a vector of <rcode>TRUE</rcode> or <rcode>FALSE</rcode> values as an 
+						index. Usually, this <rcode>TRUE</rcode>/<rcode>FALSE</rcode> vector will be the same length as the vector 
+						it is indexing.
+						<blockquote>
+							<rcode>
+								t.f<- rep(F,26)<br>
+								t.f<br>
+								LETTERS[t.f]<br>
+								t.f[3]<- T<br>
+								LETTERS[t.f]<br>
+								<br>
+								x<-1:10<br>
+								x<br>
+								x>5<br>
+								x[x>5]<br>
+							</rcode>
+						</blockquote>
+					</p>
+					<p>
+						If you use a vector of Boolean values as an index which is shorter than the vector it is indexing, R will repeat it so it is the same 
+						length.
+						<blockquote>
+							<rcode>
+								x[c(T,F)]<br>
+								x[c(F,T)]<br>
+							</rcode>
+						</blockquote>
+						As might be expected, any vector of Boolean values, if preceded by <rcode>!</rcode> will produce a vector of
+						the opposite values.
+						<blockquote>
+							<rcode>
+								t.f<br>
+								!t.f<br>
+								LETTERS[t.f]<br>
+								LETTERS[!t.f]<br>
+							</rcode>
+						</blockquote>
+					</p>
+		
+		
+				<h3>Handy Vector Functions<a name = "vectorfunctions"></a></h3>
+					<ul>
+						<li>Numeric Vectors</li>
+						<ul>
+							<li><rcode>sum()</rcode></li>
+							<li><rcode>mean()</rcode></li>
+							<li><rcode>sd()</rcode> (standard deviation)</li>
+							<li><rcode>max()</rcode></li>
+							<li><rcode>min()</rcode></li>
+							<li><rcode>median()</rcode></li>
+							<li><rcode>range()</rcode></li>
+						</ul>
+						<li>Any Vector</li>
+						<ul>
+							<li><rcode>rev()</rcode> (reverse)</li>
+							<li><rcode>unique()</rcode> (list of unique vector values)</li>
+						</ul>
+					</ul>
+				<h2><a name = "logical_operators"></a>Logical Operators</h2>
+					<p>
+						The following operators will return a vector of <rcode>TRUE</rcode> and <rcode>FALSE</rcode> values.
+					</p>
+					<center>
+					<table border = 1>
+						<tr>
+							<td><rcode>==</rcode></td><td>exactly equal to</td>
+						</tr>
+						<tr>
+							<td><rcode>!=</rcode></td><td>not equal to</td>
+						</tr>
+						<tr>
+							<td><rcode>></rcode></td><td>greater than</td>
+						</tr>
+						<tr>
+							<td><rcode>>=</rcode></td><td>greater than or equal to</td>
+						</tr>
+						<tr>
+							<td><rcode><</rcode></td><td>less than</td>
+						</tr>
+						<tr>
+							<td><rcode><=</rcode></td><td>less than or equal to</td>
+						</tr>
+					</table>
+					</center>
+					<p>
+						Multilength vectors behave the same for these logical operators as for arithmetic operators.
+					</p>
+					<blockquote>
+						<rcode>
+							x <- 1:10<br>
+							y <- x+1<br>
+							<br>
+							x < y<br>
+							x == x
+						</rcode>
+					</blockquote>
+					<p>
+						These operate over vectors of <rcode>T F</rcode> values, or logical statements.
+					</p>
+					<center>
+						<table border = 1>
+							<tr>
+								<td><rcode>!x</rcode></td><td>not <rcode>x</rcode><br>All <rcode>T</rcode> become <rcode>F</rcode>, and vice versa</td>
+							</tr>
+							<tr>
+								<td><rcode>x|y</rcode></td><td><rcode>x</rcode> or <rcode>y</rcode><br>
+																<table>
+																	<tr>
+																		<td><rcode>x</rcode></td><td><rcode>y</rcode></td><td align = center><rcode>x|y</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>T</rcode></td><td><rcode>T</rcode></td><td align = center><rcode>T</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>T</rcode></td><td><rcode>F</rcode></td><td align = center><rcode>T</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>F</rcode></td><td><rcode>T</rcode></td><td align = center><rcode>T</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>F</rcode></td><td><rcode>F</rcode></td><td align = center><rcode>F</rcode></td>
+																	</tr>
+																</table>
+																</td>
+							</tr>
+							<tr>
+								<td><rcode>x&y</rcode></td><td><rcode>x</rcode> and <rcode>y</rcode><br>
+																<table>
+																	<tr>
+																		<td><rcode>x</rcode></td><td><rcode>y</rcode></td><td align = center><rcode>x&y</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>T</rcode></td><td><rcode>T</rcode></td><td align = center><rcode>T</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>T</rcode></td><td><rcode>F</rcode></td><td align = center><rcode>F</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>F</rcode></td><td><rcode>T</rcode></td><td align = center><rcode>F</rcode></td>
+																	</tr>
+																	<tr>
+																		<td><rcode>F</rcode></td><td><rcode>F</rcode></td><td align = center><rcode>F</rcode></td>
+																	</tr>
+																</table>
+																</td>
+							</tr>
+						</table>
+					</center>
+					
+					<h3><a name = "in"></a><rcode>%in%</rcode></h3>
+					<p>
+						I found out about the <rcode>%in%</rcode> operator too late. It matches all <rcode>i</rcode> elements of the <rcode>x</rcode> vector 
+						against the <rcode>y</rcode> vector, and returns <rcode>TRUE</rcode> if <rcode>x[i]</rcode> is also a member of <rcode>y</rcode>.
+					</p>
+					<blockquote>
+						<rcode>
+							3 %in% 1:10<br>
+							1:10 %in% 3<br>
+							-3:3 %in% 1:10<br>
+							<br>
+							(-3:3)[-3:3 %in% 1:10]<br>
+							(-3:3)[!(-3:3 %in% 1:10)]
+						</rcode>
+					</blockquote>
+				<h2><a name="IO"></a>Data Input-Output</h2>
+				<p>
+					Here, we'll talk about how to load data into R, and how to write data back out to a data file.  When loading a data file into R, you are just
+					loading it into the R workspace.  Any alterations or modifications you make to the data frame will <em>not</em> be reflected in the file in your
+					system, <em>just</em> in the copy in the R workspace.
+				</p>
+	
+				<h3><a name="Input"></a>Input</h3>
+				<p>
+					For the most part, data that will be loaded into R will be in the form of data tables.  Ideally, they will be plain text, and delimited either 
+					by tabs or other whitespace, or by commas (.csv files).
+				</p>
+	
+				<p>
+					The two most likely commands to be used will be <rcode>read.delim()</rcode> or <rcode>read.csv()</rcode>.
+					<rcode>read.delim()</rcode> is used to read in files delimited by tabs, and <rcode>read.csv()</rcode> for files
+					delimited by commas.  Both of these functions assume that the first line is a header.  If this is not the case, then set the option 
+					<rcode>header = F</rcode>.  If the file you are looking at is delimited neither by tabs nor by commas, you should try 
+					<rcode>read.table()</rcode> (which the first two are based on) with the option <rcode>sep</rcode> given the appropriate delimiter.
+					As always see <rcode>?read.table</rcode> for more info on all of these functions.
+				</p>
+	
+				<p>
+					These <rcode>read.table</rcode> commands will read in the data as a data frame, a particular data structure in R that we'll talk about below.
+					Be sure to assign the output of <rcode>read.table()</rcode> to a variable, or else it will just print the file, and that's no good to no one.
+				</p>
+	
+				<p>
+					For example, we could read in the data in cherokeeVOT from Johnson 2008 (
+					<a href="http://media.wiley.com/product_ancillary/46/14051442/DOWNLOAD/3phonetics.zip">here again</a> [ZIP])as follows.
+				</p>
+				<blockquote>
+					<rcode>
+						vot <- read.delim("PATH/cherokeeVOT.txt")<br>
+						#or<br>
+						vot <- read.table("PATH/cherokeeVOT.txt",sep = "\t",header = T)
+					</rcode>
+				</blockquote>
+				<p>
+					It appears that on Windows machines, the proper file delimiter is still "/", even though if you copy the path, it will be delimited by "\".  
+					If you're copying a path into the prompt with the "\" delimiter, change them all to "/" to successfully load the file. 
+				</p>
+				<p>
+					There is also the very handy <rcode>file.choose()</rcode> function, which will open up a file browser for you to navigate to the file.
+				</p>
+				<blockquote>
+					<rcode>
+						vot <- read.delim(file.choose())
+					</rcode>
+				</blockquote>
+				<p>
+					I'm not actually a huge fan of the <rcode>file.choose()</rcode> function. If you mess up somewhere along the line, it makes it harder
+					to rerun your code. If you insist on using the <rcode>file.choose()</rcode> function, I would suggest assigning the output of 
+					<rcode>file.choose()</rcode> to a variable first.
+				</p>
+				<blockquote>
+					<rcode>
+						votPATH <- file.choose()<br>
+						vot <- read.delim(votPATH)
+					</rcode>
+				</blockquote>
+			
+				<h3><a name="Output"></a>Output</h3>
+				<p>
+					If you want to save data a data frame that you've edited or enriched, use <rcode>write.csv()</rcode> or 
+					<rcode>write.table()</rcode>.  As the name suggests, <rcode>write.csv()</rcode> writes the data frame to a comma separated file.
+					Note, if one of your variables has a comma in it (like "City,State"), do <em>not</em> write to a csv, because it will ruin your life.
+					I personally don't like a few of the defualt settings to these commands, so here's what I change:
+					<dl>
+						<dt><rcode>sep</rcode></dt><dd>-- If using <rcode>write.table()</rcode>, I set this to "\t", which writes a 
+														tab delimied file.  The default is a single space: " "</dd>
+						<dt><rcode>quote</rcode></dt><dd>-- I set this to F.  By default, character strings, and the character labels for factors will
+														be closed in quotes.  I don't like this so much, and it makes it harder to read by eye or for some
+														other script.</dd>
+						<dt><rcode>row.names</rcode></dt><dd>-- I set this to F. By default, it will write a column for the row names in the data frame.
+															These are usually meaningless, just being the row number.</dd>
+					</dl>
+					The final command will usually look something like this:
+				</p>
+				<blockquote>
+					<rcode>
+						write.delim(vot,file = "PATH/vot.txt",sep = "\t",quote = F,row.names = F)
+					</rcode>
+				</blockquote>
+				<p>Again, on a Windows machine, use "/" even though the standard file delimiter is "\".</p>
+	
+				<h2><a name = "DataFrame"></a>Data Frames</h2>
+				<p>
+					Data Frames are the format you are most likely to access data from in R.
+				</p>
+				
+				<p>
+					Lets focus on the Cherokee VOT data from Johnson 2008. To see how many rows and columns it has, use <rcode>nrow()</rcode> 
+					and <rcode>ncol()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						ncol(vot)<br>
+						nrow(vot)<br>
+					</rcode>
+				</blockquote>
+				<p>
+					There are 3 variables coded for 44 observations in the data.  To see the column names, which are the same as the variable names here, use
+					<rcode>colnames()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						colnames(vot)<br>
+					</rcode>
+				</blockquote>
+				<p>
+					To see the first 6, or last 6 observations, use <rcode>head()</rcode>and <rcode>tail()</rcode>
+				</p>
+				<blockquote>
+					<rcode>
+						head(vot)<br>
+					</rcode>
+				</blockquote>
+				<xmp>
+	  VOT year Consonant
+	1  67 1971         k
+	2 127 1971         k
+	3  79 1971         k
+	4 150 1971         k
+	5  53 1971         k
+	6  65 1971         k
+				</xmp>
+				
+				<blockquote>
+					<rcode>
+						tail(vot)<br>
+					</rcode>
+				</blockquote>
+				<xmp>
+	   VOT year Consonant
+	39 106 2001         t
+	40  54 2001         t
+	41  49 2001         t
+	42  56 2001         t
+	43  58 2001         t
+	44  97 2001         t
+				</xmp>
+				<p>
+					To get 5 number summaries of numerical data in a data frame and counts for factors, use <rcode>summary()</rcode>. (<rcode>summary()</rcode> 
+					is a general purpose function, and generates unique and interesting output for many different objects.)
+				</p>
+				<blockquote>
+					<rcode>
+						summary(vot)<br>
+					</rcode>
+				</blockquote>
+				<xmp>
+	      VOT              year      Consonant
+	 Min.   : 45.00   Min.   :1971   k:21     
+	 1st Qu.: 71.50   1st Qu.:1971   t:23     
+	 Median : 81.50   Median :2001            
+	 Mean   : 96.45   Mean   :1989            
+	 3rd Qu.:120.25   3rd Qu.:2001            
+	 Max.   :193.00   Max.   :2001   
+				</xmp>
+				<h3><a name="dataframe_index"></a>Data Frame Indexing and Subsetting</h3>
+				<p>
+					Indexing in data frames can work almost exactly like it does in matrices.  To see the first 6 rows of a data frame, you can use
+					<rcode>head()</rcode> -or- <rcode>data[1:6,]</rcode>
+				</p>
+				<blockquote>
+					<rcode>
+						vot[1:6,]<br>
+					</rcode>
+				</blockquote>
+				<p>
+					Likewise, you can see a column either by using <rcode>$</rcode>, or giving the column index, or name.
+				</p>
+				<blockquote>
+					<rcode>
+						vot[ ,"VOT"]<br>
+						head(vot[ ,c("VOT","Consonant","year")])<br>
+						head(vot[ ,c("year","VOT","Consonant")])<br>
+					</rcode>
+				</blockquote>
+				<p>
+					Frequently, you might want to pull out subets of the data frame, or subsets of variables based on certain conditons.  There are a few ways to do 
+					this. First, you could generate a vector of boolean values, and use this as an index for the data frame.
+				</p>
+				<blockquote>
+					<rcode>
+						vot$VOT > 100<br>
+						vot[vot$VOT > 100,]<br>
+						vot[vot$Consonant == "t",]
+					</rcode>
+				</blockquote>
+			
+				
+				<p>If you just want to see variable values for a given factor level, there are at least two ways to do this.</p>
+				<blockquote>
+					<rcode>
+						vot[vot$year == 1971,]$VOT<br>
+						#or<br>
+						vot$VOT[vot$year == 1971]
+					</rcode>
+				</blockquote>
+				<p>
+					The first selects a subset of the data frame, then takes the VOT variable from that subset.  The second takes the variable first, the takes 
+					a subset of that. I'm not sure if one approach is more efficient, common or preferable than the other.
+				</p>
+	
+				<p>
+					You could also use <rcode>subset()</rcode> function.  It takes a data frame as its first argument, a conditional expression as its,
+					second, and an optional selection argument, which takes a vector of variable names to return as an argument
+				</p>
+				<blockquote>
+					<rcode>
+						subset(vot,VOT>100 & Consonant == "k")<br>
+						subset(vot,VOT>100 & Consonant == "k",select = c("VOT","year"))<br><br>
+						subset(vot,VOT>100 & Consonant == "k")$VOT
+					</rcode>
+				</blockquote>
+	
+				<p>
+					If you want to save time by not needing to do the <rcode>$</rcode> reference for a data frame you're working with a lot,
+					you can use the <rcode>attach()</rcode> command, which will allow you to directly reference the variable names.  Note, however,
+					that any type conversions you make to a data frame's variable will not be reflected in the attached version.  Once you've finished using 
+					the data frame, you can remove it from the search path with <rcode>detach()</rcode>.
+				</p>
+				
+				<h2><a name = "Factors"></a>Factors</h2>
+				<p>
+					For the most part, if we're using data which has some variable coded as a character string, it is actually a <em>factor</em> with
+					specific <em>levels</em>.
+				</p>  
+
+				<p>
+					A good way to grasp the structure of factors is to build one from scratch.  Say we had collected class data in a study, 
+					and coded lower working class, upper working class, and lower middle class with numeric codes, 1, 2, and 3, repectively.
+					First, lets simulate a sample of 10 speakers.  <rcode>sample()</rcode> will simulate such a sample.  See
+					<rcode>?sample</rcode> for more details.
+				</p>
+				<blockquote>
+					<rcode>
+						class <- sample(1:3, 10, replace = T)<br>
+						class
+					</rcode>
+				</blockquote>
+				
+				<p>
+					Your numbers will probably be different.  Right now, <rcode>class</rcode> is a numerical vector.  The 
+					<rcode>factor()</rcode> function will convert it to a factor vector.
+				</p>
+				<blockquote>
+					<rcode>
+						factor(class)
+					</rcode>
+				</blockquote>
+		
+				<p>
+					We can also add meaninful labels to the factor levels.
+				</p>
+				<blockquote>
+					<rcode>
+						class.f<-factor(class,labels = c("LWC","UWC","LMC"))<br>
+						class.f
+					</rcode>
+				</blockquote>
+				<p>
+					In essence, the factor vector has a representation like this:
+				</p>
+				<center>
+					<table border = 1>
+						<tr><th>Vector</th><th>Dictionary</th></tr>
+						<tr><td>3</td><td>1 = "LWC"</td></tr>
+						<tr><td>1</td><td>2 = "UWC"</td></tr>
+						<tr><td>1</td><td>3 = "LMC"</td></tr>
+						<tr><td>2</td></tr>
+						<tr><td>3</td></tr>
+						<tr><td>3</td></tr>
+						<tr><td>3</td></tr>
+						<tr><td>2</td></tr>
+						<tr><td>3</td></tr>
+						<tr><td>3</td></tr>
+					</table>
+				</center>
+				<p>
+					Compare the following printed output
+				</p>
+				<blockquote>
+					<rcode>
+						class<br>
+						class.l<-c("LWC","UWC","LMC")<br>
+						class.l<br>
+						class.l[class]<br>
+						class.f<br>
+					</rcode>
+				</blockquote>
+				<p>
+					The factor vector that we built is unordered.  That is, the factor levels define groups rather than an ordering.  It is possible to also
+					define ordered factors, which will strongly affect model fitting.  I haven't used ordered factors much myself, so I don't really understand how 
+					they work (but I should).
+				</p>
+		
+				<h3><a name="levels()"></a><rcode>levels()</rcode></h3>
+				<p>
+					The <rcode>levels()</rcode> command accesses the levels of a factor.  It will either produce a character vector
+					of the current levels, or allow you to edit the levels by assigning a new character vector to it.
+					<blockquote>
+						<rcode>
+							> levels(class.f)
+							> old.levels<-levels(class.f)
+							> new.levels <- c("LowerWorkingClass","UpperWorkingClass","LowerMiddleClass")<br>
+							> levels(class.f)<-new.levels<br>
+							> class.f<br>
+						</rcode>
+					</blockquote> 
+				</p>
+		
+				<h3><a name = "relevel"></a><rcode>relevel()</rcode></h3>
+				<p>
+					<em><b>Don't</b></em> use <rcode>levels()</rcode> to try to change the order of levels. Here's a demonstration of what will happen
+				</p>
+				<blockquote>
+					<rcode>
+						x <- factor(1:3, labels = c("one","two","three"))<br>
+						x<br>
+						levels(x) <- c("two","one","three")<br>
+						x<br>
+					</rcode>
+				</blockquote>
+				<p>
+					All we've done is change the labels of each level, which ends up scrambling their meaningful labels. If we really wanted
+					"two" to be the first level (this will be important for fitting regression models), we should use <rcode>relevel()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						x <- factor(1:3, labels = c("one","two","three"))<br>
+						x<br>
+						x <- relevel(x, "two")<br>
+						x<br>
+					</rcode>
+				</blockquote>		
+				<p>
+					<rcode>relevel()</rcode> has reordered the levels, making "two" the first one, but has kept the labels for each level the same.
+				</p>
+				
+				<h3><a name = "reorder"></a><rcode>reorder()</rcode></h3>
+				<p>
+					There is also a pretty nifty function called <rcode>reorder()</rcode> which will reorder the levels of a factor
+					according to their values on some other dimension,
+				</p>
+				<blockquote>
+					<rcode>
+						x <- as.factor(c(rep("A",10),rep("B",10)))<br>
+						value <- c(rnorm(10,mean = 1), rnorm(10, mean = -1))<br>
+						tapply(value, x, mean)<br>
+						<br>
+						x <- reorder(x, value, mean)<br>
+						tapply(value, x, mean)
+					</rcode>
+				</blockquote>
+				
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

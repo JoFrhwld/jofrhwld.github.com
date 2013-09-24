@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>R Study Group</title>
+</head>
+<body>
+	<div class="content">
+		<div class="header">
+			
+			
+			
+			<div class="logo">
+				<h2><a href="#" title="R Study Grop"><span class="dark">R Study Group</span></a></h2>
+			</div>
+			
+		</div>
+		
+		<div class="bar">
+			<!--<ul>
+				<li class="browse_category">Navigation:</li>
+				<li class= "active">Home</li>
+				<li><a href= "http://www.ling.upenn.edu/~joseff/research.html">Research</a></li>
+				<li><a href="http://www.ling.upenn.edu/~joseff/Personal.html" accesskey="m">Personal</a></li>
+			</ul>-->
+		</div>
+		
+		<p>&nbsp;</p>
+		
+		<div class="left">
+			
+			<h3>Goals:</h3>
+				<p>The goals of the study group should be flexible to meet the needs of those attending.  I think a basic outline
+				of goals should look something like this:</p>
+				<ul>
+					<li>R basics: input, output</li>
+			    	<li>Data Management and Manipulation</li>
+    				<li>Basic Statistics</li>
+    				<li>Statistical Graphics</li>
+    				<li>Basic Linear and Logistic Regressions</li>
+				</ul>
+			<div class="left_box">
+				
+			</div>
+			
+			<h3><a href = "week1.html">Week 1</a></h3>
+			
+			<div class="left_box">
+	 			<h4>Agenda</h4>
+				<ul>
+					<li>Installing R</li>
+					<li>Gauging pre-existing R / Statistics / Programming knowledge.</li>
+					<li>The Basics</li>
+				</ul>
+			</div>
+			
+  
+		</div>	
+		
+		
+		<div class="right">
+			
+    		<h3>Useful Links:</h3>
+			
+			<div class="right_articles">
+				<p><a href= "http://www.r-project.org/"><b>R Project</b></a></p>
+			</div>
+			
+			<div class="right_articles">
+				<p><a href= "http://cran.r-project.org/"><b>CRAN</b></a></p>
+			</div>
+			
+			<div class="right_articles">
+				<p><a href = "http://www.rseek.org/"><b>RSeek</b></a></p>
+			</div>
+			
+			<h3>Books</h3>
+			
+			<div class="right_articles">
+				<p><b>Introductory Statistics with R</b> by Peter Dalgaard</p>
+			</div>
+			<div class="right_articles">
+				<p><b>Analyzing Linguistic Data: A practical introduction to statistics</b> by Harald Baayen</p>
+			</div>
+			<div class="right_articles">
+				<p><b>Quantitative Methods in Linguistics</b> by Keith Johnson</p>
+			</div>
+			<div class="right_articles">
+				<p><b>Data Analysis Using Regression and Multilevel/Hierarchical Models</b> by Andrew Gelman and Jennifer Hill</p>
+			</div>
+			
+			<h3>Useful Web Documents</h3>
+			<div class="right_articles">
+				<p><a href="http://www.ling.upenn.edu/~kgorman/mlm.html"><b>Penn MLM Reading Group</b></a></p>
+			</div>
+			
+		</div>
+
+			
+		<div class="footer">
+		
+		</div>
+	</div>
+	
+</body>
+</html>

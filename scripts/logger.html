@@ -1,0 +1,160 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Vowel Logging Sytem</title><h1>Vowel Logging System</h1></head>
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "../">Home</a> </td><td><a href = "../research.html">Research</a> </td>
+				</tr>
+			</table>
+		</p>
+		<p>This Vowel Logging System records F1, F2, and F3 values for nuclei and glides of vowels, as well as vowel duration, and duration
+		of nucleus to glide transition. It also creates a labeled Praat text grid for the word, vowel, and measurement points.</p>
+		<h2>Download</h2>
+		<p>This vowel logging system consists of two praat scripts</p>
+			<blockquote>
+				labeler.praat (<a href="labeler.praat">Download</a>)<br>
+				logger.praat (<a href="logger.praat">Download</a>)
+			</blockquote>
+		
+		<h2>Usage</h2>
+			<h3>Setup</h3>
+				<h4>Step 1</h4>
+					<p>Open a sound file in Praat. Select the "Annotate" dropdown menu, then choose "To TextGrid..." What you choose to name the 
+					tiers is immaterial, but for the sake of readabilty, I'd suggest "word vowel points". In the box asking which tiers are point 
+					tiers, enter the name of the third tier (if you're following my advice, that'd be "points"). </p>
+				<h4>Step 2</h4>
+					<p>Open labeler.praat in the Praat script editor, or in any other plain text editor. The first few lines of the script (after the GNU license)
+					will look like this
+					<xmp>
+	form Test
+	## Change 'name' below to the name of the text grid being annotated to
+	word tgrid name
+	word Word
+	word Vowel
+	endform
+					</xmp>
+					Per the directions in the comment, change '<font face = "Courier">name</font>' in the line reading '<font face = "Courier">word tgrid name</font>'
+					to whatever the name of the text grid being annotated to. If your .wav file is named something like Subject1.wav, then you should
+					probably put in '<font face = "Courier">Subject1</font>' here.
+					</p>
+					<p>Next, open logger.praat. The first few lines of the script (again, after the GNU license information) will look like
+					<xmp>
+	form Test
+	## Change 'name' below to the name of the text grid being annotated to
+	word tgrid name
+	## change 'log.txt' to wherever you want the logged values to go to
+	text output log.txt
+	endform
+					</xmp>
+					Like with labeler.praat, change '<font face ="Courier">name</font>' to the name of the text grid being annotated to. You should also
+					change '<font face = "Courier">log.txt</font>' to to the name of the output file that the logged info will be written to. You must include
+					the full path to the file.
+					</p>
+				<h4>Step 3</h4>
+					<p>Select both the sound object and the text grid in the Praat objects window, and click Edit. You should now be in the Sound Editor window.
+					From the the 'Query' dropdown menu, select 'Log Settings...' The log settings window should open up. In the field labeled 'Log script 3' give
+					the full path to the labeler.praat script. In the field labeled 'Log script 4' give the full path to the logger.praat script.</p>
+			
+			<h3>Logging</h3>
+				<h4>labeler.praat</h4>
+					<p>To start logging a vowel, select the full duration of the vowel in the sound editor. The beginning of the selection
+					should be at vowel onset, and the end of the selection should be at vowel offset. Then hit the shortcut command for labeler.praat.
+					If you set up the Log Settigs as described above, this will be the shortcut for Log Script 3. The actual keystrokes vary by system,
+					but they are labeled next to each log script in the Query menu.
+					</p>
+					<p>A dialog box will open. It will display the name of the text grid for sanity checking, and will have two dialog boxes
+					for the word and vowel. Enter the word being logged in the Word field, and whatever label you are using for the vowels in
+					the Vowel field and hit Enter.</p>
+					<p>labeler.praat will create labeled intervals on the word and vowel tier from the information provided. It will also
+					concatenate the number of the measurement to the end of the word label. If you have logged 5 vowels already, and now are now logging
+					"spider," the label on the Word tier will be "spider6". This should be useful for not confusing multiple tokens of the same word.</p>
+					<p>The last thing labeler.praat will do is create a new selection within the vowel, with the beginning at the F1 maximum, and the end
+					at the F2 maximum.</p>
+				<h4>logger.praat</h4>
+					<p>If you want to measure both a nucleus and glide target for the vowel you're logging, make a selection with the beginning at the vowel
+					nucleus, and the end at the vowel glide. The labeler.praat script will have created a selection beginning at max F1 and ending at max F2, which
+					are pretty good measurement points for some diphthongs, but of course very inappropriate for others. If you want to just measure a
+					nucleus, just place the cursor at the measurement point without making a selection. I would suggest making a point selection if there
+					really is no glide whatsoever. Measuring a glide requires almost no additional work, and this way, you will be able to distinguish between 
+					vowels with glides and true monophthongs in your data.</p>
+					<p>After making the appropriate selection, hit the keyboard shortcut for Log Script 4. The logger dialog box will open. This is here
+					strictly for sanity checking. It will display the text grid name, the output file name, and the nucleus and glide window information.
+					By default, the logger.praat script will take the mean formant values from a window 5 ms before and after the selected nucleus point,
+					and 2ms before and after the glide point. If you would prefer just to take point measurments, without averaging over a window,
+					I would suggest openning the logger.praat script and changing 0.005 to 0, for the NucleusWindow variable, and likewise for the 
+					GlideWindow variable. If everything looks good in the logger dialog box, just hit enter.</p>
+					<p>The logger script will write the logged values to he output script, and create intervals on the point tier, appropriately labled
+					'nuc' and 'glide'.</p>
+					
+					
+					
+					
+				<h4>Output</h4>
+					<p>The output of the logger.praat script is a tab delimited file with the following elements (listed left to right).</p>
+					<ul>
+						<li>Word Label</li>
+						<li>Vowel Label</li>
+						<li>Vowel Begin Time</li>
+						<li>Vowel End Time</li>
+						<li>Vowel Duration</li>
+						<li>Nucleus Time</li>
+						<li>Glide Time</li>
+						<li>Nucleus to Glide Duration</li>
+						<li>Nucleus F1</li>
+						<li>Nucleus F2</li>
+						<li>Nucleus F3</li>
+						<li>Glide F1</li>
+						<li>Glide F2</li>
+						<li>Glide F3</li>
+						<li>Has Glide? (will have values "Glide" and "NoGlide")</li>
+					</ul>
+					<p>As stated above, the nucleus formant data is, by default, the mean value over a 10ms window centered around the nucleus time, and the
+					glide formant data is an average over a 4ms window centered around the glide time.</p>
+					<p>The glide time, F1, F2 and F3 is printed for all vowels, even those for which just a nucleus was measured. For these
+					monophthongs, the glide data will be the same as the nucleus data. Two ways to pick out the monophthongs from the rest will be that 
+					their Nucleus to Glide Duration will be 0, and their Has Glide? value will be NoGlide.</p>
+					
+				
+		<h2>Motivations</h2>
+			<p>With any luck, the process of automated formant analysis will be refined in the near future, especially given the recent successes 
+			of Keelan Evanini's dissertation (<a href="http://www.evanini.com/keelan.html#diss">link</a>). In the meantime, however, I hope this
+			logging system will be useful for improving the scalability and recoverability of hand measurements.</p>
+			<p>It seems to me that lot of hand measurement studies, like the Atlas of North American English, or Dinkin's Herculean study of
+			New York State (one man, 57,664 hand measurments), lose as much data as they collect. Every observation consists of a single point measurement with values for F1, F2 and F3, 
+			along with a time stamp, and perhaps an additional point measurement for the glide.</p>
+			<p>Usually no data is recorded for the duration of the vowel, which is clearly a dimension of interest for the study of vowel changes
+			(see Baranowski and Labov, 2006). Additionally, a clear record of the observation is not recorded which will allow for a rapid
+			restudy. For example, a restudy of the ANAE data focusing on the role formant dynamics on merger (see Scanlon 2009), perhaps by utilizing 
+			Smoothing Spline ANOVAs (see Baker 2006, Nycz and De Decker 2006, Koops 2009 and my write-up here [<a href="../papers/fruehwald_ssanova.pdf">PDF</a>]), 
+			would be virtually impossible without redoing the study.</p>
+			<p>However, these drawbacks to a manual study are strictly due to the collection tools used. It is completely possible to rapidly record duration data
+			along with nuclear and glide formant data, while at the same time leaving yourself a trail of breadcrumbs should you want to restudy. According to my
+			own <a href="http://www.ling.upenn.edu/~joseff/rstudy/week3.html#general">general principles to data collection</a>, when working with
+			observational data it is crucial to answer the following question: "How can I preserve a record of this observation in such a way that I can quickly return to it and 
+			gather more data on it if necessary?" This vowel logging system is my own approach to answering this question. </p>
+			<p>The time-per-observation to data-per-observation ratio is rather good. I haven't noticed it to be significantly slower than the time it takes to make a
+			single point measurement, and in the end you have data on more dimensions, and a clear trail of crumbs to follow back to the original observation
+			so you can collect more data from it if needed.</p>
+			
+			
+			
+<!-- Creative Commons License -->
+<a href="http://creativecommons.org/licenses/GPL/2.0/">
+<img alt="CC-GNU GPL" border="0" src="http://creativecommons.org/images/public/cc-GPL-a.png" /></a><br />
+This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
+<!-- /Creative Commons License -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-5");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+	</body>
+</html>

@@ -1,0 +1,98 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Recontrast</title><h1><font face = "Courier">recontrast()</font></h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "../">Home</a> </td><td><a href = "../research.html">Research</a> </td>
+				</tr>
+			</table>
+		</p>
+		<h2><a href="recontrast.R"><b>Download</b></a></h2>
+		<p>You can download the script here and source it locally, or source it directly from
+		this location with the following command:
+		<blockquote>
+				<font face="Courier">
+					source("http://www.ling.upenn.edu/~joseff/scripts/recontrast.R")
+				</font>
+		</blockquote>
+		
+		</p>
+		<h2>Usage:</h2>
+			<blockquote>
+				<font face="Courier">
+					recontrast(x, type = "sum")
+				</font>
+			</blockquote>
+			<p>
+				<font face = "Courier">x</font> can be a data frame, or a factor. If given a data frame, <font face = "Courier">recontrast()</font>
+				will change the contrasts for all unordered factors with < 1000 levels.
+			</p>
+			<p>
+				As of now, <font face = "Courier">recontrast()</font> will generate sum and treatment contrasts if you pass <font face = "Courier">"sum"</font> 
+				or <font face = "Courier">"treatment"</font> to <font face = "Courier">type</font>.
+			</p>
+			<p>
+				The output of <font face = "Courier">recontrast()</font> is either a factor with the new contrasts, or a data frame with all of its 
+				factor columns given the specified contrasts
+			</p>
+		<h2>Motivations</h2>
+			<p>See <a href = "http://www.ling.upenn.edu/~joseff/rstudy/week5.html#contrasts">here</a> for a discussion of contrasts with sample data.</p>
+			<p>By default, R sets up <b>treatment contrasts</b> for categorical factors. Treatment contrasts assume that some level (the first one) is untreated,
+			or default with respect to the response. The reported effects for the treated levels are their differences from the default group. For
+			experimental data, where there is one control group and many experimental groups, treatment contrasts are obviously the most appropriate.
+			For some linguistic data, treatment contrasts can also be appropriate. For example, if you assume that for some variation a lingual
+			articulation will introduce a bias, but a labial articulation will not, you can treat the labial articulation as "untreated."</p>
+			
+			<p>However, the assumption of an untreated group is inappropriate for a lot of linguistic data, and the comparision of all levels to some reference 
+			level is uninteresting. <b>Sum contrasts</b> are another way of setting up comparisons in the model, where reported coefficients for each level
+			represent the difference of that level from the mean of the response variable. Sum contrasts are the standard kind of contrasts used in sociolinguistic 
+			research. In fact, they are the only kind of contrast one can use in GoldVarb (with centered factors). They are so called because the sum of all
+			effects is 0 when reported in log-odds (they average to 0.5 when reported as "factor weights," the inverse logit of the log-odds coefficients).</p>
+			
+			<p>So why write a script to change the contrasts, when we could change the default options in R about what kinds of contrasts to automatically
+			generate, or we could just use <font face = "Courier">contr.sum()</font> and <font face = "Courier">contr.treatment()</font> on a factor
+			by factor basis? The primary reason is that the output of <font face = "Courier">contr.sum()</font> is this:
+			<xmp>
+	> contr.sum(levels(td$PreSeg))
+	          [,1] [,2] [,3] [,4]
+	fricative    1    0    0    0
+	l            0    1    0    0
+	nasal        0    0    1    0
+	obstruent    0    0    0    1
+	sibilant    -1   -1   -1   -1
+			</xmp>
+			Whereas the output of <font face = "Courier">contr.treatment()</font> is this:
+			<xmp>
+	> contr.treatment(levels(td$PreSeg))
+	          l nasal obstruent sibilant
+	fricative 0     0         0        0
+	l         1     0         0        0
+	nasal     0     1         0        0
+	obstruent 0     0         1        0
+	sibilant  0     0         0        1
+			</xmp>
+			The crucial difference here is that <font face = "Courier">contr.treatment()</font> names the columns of the contrasts matrix, but 
+			<font face = "Courier">contr.sum()</font> doesn't.  This means that if we were to fit a model with <font face = "Courier">PreSeg</font> with
+			treatment contrasts, the coefficients would be meaningfully named, like <font face = "Courier">PreSegnasal</font>. Fitting the model with
+			sum contrasts would just number the coefficients, returning a non-meaningfully named <font face = "Courier">PreSeg3</font>.
+			</p>
+			<p><font face = "Courier">recontrast()</font> names the columns of sum contrasts matrix, so that models fit with these factors
+			will be more readable. It also operates over factors and data frames, which are the important conceptual units of model fitting.</p>
+			
+		<h2>Words of Warning</h2>
+			<p>If you change, reorder, or eliminate levels of a factor, it will be necessary to reconstruct the contrasts for that factor again with
+			<font face = "Courier">recontrast()</font>.</p>
+		
+		
+<!-- Creative Commons License -->
+<a href="http://creativecommons.org/licenses/GPL/2.0/">
+<img alt="CC-GNU GPL" border="0" src="http://creativecommons.org/images/public/cc-GPL-a.png" /></a><br />
+This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
+<!-- /Creative Commons License -->
+
+	</body>
+	
+</html>

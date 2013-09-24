@@ -1,0 +1,506 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 3</title><h1>Week 3</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week2.html"><- Week 2</a></td><td><a href="week4.html">Week 4</a>-></td>
+				</tr>
+			</table>
+		</p>
+		
+		<h2>Contents</h2>
+		<ol>
+			<li><a href = "#struct">Data Structure</a></li>
+				<ol>
+					<li><a href = "#general">General Principles</a></li>
+					<li><a href = "#Organization">Organization</a></li>
+				</ol>
+			
+			<li><a href = "#ObsTypes">Observation Types</a></li>
+			<ol>
+				<li><a href = "#Nominal">Nominal</a></li>
+				<li><a href = "#Ordinal">Ordinal</a></li>
+				<li><a href = "#Continuous">Interval and Ratio</a></li>
+				<li><a href = "#ObsSummary">What really matters</a></li>
+			</ol>
+			<li><a href="#Distributions">Distributions</a></li>
+			<ol>
+				<li><a href="#PopsSamps">Populations and Samples</a></li>
+				<ol>
+					<li><a href="#Variance">Defining Variance and Standard Deviation</a></li>
+					<li><a href="#Normal">The Normal Distribution</a></li>
+				</ol>
+				<li><a href="#Example">An Example</a></li>
+				<ol>
+					<li><a href="#ContinuousMeasurements">Continuous measurements</a></li>
+				</ol>
+				<li><a href="#Normality">Normality of Sample Means</a></li>
+				<li><a href="#NormalSummary">What We've Got</a></li>
+				<li><a href="#NormalTesting">Normality Testing</a></li>
+			</ol>
+			<li><a href="#MeanTests">Tests for the mean</a></li>
+			<ol>
+				<li><a href="#t-tests">t-tests</a></li>
+				<ol>
+					<li><a href="#OneSample">One Sample t-test</a></li>
+					<li><a href="#TwoSample">Two Sample t-tests</a></li>
+					<li><a href="#Paired">Paired t-test</a></li>
+				</ol>
+				<li><a href="#Non-parametric">Non-parametric tests</a></li>
+				<ol>
+					<li><a href="#OneSampleWilcox">One Sample Wilcoxon test</a></li>
+					<li><a href="#TwoSampleWilcox">Two Sample Wilcoxon test</a></li>
+					<li><a href="#MatchedPairsWilcoxon">Matched Pairs Wilcoxon test</a></li>
+				</ol>
+			</ol>
+		</ol>
+		
+		<h2>References</h2>
+		<h3>Distributions Etc.</h3>
+		<p><b>Baayen 2008</b>: Ch 3<br>
+			<b>Dalgaard 2008</b>: Ch 3<br>
+			<b>Johnson 2008</b>: Ch 1</p>
+		</p>
+		<h2><a name = "struct"></a>Data Structure</h2>
+		<p>The way in which you structure your data, before you ever load it into R, will greatly affect the ease with which you
+		can do your analysis, so I figured I'd spend some time talking about how to do that. </p>
+		<h3><a name = "general">General Principles</a></h3>
+		<p>This advice applies mostly to researchers working with 
+		observational data.</p>
+		<p><b>Over-collect:</b> When collecting data in the first place, over-collect if at all possible. The world is a very complex place,
+		so there is no way you could cram it all into a bottle, but give it your best shot! If during the course of your data analysis, you
+		find that it would have been really useful to have data on, say, duration, as well as formant frequencies, it becomes very costly to 
+		recollect that data if you haven't laid the proper trail for yourself. </p>
+		
+		<p><b>Preserve HiD Info</b> If, for instance, you're collecting data on the effect of voicing on preceding vowel duration, preserve high dimensional
+		data coding, like Lexical Item, or the transcription of the following segment. These high dimensional codings probably won't be too useful for your
+		immediate analysis, but they will allow you to procedurally exract additional features from them at a later time. By preserving your high dimensional
+		information, you're preserving the data's usefulness for your own later reanalysis, as well as for future researchers.
+		</p>
+		<p><b>Leave A Trail of Crumbs</b> Be sure to answer this question: How can I preserve a record of this observation in such a way that I can quickly 
+		return to it and gather more data on it if necessary? If you fail to successfully answer this question, then you'll be lost in the woods if you
+		ever want to restudy, and the only way home is to replicate the study from scratch.</p>
+		
+		<p><b>Give Meaningful Names</b> Give meaningful names to both the names of predictor columns, as well as to labels of nominal observations. 
+		Keeping a readme describing the data is still a good idea, but at least now the data is approachable at first glance.</p>
+		
+		<h3><a name = "Organization">Organization</a></h3>
+		<p>These are useful principles for organizing the data you collect </p>
+		<p><b>Rows = Smallest Granularity</b> Every row should represent a single observation at the finest grained level of your observational
+		tools. If, for instance, you have a record of where a baby was looking (Target, Distractor, Other) for every milisecond of trial, then every row
+		should represent one milisecond's data. Things like Trial Type, Subject Age, etc. which will be shared by all observations from a single trial
+		can be coded in separate columns. It is very easy to downsample your data from this kind of format, and impossible to "upsample."</p>
+		
+		<p><b>Columns:</b> </p>
+		<p><i>Responses</i> You'll probably only have one response, or dependant variable for the data you're collecting. However, it's not inconcievable 
+		that you might have more than one response for a dataset.</p>
+		<p><i>HiD Labels</i> Like I said, keep these in here. </p>
+		<p><i>Predictors</i> These columns should represent some single feature of observations. What to do about observations which are undefined for
+		some feature may depend on your statistical purposes, but it's a pretty safe bet that they should be left blank, or given an NA value. **Important:** For
+		numeric variables, don't use 0 to mean NA. For a numeric variable, 0 should mean 0. </p>
+		<p>I was recently working with some data which was coded for sentence type (Question, Declarative), as well as for some subtypes (Yes/No, WH-). My
+		suggestion is that even though sentence subtypes will be non-overlapping, and <i>can</i> all be put (crammed) into the same column, they should
+		not be. "Question Subtype" and "Declarative Subtype" should be separate predictors, since they are separate features of observation. The QSubtype 
+		should probably be given NA for all sentences which are not Questions, and the same for Declaratives.</p>
+		
+		<h2><a name = "ObsTypes">Observation Types</a></h2>
+		<p>All data we work with are going to be observations of some kind. Understanding what kind of observaton we have made will be crucial in
+		carrying out the correct statistical technique, since different kinds of observations have different kinds of properties. Johnson 2008 has 
+		a rather good discussion of the different kinds of observations at the beginning of Chapter 1, and I reproduce some of it here.</p>
+		<h3><a name = "Nominal">Nominal</a> </h3>
+		<p>Nominal observations are named, but have no meaningful scale or magnitude relationship. No particular value for this
+		observation is greater than or less than another.  If you collected duration measurments for /s/ and /sh/, then the consonant labels
+		"s" and "sh" would be nominal observations (expressions like "s" > "sh" or "s" = 2*"sh" are meaningless).  Other examples include
+		speaker sex, race, dialect, or records of success vs. failure on a series of experimental trials.  In R, nominal obervations are 
+		represented as factors.</p>
+		<h3><a name = "Ordinal">Ordinal</a></h3>
+		<p>The different levels of an ordinal observation can be ordered, but the difference between different levels is not quantifiable.
+		We discussed socioeconomic class last week as an example of this.  Assuming  that there is some sort of cline along which SEC can be ordered, we 
+		can order different SECs along this cline.  For example, the expression LowerWorkingClass < UpperWorkingClass is meaningful with this approach.  
+		<em>How much</em> greater than LWC UWC is is unanswerable though.  Ordinal observations can be represented as ordered factors in R</p>
+		<h3><a name = "Continuous">Interval and Ratio</a></h3>
+		<p>The distinction between these two kinds of observations is rather subtle, and has to do with whether or not the scales they lie on have
+		meaningful 0 values.  Comparing temperature with duration, an object can't really have 0 temperature, but an event can have 0 duration. Also
+		100 ms is twice as much as 50 ms, but 100* F is not twice as much temperature as 50* F. To measure temperature on a meaningful ratio scale, 
+		we would have to measure it in terms of rates of molecular movement, for which there is a meaningful 0 value, and ratio relation between
+		numbers on the scale.
+		</p>
+		<h3><a name = "ObsSummary">What really matters</a></h3>
+		<p>For our purposes, I don't think we need to worry too much about the distinction between interval and ratio observations.  The important differences between
+		these kinds of observations for our purposes can be understood this way:
+		<table>
+			<tr><td align = "right"><b>Nominal:</b></td><td>Discrete, unordered variables</td></tr>
+			<tr><td align = "right"><b>Ordinal:</b></td><td>Discrete, ordered variables</td></tr>
+			<tr><td align = "right"><b>Interval and Ratio:</b></td><td>Continuous variables</td></tr>
+		</table>
+		</p>
+		<h2><a name="Distributions">Distributions</a></h2>
+			<h3><a name="PopsSamps">Populations and Samples</a></h3>
+			<p>What is key to statistical reasoning is the assumption that the populations we sample have some kind of <i>distribution</i>.  That is,
+			there is a tendency within a population towards a certain value (usually written as &mu), with a given variability around that tendency,
+			(usually given as &sigma or &sigma<sup>2</sup>).
+			</p>	
+	
+			<h4><a name="Variance">Defining Variance and Standard Deviation</a></h4>
+			<p>Here is a brief definition of variance and standard deviations.</p>
+			<p>To figure out how broadly dispersed around the central tendency the data is, you could subtract out the mean from the sample.</p>
+			<blockquote>
+				<font face = "Courier">
+					samp <- rnorm(50)<br>
+					samp<br>
+					samp-mean(samp)
+				</font>
+			</blockquote>
+			<p>If you were to sum this vector, the result would be 0 (or at least close to it, due to floating point arithmetic). To get a meaningful sum, we 
+			square this result.</p>
+			<blockquote>
+				<font face = "Courier">
+					(samp-mean(samp))^2<br>
+					sum((samp-mean(samp))^2)
+				</font>
+			</blockquote>
+			<p>Now, we have a sum of variance, but obviously this number will be larger if we had a larger sample, so we want to know the mean variance. For 
+			complex reasons, we calculate the mean variance by dividing it by n-1 (number of samples minus one)</p>
+			<blockquote>
+				<font face = "Courier">
+					sum((samp-mean(samp))^2)/(length(samp)-1)
+				</font>
+			</blockquote>
+			<p>This number is the variance of the sample (s<sup>2</sup>).  The standard deviation (s) is the square root of the variance.</p>
+			<blockquote>
+				<font face = "Courier">
+					sqrt(sum((samp-mean(samp))^2)/(length(samp)-1))
+				</font>
+			</blockquote>
+			<p>R has a built in function for finding the standard deviation, which you should use not only because it is easier, but is optimized to avoid
+			the accumulation of errors from floating point arithmetic.</p>
+			<blockquote>
+				<font face = "Courier">
+					sd(samp)
+				</font>
+			</blockquote>
+			<h4><a name="Normal">The Normal Distribution</a></h4>
+			<p>It is generally assumed that most population distributions are normal, or at least could be transformed to be normal.
+			What is nice about a normal distibution is that it can be defined strictly by a mean (&mu) and standard deviation (&sigma).</p>
+			
+			<p>R has a number of built in functions that give you access to a few statistical distributions (see <a href="http://www.johndcook.com/distributions_R_SPLUS.html">here</a> 
+			for a comprehensive list). Here are the functions for accessing the normal distribution:</p>
+			<ul>
+				<li><b><font face = "Courier">dnorm(x, mean, sd)</font></b> Gives the density of a normal distribution with a given mean and sd at x</li>
+				<li><b><font face = "Courier">pnorm(q, mean, sd)</font></b> Gives the probabilty of getting a value &le q from the cumulative probability function
+																			(the percentile)</li>
+				<li><b><font face = "Courier">qnorm(p, mean, sd)</font></b> Gives the value that is the p<sup>th</sup> percentile from the cumulative probability 
+																			function</li>
+				<li><b><font face = "Courier">rnorm(n, mean, sd)</font></b> Gives n random numbers from a normal distribution</li>
+			</ul>
+			
+			<p>To plot any of these distributions, we can use the <font face = "Courier">curve()</font> function, which takes an algebraic function as 
+			its first argument, then plots the function from some value to some other value.</p>
+			
+			<blockquote>
+				<font face = "Courier">
+					curve(dnorm(x, mean = 0, sd = 1), from = -2, to = 2)<br>
+					##plots the shape of the density function<br>	
+					curve(pnorm(x, mean = 0, sd = 1), from = -2, to = 2)<br>
+					##plots the cumulative probability function<br>
+					curve(qnorm(x, mean = 0, sd = 1), from = 0.022, to = 0.977)<br>
+					##plots the percentiles against their values
+				</font>
+			</blockquote>
+			
+			<h3><a name="Example">An Example</a></h3>
+			<p>Following the discussion in Johnson 2008, lets look at a ficticious rating task.  36 subject are given a sentence, and are asked to rate
+			its grammaticality on a scale of 1-10.  First, let's simulate the data.  I do this a little differently than Johnson 2008.  I don't know if
+			the difference is significant, but I think my way is more principled.
+			</p>
+			<blockquote>
+				<font face = "Courier">
+					samp.prob<-dnorm(1:10,mean = 4.5,sd = 2)<br>
+					## returns the probability of getting a particular rating assuming<br>
+					## &mu = 4.5 and &sigma = 2<br>
+					ratings <- sample(1:10, 36, replace = T, prob = samp.prob) <br>
+					# ^^ this is the step to repeat to get new ratings
+				</font>
+			</blockquote>
+			<p>Now that we've simulated the data, lets look at the frequencies of each response using <font face = "Courier">table()</font> and plot
+			a histogram of it. (The default behavior for plotting a table is as a histogram.)</p>
+			<blockquote>
+				<font face= "Courier">
+					table(ratings)<br>
+					plot(table(ratings),xlim = c(1,10))
+				</font>
+			</blockquote>
+			<p>Here is the result I got.</p>
+				<center>
+				<img src = "plots/ratings.png" height = 70% >
+				</center>
+			<p>Here, we can obviously see how the data has clustered.  It looks the sentence got ratings of 5 the most, followed by 4. With this task,
+			what is the probability of getting a particular response?  We can approximate this by dividing the frequency of each response by the number
+			of tokens.</p>
+			<blockquote>
+				<font face = "Courier">
+					table(ratings) / 36
+				</font>
+			</blockquote>
+			
+			<p>Based on the data I generated for the plot above, the probability of the sentence recieving a rating of 5 &asymp 28%, and the probabilty
+			of getting a 4 rating &asymp 22%.  The probability of getting a 4 or 5 &asymp 50%.  This is a little higher than you would expect from the population
+			we sampled. </p>
+			<blockquote>
+				<font face = "Courier">
+					sum(samp.prob[4:5])<br>
+					## should be 0.3866681
+				</font>
+			</blockquote>
+			
+			<h4><a name="ContinuousMeasurements">Continuous measurements</a></h4>
+			
+			<p>What would happen if we hadn't restricted subjects to giving us an integer rating, but had instructed them to report grammaticality 
+			by moving a slider left to right. We would then be collecting data with continuous values.  Let's simulate and examine the data:</p>
+			<blockquote>
+				<font face ="Courier">
+					c.ratings <- rnorm(36,mean = 4.5,sd = 2)<br>
+					## rnorm() draws random samples from a normal distribution.<br>
+					table(c.ratings)<br>
+					plot(table(c.ratings),xlim = c(1,10))
+				</font>
+			</blockquote>
+			<p>So, you can see how useless it is like this.  The probability of getting the same value on a continuous scale is infinitely low.
+			If we did get the same value twice, it would actually be evidence of the limited precision of our measurement tools. We could try binning the 
+			continuous values, then plotting a histogram of frequencies within each bin. <font face = "Courier">hist()</font> does this automatically.
+			We'll give the argument <font face = "Courier">prob</font> the value True, so that the y-axis values will be the probability of an observation
+			appearing in that bin.</p>
+			<blockquote>
+				<font face = "Courier">
+					hist(c.ratings,prob = T)<br>
+					##break points can be modified with breaks<br>
+					##see ?hist
+				</font>
+			</blockquote>
+			<p>However, if we are willing to assume normality, we can do better than this by examining the normal density curve.  Here, we'll overlay it 
+			on the histogram we just plotted.</p>
+			<blockquote>
+				<font face = "Courier">
+					curve(dnorm(x,mean = mean(c.ratings),sd = sd(c.ratings)),add = T)
+				</font>
+			</blockquote>
+			<p>What is nice about the normal distribution density function is that you can calculate the probability of a number appearing within a given range
+			by finding the area under the curve.</p>
+			
+			<center>
+			<a href = "plots/densityarea.R"><img src = "plots/densityarea.png" width = 50%></a>
+			</center>
+			
+			<h3><a name="Normality">Normality of Sample Means</a></h3>
+			<p>If you were to take a random sample from a normally distributed population 1000 times, you would probably have 1000 different sample means.
+			However, those sample means themselves are normally distributed, and the larger the sample, the lower the variance.</p>
+			<center>
+			<a href = "plots/meannormality.R"><img src = "plots/meannormality.png" height = 75%></a>
+			</center>
+			<p>Not surprisingly, if the variance of the population were lower, the sample variance is also lower. The variance of the possible mean values
+			is called the Standard Error of the Mean, and can be calculated as the standard deviation of the sample divided by the square of the size of the 
+			sample. The 95% confidence interval of a mean &asymp the sample mean &plusmn (SEM*1.96). Let's look at our ratings example.</p>
+			
+			<blockquote>
+				<font face = "Courier">
+				r.mean<-mean(c.ratings)<br>
+				##the sample mean<br>
+				r.sem<-sd(c.ratings)/sqrt(length(c.ratings))<br>
+				c(r.mean-(r.sem*1.96),r.mean+(r.sem*1.96))<br>
+				##95% of means of samples of the same size<br>
+				##drawn from the same population will be between<br>
+				##these two values
+				</font>
+			</blockquote>
+			
+			<h3><a name="NormalSummary">What We've Got</a></h3>
+			<p>As Johnson 2008 points out, this reasoning about distributions buys us the following:</p>
+			<ul>
+				<li>We can make probability statements about normal distributions</li>
+				<li>We can calculate sample means and variances</li>
+				<li>Sample means will fall into a normal distribution</li>
+				<li>You can estimate the variance of means from the sample mean and variance</li>
+				<li>Therefor we can make probability statements about population means.</li>
+			</ul>
+			<p>This now gives us a boot strap into testing hypotheses about populations from our samples.</p>
+			
+			<h3><a name="NormalTesting">Normality Testing</a></h3>
+			<p>Since the normal distribution is so important to many assumptions in statistical test, it's good to know some ways to gauge the normality
+			of a sample.  If your data is not normally distributed, then the results of most statistical tests and regressions can be meaningless, so you really
+			really need to inspect the data this way. Here are two graphical techniques, and one statistical test.</p>
+			
+			<p>First, you can plot the empirical density of the data, and compare that to the density function of a normal distribution with the same 
+			mean and variance.</p>
+			
+			<blockquote>
+				<font face = "Courier">
+					plot(density(c.ratings))<br>
+					curve(dnorm(x,mean = mean(c.ratings),sd = sd(c.ratings)),add = T,lty =2, col = "red")
+				</font>
+			</blockquote>
+			<p>Just eyeballing it, the sample looks pretty normal, and it should, since it was randomly generated from a normal distribution.</p>
+			
+			<p>Another graphical technique is the qqplot.</p>
+			
+			<blockquote>
+				<font face = "Courier">
+					qqnorm(c.ratings)<br>
+					qqline(c.ratings)
+				</font>
+			</blockquote>
+			
+			<p>What this plot does is compare which quantile a point empirically is in the data (the y axis) to what quantile that point would be
+			if it had been drawn from a normal disribution with the mean and sd of the sample (the x axis). I find these hard to interpret sometimes.
+			What is important is that if the points are closely distributed to the line, then the distribution is fairly normal.</p>
+			
+			<p>The statistical test for normality is the Shapiro-Wilk normality test.  It returns a significant p-value if the distribution is
+			significantly non-normal.</p>
+			<blockquote>
+				<font face = "Courier">
+					shapiro.test(c.ratings)
+				</font>
+			</blockquote>
+			<p>The p-value is > 0.05, so we cannot reject the hypothesis that the distribution is normal.</p>
+		
+		<h2><a name="MeanTests">Tests for the mean</a></h2>
+		<p>Since the properties of a normal distribution are rather well known, we can test hypotheses about means of distributions. The questions we can ask are:
+		Could this sample have been drawn from a population with mean equal to, greater or less than x?  Could these two samples have been drawn from the same
+		populations?  Are the populatio means of these two samples greater or less than eachother?</p>
+		<h3><a name="t-tests">t-tests</a></h3>
+		<p>The t-test is a test for the job. <b>**Note**</b> t-tests can only be performed meaningfully on data that is normally distributed.
+		 <h4><a name="OneSample">One Sample t-test</a></h4>
+		  Let's look at some data from Daalgard 2008. This data is of the daily energy intake of some women.</p>
+		<blockquote>
+			<font face = "Courier">
+				daily.intake<-c(5260,5470,5640,6180,6390,6515,6805,7515,7515,8230,8770)<br>
+				mean(daily.intake)<br>
+				sd(daily.intake)<br>
+				plot(density(daily.intake))<br>
+				curve(dnorm(x,mean = mean(daily.intake),sd = sd(daily.intake)),add = T, col = "red",lty = 2)<br>
+				qqnorm(daily.intake)<br>
+				qqline(daily.intake)<br>
+				shapiro.test(daily.intake)<br>
+			</font>
+		</blockquote>
+		<p>Everything looks good and normal.  As Daalgard suggests, we may want to know if this sample could have come from a population of women
+		with a mean intake of 7725 kJ.</p>
+		<blockquote>
+			<font face = "Courier">
+				kJ<-t.test(daily.intake,mu=7725)<br>
+				kJ
+			</font>
+		</blockquote>
+		<p>The output of <font face = "Courier">t.test()</font> is the first specialized R object we've come across so far.  The default print out is
+		rather useful, but we can also access specific values from the test.  To see what all is accessible, use <font face = "Courier">names()</font></p>
+		<blockquote>
+			<font face = "Courier">
+				names(kJ)<br>
+				kJ$alternative<br>
+				kJ$p.value
+			</font>
+		</blockquote>
+		<p>This was a two-sided t-test, which means we were testing the hypothesis that &mu = 7725. The p-value is sufficiently low, so we can
+		reject this hypothesis at the p = 0.018 level, and adopt the alternative, that &mu &ne 7725.  The default printout actually presents this in a much more
+		readable way, but it' good to know how to access values from an object.</p>
+		<p>If you wanted to do a one sided t-test, to examine the altenative hypotheses that &mu < or > x, you can pass a value of "greater" or "less" to
+		the <font face = "Courier">alternative</font> argument of <font face= "Courier">t.test()</font></p>
+		<blockquote>
+			<font face = "Courier">
+				t.test(daily.intake, mu = 7725, alternative = "greater")<br>
+				t.test(daily.intake, mu = 7725, alternative = "less")
+			</font>
+		</blockquote>
+		
+		<h4><a name="TwoSample">Two Sample t-tests</a></h4>
+		<p>If you have two samples, and want to see if they could have come from the same population, you want to test if they could have the same &mu.  Daalgard
+		has data on energy consumption of people with different satures.</p>
+		<blockquote>
+			<font face = "Courier">
+			library(ISwR)<br>
+			summary(energy)
+			</font>
+		</blockquote>
+		<p>There are two ways you could peform the t-test. Either pass two vectors to t-test, or give it a formula.</p>
+		<blockquote>
+			<font face = "Courier">
+			obese<-subset(energy,stature == "obese")$expend<br>
+			lean<- subset(energy,stature == "lean")$expend<br>
+			t.test(lean,obese)<br>
+			##or<br>
+			t.test(energy$expend ~ energy$stature)<br>
+			</font>
+		</blockquote>
+		<p>The p-value is very low, so we can reject the hypothesis that the population of obese people and the population of lean people have the same &mu 
+		when it comes to energy consumption.  How big is the difference?  The 95% confidence interval give the range we can be 95% confident that 
+		&mu<sub>lean</sub>-&mu<sub>obese</sub> lies within.  </p>
+		<p>Again, we could do a one-sided t-test by defining alternative hypotheses</p>
+		<blockquote>
+			<font face = "Courier">
+				t.test(energy$expend ~ energy$obese, alt = "g")<br>
+				t.test(energy$expend ~ energy$obese, alt = "l")
+			</font>
+		</blockquote>
+		
+		<p>If you're willing to commit to the variances of these two populations being the same, then the two-sample t-test can be done with a 
+		bit more power.  To compare variances, use <font face="Courier">var.test()</font></p>
+		<blockquote>
+			<font face = "Courier">
+				var.test(energy$expend ~ energy$stature)
+			</font>
+		</blockquote>
+		<p>If this returned a significant p-value, then we could not assume that the variances were equal.  However, the p-value is not, so let's do the 
+		t-test again assuming equal variances.</p>
+		<blockquote>
+			<font face= "Courier">
+				t.test(energy$expend ~ energy$stature, var.equal = T)
+			</font>
+		</blockquote>
+		<p>Looks like we've got a smaller p-value, and a narrower 95% confidence interval, so success.</p>
+		
+		<h4><a name="Paired">Paired t-test</a></h4>
+		<p>Daalgard also has data on energy intake from women pre- and postmenstrual women in <font face = "Courier">intake</font>.  However, what is important
+		about this data is that it was not collected from different groups of women, but from the same women at different times.  It's important to use a 
+		paired t-test for this kind of data.  Any time a single individual provides 2 points of measurement, sort of pre- and post-treatment, a paired t-test
+		should be used.  (If you have more than two data points from an individual, you should do a 
+		<a href="http://www.ats.ucla.edu/stat/sas/library/repeated_ut.htm">repeated measures ANOVA</a>, but I don't know how that works yet.)</p>
+		<blockquote>
+			<font face= "Courier">
+				t.test(intake$pre, intake$post,paired = T)
+			</font>
+		</blockquote>
+		<h3><a name="Non-parametric">Non-parametric tests</a></h3>
+		<p>If for some reason you can't assume normality of a population (because you got a significant result on a Shapiro-Wilk test for instance), you
+		could try using a non-parametric test.  These tests make no assumptions about the distribution of the data, except that it is symmetrically distributed
+		around its &mu;.</p>
+		<h4><a name="OneSampleWilcox">One Sample Wilcoxon test</a></h4>
+		<blockquote>
+			<font face= "Courier">
+				wilcox.test(daily.intake, mu = 7725)
+			</font>
+		</blockquote>
+		<h4><a name="TwoSampleWilcox">Two Sample Wilcoxon test</a></h4>
+		<blockquote>
+			<font face = "Courier">
+				wilcox.test(energy$expend ~ energy$stature)
+			</font>
+		</blockquote>
+		<h4><a name="MatchedPairsWilcoxon">Matched Pairs Wilcoxon test</a></h4>
+		<blockquote>
+			<font face = "Courier">
+				wilcox.test(intake$pre, intake$post, paired = T)
+			</font>
+		</blockquote>
+		<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

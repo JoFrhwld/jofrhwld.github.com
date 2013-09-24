@@ -1,0 +1,188 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Telsur Plot</title><h1>Telsur Plot</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "../">Home</a> </td><td><a href = "../research.html">Research</a> </td>
+				</tr>
+			</table>
+		</p>
+		<p><a href="plot_tels1.1.R"><b>Download</b></a> (updated January 23, 2009)
+		<blockquote>You can download the script here and source it locally, or source it directly from
+		this location with the following command:<br><br>
+		<font face="Courier">
+				source("http://www.ling.upenn.edu/~joseff/scripts/plot_tels1.1.R")
+				</font>
+		</blockquote>
+		
+		</p>
+		<p><b>Usage:</b>
+			<blockquote>
+				<font face="Courier">
+				anae.plot(telsur_439, output)
+				</font>
+				<br>
+				<br>
+				<font face = "Courier">telsur_439</font> = The full path to the telsur_439 file.<br>
+				<font face = "Courier">output</font> = An already existing output directory.  The script automatically organizes
+					the output into directories and subdirectories, so this will not clutter the designated directory.
+			</blockquote></p>
+		<p><b>Compatibility:</b> 
+			<blockquote><b>**Updated 1.23.09**</b><br><br>This script should now be compatible with PC versions of R.
+			A problem some PC systems will have will be the way the script reads the data into R from the excel file.  The command
+			<font face="Courier">read.xls</font> in the gdata package calls upon perl, which may not be correctly configured on PC's.
+			If you receive an error along the lines of "perl cannot be found," open the telsur_439.xls file in excel, save it as a comma 
+			separated (.csv) file, and point <font face="Courier">anae.plot</font> at that.
+			</blockquote></p>
+		<p><b>Required Packages</b>
+			<blockquote>gdata: If gdata is not already installed in your system, this script will attempt to install it.  This step introduces 
+			the largest source of error.  If you recieve an error involving the installation of the gdata package, try installing it yourself,
+			either with the package manager, or with the following command:<br><br>
+			
+			<font face = "Courier">install.packages("gdata",dependencies = T)</font></blockquote></p>
+		<p><b>Information</b>
+				<blockquote>This script is designed to automatically plot the data published with 
+				the Atlas of North American English (Labov, Ash and Boberg 2006).
+				The specific file it utilizes is "telsur_439.xls," which can be found on the CD bundled with the atlas.
+				If your library has a copy of the atlas, the data CD should also be available.
+				This script will save 282 plots of the ANAE data, for a total size of about 2.2 MB.
+				<br>
+				<br>
+				The data is ploted in the following way:<br>
+				<center>	
+				<table border = "1">
+					<tr><th>Subsystem</th> <th>Vowels</th> <th>Plotting Method</th></tr>
+					<tr><td>Short Vowels</td><td>i<br>e<br>&#230;("ae" in plots)<br>o<br>&#652;("uh" in plots)<br>u</td><td>Black Polygon</td>  </tr>
+					<tr><td>Front Upgliding</td><td>iyc<br>eyc<br>ayv<br>(ay0 and oy omitted)</td><td>Solid Red Line</td>  </tr>
+					<tr><td>Back Upgliding</td><td>iw<br>uwf<br>uwc<br>owc<br>aw</td><td>Solid Blue Line</td> </tr>
+					<tr><td>Front Ingliding</td><td>eyr<br>&#230;h(aeh in plots)</td><td>Red Dashed Line</td> </tr>
+					<tr><td>Back Ingliding</td><td>uwr<br>owr<br>ohr<br>oh<br>ahr<br>ah</td><td>Blue Dashed Line</td> </tr>
+				</table>
+				</center><br>
+				The plots will be saved to directories automatically created by the script.  If the specified output directory is
+				<font face = "Courier">~</font>, then the directory <font face = "Courier">~/ANAE</font> will be created. Within
+				<font face = "Courier">~/ANAE</font>, there will be a directory for every dialect region named after the one, two, or three letter 
+				specification from the spreadsheet.  Each dialect region directory will contain a plot of the over all dialect data, as well as a 
+				directory called <font face = "Courier">SPCOM</font>, which contains plots of all the speech communities sampled from that region.
+				<br>
+				<br>
+				The following is the directory listing for the Boston dialect region, B:
+				<br>
+				<blockquote>
+				<font face = "Courier">ANAE/B/<br><br>
+				ANAE/B/B.pdf<br>
+				ANAE/B/SPCOM<br><br>
+				ANAE/B/SPCOM/Boston.pdf<br>
+				ANAE/B/SPCOM/Concord.pdf<br>
+				ANAE/B/SPCOM/Manchester.pdf<br>
+				ANAE/B/SPCOM/Worcester.pdf
+				</font> 
+				</blockquote>
+				This script will also leave an object called <font face = "Courier">anae</font> in your workspace.  This is a reformatted 
+				data frame based on the telsur_439.xls file.  Every row has the mean F1 and F2 of a vowel from a speaker.  The speaker and dialect
+				info is in the columns in the usual way, and the vowel info is in the column <font face="Courier">VClass</font>.
+				</blockquote>
+				</p>
+				<p><b>Uses:</b>
+				<blockquote>
+				By capitalizing on the notion of subsystems, quite a few relationships in the data are illuminated.  
+				For example, the pattern of the Northern Cities Shift is very clear below.   
+				<center>
+				<img src = "../plots/IN.gif"  width="400" height="400"> 
+				</center>
+				
+				One other relationship that can be seen in many places in the data is the /ay/-/aw/ crossover, where the nucleus of
+				/aw/ is a front vowel, and the nucleus of /ay/ is a back vowel. This is clearly illustrated by the crossing of the red and
+				blue solid lines. Two features which appear to be correlated with non-crossover dialects are little back vowel fronting, and the
+				presence of a single low point vowel.
+			
+				<br><br>
+				<center>
+				<b>Some Cross Over Dialects</b>
+				<br>
+				<img src = "../plots/MA.gif"  width="300" height="300">
+				<img src = "../plots/S.gif"  width="300" height="300">
+				<img src = "../plots/WPA.gif"  width="300" height="300">
+				</center>
+				<br>
+				<br>
+				<center>
+					<b>Some Non-Cross Over Dialects</b>
+					<br>
+					<img src = "../plots/IN.gif"  width="300" height="300">
+					<img src = "../plots/B.gif"  width="300" height="300">
+					<img src = "../plots/WNE.gif"  width="300" height="300">
+				</center>
+				<br>
+				Of course, this is just an example of the kind of inquiry that can be approached when looking at the data in this kind of way.
+				</blockquote></p>
+		
+		<br>
+		<p><b>Future Goals:</b>
+			<blockquote>
+				Goals for this particular script include expanding system compatibility, as well as options to 
+				plot specific subsets of dialects and speech communities.
+				<br>
+				<br>
+				The greatest strength of this way of plotting the atlas data is in the representation of the short vowels.
+				The visible cross over of the front and back upgliding vowels is also rather clear, but not is as quite a striking manner.
+				These graphics are alredy very information dense, and adding much more information would risk muddying the waters. I would, however,
+				like to find ways of graphically representing additional relationships in as clear a way as possible, such as tense-lax pairings, specific 
+				allophonic alternations of interest (e.g. ayV~ay0), phonemic contrasts of interest (e.g. ah~o~oh), or specific hypothesized patterns of sound changes.
+				These goals are quite general, and not necessarilly limited to the ANAE data set.
+				
+			</blockquote>
+			
+		</p>
+		
+		<p>
+			<b>Revisions in Progress</b>
+			<blockquote>
+				<ul>
+					<li>A "save" option, which will allow the output of the script to be written to files in automatically organized directories,
+					or to be plotted to the standard device to be reviewed there.</li>
+					<li>The ability to plot specific dialect regions, speech communities, or speakers.</li>
+					<li>End user usable versions of the subroutines, to allow a finer grained investigation of the data.</li>
+				</ul>
+			</blockquote>	
+		</p>
+		
+		<p>
+			<b>Older Versions</b>
+			<blockquote>
+				<a href="plot_tels1.0.1.R">plot_tels1.0.1</a>
+			</blockquote>
+		</p>
+		
+		<p>Contact me with bugs or suggested revisions: <script language="JavaScript">
+			 		<!-- 
+
+			 		var email = "joseff"; var emailHost = "babel.ling.upenn.edu"
+			 		document.write("<a href=" + "mai" + "lto:" +email +
+			 		"&#64;" + emailHost+ ">" + "<b"+">"+ email + "&#64;" + emailHost + "</"+"b>"+"</a>")
+	
+				 	//-->
+   		</script></p>
+		
+		<a rel="license" href="http://creativecommons.org/licenses/GPL/2.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/GPL/2.0/88x62.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/GPL/2.0/">Creative Commons GNU General Public License License</a>.
+	
+	
+	</font>
+	
+	
+	
+	<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-5");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+	
+</html>

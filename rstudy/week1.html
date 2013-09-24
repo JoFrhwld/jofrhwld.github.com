@@ -1,0 +1,404 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 1</title><h1>Week 1</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week2.html">Week 2 -></a></td>
+
+				</tr>
+			</table>
+		</p>
+	<h2>References</h2>
+		<p><b>Introductory Statistics with R</b>: Chapter 1
+		<br><b>Analyzing Linguistic Data: A practical introduction to statistics</b>: Chapter 1</p>
+		
+	<h2>Contents</h2>
+<ol>
+	
+<li><a href = "#why">Why use R?</a></li>
+<li><a href = "#installing">Installing R</a></li>
+
+<li><a href = "#help">Getting Help</a></li>
+
+<li><a href = "#expansion">Customization and Expansion</a></li>
+
+<li><a href = "#vectors">Basics of Vectors and Assignment</a></li>
+	<ol>
+	<li><a href = "#assignment">Assignment</a></li>
+	<li><a href = "#arithmetic">Vector Arithmetic</a></li>
+	<li><a href = "#Indexing">Indexing</a></li>
+	<li><a href = "#vectorfunctions">Handy Vector Functions</a></li>
+	</ol>
+
+<li><a href = "#matrices">Matrices</a></li>
+	<ol>
+	<li><a href = "#matrixindex">Matrix Indexing</a></li>
+	<li><a href = "#matrixfunction">Handy Matrix Functions</a></li>
+	</ol>
+</ol>	
+
+
+	<h2>Why use R?<a name = "why"></a></h2>
+	<p>When you first start up R, this is what you see:
+		<blockquote>
+			<font face = "Courier">
+				>
+			</font>
+		</blockquote>
+	and that is very intimidating.</p>
+	<p> Here are some immediate questions you will have
+	<ul>
+		<li>How do I load my data?</li>
+		<li>How do I look at my data?</li>
+		<li>What method do I use to analyze my data</li>
+	</ul>
+	Look in the menus of your R distribution. You will not find the answers to these questions.
+	</p>
+	
+	<p>Your immediate and natural response right now might be to question why we should all be using R. Other statistics programs exist,
+	like SPSS, and some people have specialty scripts to do stats for them (e.g. Sociolinguistics with GoldVarb and RBrul).
+	</p>
+	
+	<p>My personal response overlaps quite a bit with <a href="http://monkeysuncle.stanford.edu/?p=367">this blog post</a>. Quite simply,
+	<b>R is the statistics software paradigm of our day</b>. That statement can easily tell the whole story, but I'll elaborate. First,
+	there are intrinsic qualities to R that are driving it towards paradigm status. Specifically, it is free, open source, platform independent,
+	has an excellent ease of use to power of use ratio, and with all the libraries available is usually a one-stop-shop for all your data analysis needs.
+	Second, because it is the paradigm, there is a broad community of users out there to continue to expand and improve its use, and to provide support, which
+	specialty scripts and proprietary software lack. Most academic statisticians use R, so if you go to them for help, or buy their book, they will usually provide 
+	R code or R packages to implement their advice. When we do our data analysis in R, we benefit from, and contribute to the use of statistics in the
+	whole of the social sciences. There approaches a point where individual disciplines may need to utilize specialized or rare statistical techniques, but these
+	points lie on the margins. For the most part, we are all asking the same questions for different problem spaces, and when we have unified language to ask them
+	in, we can all assist each other despite non-overlapping theoretical backgrounds.</p>
+	
+	<p>But what's more is that it is not necessary to suffer to reach salvation! It is possible to start using R quite effectively quite rapidly, which will
+	be the goal of this study group. We will gloss over a lot of the guts of the system, as well as its use as a programming language, and focus exclusively on 
+	using the interactive prompt to manipulate and analyze data.
+	</p>
+	
+	
+	<h2>Installing R<a name = "installing"></a></h2>
+	<p>If you haven't already installed R, you can do so at the <a href="http://cran.r-project.org/">Comprehensive R Archive Network</a> (CRAN).</p>
+	
+	<h2>Getting Help<a name = "help"></a></h2>
+		<p>Perhaps the most useful command in R is <font face = "Courier">?</font>.  At the prompt, type <font face = "Courier">?</font> followed by any
+		command, and it will bring up the help page for that command. e.g. <font face = "Courier">?plot</font>
+		</p>
+		<p>If you don't know the name of a specific command, or don't know how to do what you want, try searching the internet for it.
+		There are a lot of blogs and mailing lists talking about R, and odds are the answer to your question will be there.  "R" is
+		a pretty poor search term, expecially when dealing with statistics or mathematics, so you might try including "R language" in your search terms. 
+		There is also a custom google search called <a href="http://www.rseek.org/">RSeek</a>, but I'm not always pleased with the results it gives. </p>
+	
+	<h2>Customization and Expansion<a name = "expansion"></a></h2>
+		<p>R is an open source project, which means everyone and their mother has a package for everything.  This means that if you have a task,
+		there is probably an R library for it.  Some caution should be exercised before you build a model that hinges on some Joe Blow's R package,
+		but the most commonly used packages are in good shape.  To install a package (if your defauts aren't changed) type 
+		<font face = "Courier">install.packages("packagename")</font>.</p>
+		<p>
+			Thanks to Keelan for pointing out <a href="http://crantastic.org/">http://crantastic.org/</a>, which is set up to rate different R libraries.
+			There isn't much content there yet, but hopefully over time it will fill up.
+		</p>
+	
+	<h2>Basics of Vectors and Assignment<a name = "vectors"></a></h2>
+		<p>R can be used for any kind of basic calculation.</p>
+		<blockquote>
+			<font face = "Courier">
+				> 3+3 <br>
+				[1] 6<br>
+				> 2*4<br>
+				[1] 8<br>
+				> (369-1)/6<br>
+				[1] 61.33333
+			</font>
+		</blockquote>
+		<p>The <font face = "Courier">></font> symbol is the prompt for input.  The output is preceded by <font face = "Courier">[1]</font> to
+		indicate that it is the first element in a vector.</p>
+		
+		<p>Vectors are one of the basic data structures in R.  They are essentially a list of data, and can contain characters, numbers, or TRUE FALSE values.
+		There are a number of ways to create vectors in R, and frequently doing data manipulation will produce subvectors of data. The table below has
+		some commands for creating vectors.</p>
+		<center>
+		<table border = 1>
+			<tr>
+				<td><font face = "Courier">1:10</font></td><td>This produces a vector of integers from 1 to 10.<br>
+																Reversing the order of the numbers will produce a vector of decreasing values</td>
+			</tr>
+			<tr>
+				<td><font face = "Courier">c(...)</font></td><td>This produces a vector of whatever is passed as an argument to 
+																<font face="Courier">c()</font>.<br>
+																e.g. <font face = "Courier">c(1,2,3,4)</font></td>
+			</tr>
+			<tr>
+				<td><font face = "Courier">seq(from,to,...)</font></td><td>This produces a sequence of numbers either by a given
+																	increment or evenly spaced to a given length.<br>
+																	<font face = "Courier">seq(1,10,by=0.5)<br>
+																	seq(1,10,length=11)</font></td>
+			</tr>
+			<tr>
+				<td><font face = "Courier">rep(x,...)</font></td><td>This produces a vector of repetitions of <font face="Courier">x</font> by
+																		a given number of times.<br>
+																		<font face="Courier">rep(1,6)<br>
+																		rep(1:3,2)<br>
+																		rep("hello world",4)</font></td>
+			</tr>
+			
+		</table>
+		</center>
+		<p>Not that this will ever be a big issue in practical use, but vectors of mixed types are impossible in R.  They will automatically be simplified
+		to the least restrictive type.  Boolean logical values will be simplified to numerical 1's and 0's in a mixed vector with numbers, and everything 
+		will be simplified to chracter strings in a mixed vector with characters.  This problem will usually need to be addressed when loading
+		poorly fomatted data into R. (For more marginal problems of dealing with integers vs. floating points, 
+		see <a href="http://blog.revolution-computing.com/2009/03/when-is-a-zero-not-a-zero.html">here</a>.)</p>
+
+		<h3>Assignment<a name = "assignment"></a></h3>
+		<p>It is usually useful to assign vectors to variables. The assignment operator in R is <font face = "Courier"><-</font> or <font face = "Courier">-></font>.
+		The following are equivalent assignments:
+		<blockquote>
+			<font face = "Courier">
+				> x <- 1:10 <br>
+				> 1:10 ->x<br>
+				> x<br>
+ 				[1]  1  2  3  4  5  6  7  8  9 10
+			</font>
+		</blockquote>
+		The variable <font face = "Courier">x</font> now represents the vector of integers from 1 to 10.  Variables in R are case sensitive, so if you 
+		assign something to <font face = "Courier">x</font>, you have not assigned it to <font face = "Courier">X</font>.
+		</p>
+		<p>Also note that functions and operations never directly modify variables.  Below we discuss some vector arithmetic.  The operation
+		<font face = "Courier">x*3</font> does not modify <font face = "Courier">x</font>, but rather produces output which can be assigned to
+		a new variable, or back to the original variable.  Without assigning the output of a function or operation to some variable, that output is not
+		available in any way to further computation.
+		<blockquote>
+			<font face = "Courier">
+				> x<br>
+				 [1]  1  2  3  4  5  6  7  8  9 10<br>
+				> x*3<br>
+				 [1]  3  6  9 12 15 18 21 24 27 30<br>
+				> x<br>
+				 [1]  1  2  3  4  5  6  7  8  9 10<br>
+				> x*3->x<br>
+				> x<br>
+				 [1]  3  6  9 12 15 18 21 24 27 30<br>
+			</font>
+		</blockquote> </p>
+		
+		
+		<h3>Vector Arithmetic<a name = "arithmetic"></a></h3>
+		<p>Just like you can carry out arithmetic functions on numbers, you can do the same to vectors. In fact, single numbers are treated as vectors
+		of length 1, so all arithmetic is actually vector arithmetic. The arithmetic functions in R (even <font face = "Courier">* /</font>)
+		are all element-wise.
+		<blockquote>
+			<font face = "Courier">
+				> x <- 1:10 <br>
+				> x<br>
+				 [1]  1  2  3  4  5  6  7  8  9 10<br>
+				> x+1<br>
+				 [1]  2  3  4  5  6  7  8  9 10 11<br>
+				> x*2<br>
+				 [1]  2  4  6  8 10 12 14 16 18 20<br>
+				> x^2<br>
+				 [1]   1   4   9  16  25  36  49  64  81 100<br>
+				> x/3<br>
+				 [1] 0.3333333 0.6666667 1.0000000 1.3333333 1.6666667 2.0000000 2.3333333 2.6666667 3.0000000 3.3333333<br>
+				> log(x)<br>
+				 [1] 0.0000000 0.6931472 1.0986123 1.3862944 1.6094379 1.7917595 1.9459101 2.0794415 2.1972246 2.3025851<br>
+			</font>
+		</blockquote>
+		You can also do arithmetic operations on two multilength vectors.  R will repeat the smaller vector so it is the same length as the larger vector.
+		<blockquote>
+			<font face = "Courier">
+				> x*x<br>
+				 [1]   1   4   9  16  25  36  49  64  81 100<br>
+				> x+x<br>
+				 [1]  2  4  6  8 10 12 14 16 18 20<br>
+				> y<-c(1,2)<br>
+				> x*y<br>
+				 [1]  1  4  3  8  5 12  7 16  9 20<br>
+			</font>
+		</blockquote>
+		If the smaller vector is not a multiple of the larger vector, you will still get output, but R will print a warning.
+		<blockquote>
+			<font face = "Courier">
+				> x<-rep(1,10)<br>
+				> x<br>
+				[1] 1 1 1 1 1 1 1 1 1 1<br>
+				> y <- c(1,2,3)<br>
+				> y<br>
+				[1] 1 2 3<br>
+				> x*y<br>
+				 [1] 1 2 3 1 2 3 1 2 3 1<br>
+				Warning message:<br>
+				In x * y : longer object length is not a multiple of shorter object length
+
+			</font>
+		</blockquote>
+		</p>
+		
+		<h3>Indexing<a name = "Indexing"></a></h3>
+		<p>Elements in a vector are indexed, and can be referenced by their index. **Note** In R, unlike many languages, indexing begins with 1.
+			<blockquote>
+				<font face="Courier">
+					> LETTERS<br>
+					 [1] "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"<br>
+					> LETTERS[1]<br>
+					[1] "A"<br>
+					> LETTERS[1:4]<br>
+					[1] "A" "B" "C" "D"<br>
+					> LETTERS[c(1,3,5)]<br>
+					[1] "A" "C" "E"<br>
+				</font>
+			</blockquote>
+		</p>
+		<p>
+			You can also access subvectors using a vector of <font face = "Courier">TRUE</font> or <font face = "Courier">FALSE</font> values as an index.
+			Usually, this <font face = "Courier">TRUE</font>/<font face = "Courier">FALSE</font> vector will be the same length as the vector it is indexing.
+			<blockquote>
+				<font face = "Courier">
+					> t.f<- rep(F,26)<br>
+					> t.f<br>
+					[1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE<br>
+					> LETTERS[t.f]<br>
+					character(0)<br>
+					> t.f[3]<- T<br>
+					> LETTERS[t.f]<br>
+					[1] "C"<br>
+					> x<-1:10<br>
+					> x<br>
+					[1]  1  2  3  4  5  6  7  8  9 10<br>
+					> x>5<br>
+					[1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE<br>
+					> x[x>5]<br>
+					[1]  6  7  8  9 10<br>
+				</font>
+			</blockquote>
+		</p>
+		<p>
+			If you use a vector of Boolean values as an index which is shorter than the vector it is indexing, R will repeat it so it is the same length.
+			<blockquote>
+				<font face = "Courier">
+				> x[c(T,F)]<br>
+				[1] 1 3 5 7 9<br>
+				> x[c(F,T)]<br>
+				[1] 2 4 6 8 10<br>
+				</font>
+			</blockquote>
+			As might be expected, any vector of Boolean values, if preceded by <font face ="Courier">!</font> will produce a vector of
+			the opposite values.
+			<blockquote>
+				<font face = "Courier">
+					> t.f<br>
+					 [1] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE<br>
+					> !t.f<br>
+					 [1]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE<br>
+					> LETTERS[t.f]<br>
+					[1] "C"<br>
+					> LETTERS[!t.f]<br>
+					 [1] "A" "B" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"<br>
+				</font>
+			</blockquote>
+		</p>
+		
+		
+		<h3>Handy Vector Functions<a name = "vectorfunctions"></a></h3>
+		<ul>
+			<li>Numeric Vectors</li>
+			<ul>
+				<li><font face = "Courier">sum()</font></li>
+				<li><font face = "Courier">mean()</font></li>
+				<li><font face = "Courier">sd()</font> (standard deviation)</li>
+				<li><font face = "Courier">max()</font></li>
+				<li><font face = "Courier">min()</font></li>
+				<li><font face = "Courier">median()</font></li>
+				<li><font face = "Courier">range()</font></li>
+			</ul>
+			<li>Any Vector</li>
+			<ul>
+				<li><font face = "Courier">rev()</font> (reverse)</li>
+				<li><font face = "Courier">unique()</font> (list of unique vector values)</li>
+			</ul>
+		</ul>
+		
+		
+		<h2>Matrices<a name = "matrices"></a></h2>
+		<p>
+			Just like they sound, matrices are matrices of data.  Just like vectors, they can contain characters, numbers, or TRUE/FALSE values.  Here are
+			some commands for creating matrices.
+		</p>
+		<center>
+			<table border = 1>
+				<tr >
+					<td><font face = "Courier">matrix(x,nrow,ncol)</font></td><td>Takes a vector as an argument, and re-forms it as a 
+																				matrix with the number of rows and columns as defined by
+																				<font face = "Courier">ncol</font> and/or <font face = "Courier">nrow</font>.<br>
+																				By default, the vector is "poured" into the matrix by columns, but it can be 
+																				done by rows by setting the 
+																				<font face = "Courier">byrows</font> option to T.<br>
+																				If <font face = "Courier">matrix()</font> is called without a vector argument,
+																				but <font face = "Courier">ncol</font> and/or <font face = "Courier">nrow</font>
+																				are defined, it will generate a matrix of empty values.<br>
+																				<font face = "Courier">matrix(1:9,ncol = 3)</font><br>
+																				<font face = "Courier">matrix(1:9,ncol = 3, byrow = T)</font><br>
+																				<font face = "Courier">matrix(nrow= 3,ncol = 3)</font>
+																				</td>
+				</tr>
+				<tr>
+					<td><font face = "Courier">cbind(...)</font></td><td>This binds vectors into a matrix by columns<br>
+																	<font face = "Courier">cbind(1:3,1:3)</font></td>
+				</tr>
+				<tr>
+					<td><font face = "Courier">rbind(...)</font></td><td>This binds vectors into a matrix by rows<br>
+																	<font face = "Courier">rbind(1:3,1:3)</font></td>
+				</tr>
+			</table>
+		</center>
+		<p>As with vectors, mixed data types in one matrix is impossible.  Automatic simplification to the least restrictive type happens in the same way
+		as described above.</p>
+		
+		<h3>Matrix Indexing<a name = "matrixindex"></a></h3>
+		<p>When a simple matrix is printed to output, its indexing is exactly like it is printed along the margins.  Within brackets, the first number 
+		indexes the row, and the second the column.  Leaving one of the numbers underspecified will return a vector of the row or column values.</p>
+		<blockquote>
+			<font face = "Courier">
+				> xmat <- matrix(1:9,ncol = 3)<br>
+				> xmat<br>
+				<table >
+				<tr align = "right"><td></td><td>[,1]</td><td>[,2]</td><td>[,3]</td></tr>
+				<tr align = "right"><td>[1,]</td><td>1</td><td>4</td><td>7</td></tr>
+				<tr align = "right"><td>[2,]</td><td>2</td><td>5</td><td>8</td></tr>
+				<tr align = "right"><td>[3,]</td><td>3</td><td>6</td><td>9</td></tr>
+				</table>
+				> row.number <-1<br>
+				> col.number <-3<br>
+				> xmat[row.number,col.number]<br>
+				[1] 7<br>
+				> xmat[row.number,]<br>
+				[1] 1 4 7<br>
+				> xmat[,col.number]<br>
+				[1] 7 8 9
+			</font>
+		</blockquote>
+		
+		
+		<h3>Handy Matrix Functions<a name = "matrixfunction"></a></h3>
+			<ul>
+				<li><font face = "Courier">t()</font>: transposes a matrix</li>
+				<li><font face = "Courier">colSums()</font>: Sum of the column values</li>
+				<li><font face = "Courier">rowSums()</font>: Sum of the row values</li>
+				<li><font face = "Courier">colMeans()</font>: Mean of the column values</li>
+				<li><font face = "Courier">rowMeans()</font>: Mean of the row values</li>
+				
+			</ul>
+			<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+	
+</html>

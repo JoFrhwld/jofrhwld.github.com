@@ -1,0 +1,1672 @@
+
+R version 2.11.1 (2010-05-31)
+Copyright (C) 2010 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[R.app GUI 1.34 (5589) i386-apple-darwin9.8.0]
+
+[Workspace restored from /Users/joseffruehwald/.RData]
+
+> tt <- read.csv("~/Documents/Classes/Fall_10/RStudy/Workbook1.csv")
+> tt
+    Class     Age    Sex   n  r tt  t X.t X.
+1 Working   older female 404 40 18 27  12  2
+2 Working   older   male 178 15 35  7  42  2
+3 Working younger female 402 21 39  5  20 13
+4 Working younger   male 230  2 59  4  23 12
+5  Middle   older female 366 12 27 39  20  2
+6  Middle   older   male 398  6 32  5  53  4
+7  Middle younger female 383  2 42  5  17 34
+8  Middle younger   male 305  1 46  4  27 23
+> library(reshape)
+Loading required package: plyr
+> melt(tt, id = 1:5)
+     Class     Age    Sex   n  r variable value
+1  Working   older female 404 40       tt    18
+2  Working   older   male 178 15       tt    35
+3  Working younger female 402 21       tt    39
+4  Working younger   male 230  2       tt    59
+5   Middle   older female 366 12       tt    27
+6   Middle   older   male 398  6       tt    32
+7   Middle younger female 383  2       tt    42
+8   Middle younger   male 305  1       tt    46
+9  Working   older female 404 40        t    27
+10 Working   older   male 178 15        t     7
+11 Working younger female 402 21        t     5
+12 Working younger   male 230  2        t     4
+13  Middle   older female 366 12        t    39
+14  Middle   older   male 398  6        t     5
+15  Middle younger female 383  2        t     5
+16  Middle younger   male 305  1        t     4
+17 Working   older female 404 40      X.t    12
+18 Working   older   male 178 15      X.t    42
+19 Working younger female 402 21      X.t    20
+20 Working younger   male 230  2      X.t    23
+21  Middle   older female 366 12      X.t    20
+22  Middle   older   male 398  6      X.t    53
+23  Middle younger female 383  2      X.t    17
+24  Middle younger   male 305  1      X.t    27
+25 Working   older female 404 40       X.     2
+26 Working   older   male 178 15       X.     2
+27 Working younger female 402 21       X.    13
+28 Working younger   male 230  2       X.    12
+29  Middle   older female 366 12       X.     2
+30  Middle   older   male 398  6       X.     4
+31  Middle younger female 383  2       X.    34
+32  Middle younger   male 305  1       X.    23
+> melt(tt, id = 1:4)
+     Class     Age    Sex   n variable value
+1  Working   older female 404        r    40
+2  Working   older   male 178        r    15
+3  Working younger female 402        r    21
+4  Working younger   male 230        r     2
+5   Middle   older female 366        r    12
+6   Middle   older   male 398        r     6
+7   Middle younger female 383        r     2
+8   Middle younger   male 305        r     1
+9  Working   older female 404       tt    18
+10 Working   older   male 178       tt    35
+11 Working younger female 402       tt    39
+12 Working younger   male 230       tt    59
+13  Middle   older female 366       tt    27
+14  Middle   older   male 398       tt    32
+15  Middle younger female 383       tt    42
+16  Middle younger   male 305       tt    46
+17 Working   older female 404        t    27
+18 Working   older   male 178        t     7
+19 Working younger female 402        t     5
+20 Working younger   male 230        t     4
+21  Middle   older female 366        t    39
+22  Middle   older   male 398        t     5
+23  Middle younger female 383        t     5
+24  Middle younger   male 305        t     4
+25 Working   older female 404      X.t    12
+26 Working   older   male 178      X.t    42
+27 Working younger female 402      X.t    20
+28 Working younger   male 230      X.t    23
+29  Middle   older female 366      X.t    20
+30  Middle   older   male 398      X.t    53
+31  Middle younger female 383      X.t    17
+32  Middle younger   male 305      X.t    27
+33 Working   older female 404       X.     2
+34 Working   older   male 178       X.     2
+35 Working younger female 402       X.    13
+36 Working younger   male 230       X.    12
+37  Middle   older female 366       X.     2
+38  Middle   older   male 398       X.     4
+39  Middle younger female 383       X.    34
+40  Middle younger   male 305       X.    23
+> melt(tt, id = 1:4)->tt.m
+> levels(tt.m$variable)
+[1] "r"   "tt"  "t"   "X.t" "X." 
+> levels(tt.m$variable)[4]
+[1] "X.t"
+> levels(tt.m$variable)[4] <- "?t"
+> levels(tt.m$variable)[5[
++ ]]
+[1] "X."
+> levels(tt.m$variable)[5]
+[1] "X."
+> levels(tt.m$variable)[5] <- "?
++ "
+> levels(tt.m$variable)[5] <- "?"
+> tt.m
+     Class     Age    Sex   n variable value
+1  Working   older female 404        r    40
+2  Working   older   male 178        r    15
+3  Working younger female 402        r    21
+4  Working younger   male 230        r     2
+5   Middle   older female 366        r    12
+6   Middle   older   male 398        r     6
+7   Middle younger female 383        r     2
+8   Middle younger   male 305        r     1
+9  Working   older female 404       tt    18
+10 Working   older   male 178       tt    35
+11 Working younger female 402       tt    39
+12 Working younger   male 230       tt    59
+13  Middle   older female 366       tt    27
+14  Middle   older   male 398       tt    32
+15  Middle younger female 383       tt    42
+16  Middle younger   male 305       tt    46
+17 Working   older female 404        t    27
+18 Working   older   male 178        t     7
+19 Working younger female 402        t     5
+20 Working younger   male 230        t     4
+21  Middle   older female 366        t    39
+22  Middle   older   male 398        t     5
+23  Middle younger female 383        t     5
+24  Middle younger   male 305        t     4
+25 Working   older female 404       ?t    12
+26 Working   older   male 178       ?t    42
+27 Working younger female 402       ?t    20
+28 Working younger   male 230       ?t    23
+29  Middle   older female 366       ?t    20
+30  Middle   older   male 398       ?t    53
+31  Middle younger female 383       ?t    17
+32  Middle younger   male 305       ?t    27
+33 Working   older female 404        ?     2
+34 Working   older   male 178        ?     2
+35 Working younger female 402        ?    13
+36 Working younger   male 230        ?    12
+37  Middle   older female 366        ?     2
+38  Middle   older   male 398        ?     4
+39  Middle younger female 383        ?    34
+40  Middle younger   male 305        ?    23
+> levels(tt.m$variable)
+[1] "r"  "tt" "t"  "?t" "?" 
+> library(ggplot2)
+Loading required package: grid
+Loading required package: proto
+> summary(tt)
+     Class        Age        Sex          n               r               tt              t              X.t              X.      
+ Middle :4   older  :4   female:4   Min.   :178.0   Min.   : 1.00   Min.   :18.00   Min.   : 4.00   Min.   :12.00   Min.   : 2.0  
+ Working:4   younger:4   male  :4   1st Qu.:286.2   1st Qu.: 2.00   1st Qu.:30.75   1st Qu.: 4.75   1st Qu.:19.25   1st Qu.: 2.0  
+                                    Median :374.5   Median : 9.00   Median :37.00   Median : 5.00   Median :21.50   Median : 8.0  
+                                    Mean   :333.2   Mean   :12.38   Mean   :37.25   Mean   :12.00   Mean   :26.75   Mean   :11.5  
+                                    3rd Qu.:399.0   3rd Qu.:16.50   3rd Qu.:43.00   3rd Qu.:12.00   3rd Qu.:30.75   3rd Qu.:15.5  
+                                    Max.   :404.0   Max.   :40.00   Max.   :59.00   Max.   :39.00   Max.   :53.00   Max.   :34.0  
+> relevel(tt.m$Age, "younger")
+ [1] older   older   younger younger older   older   younger younger older   older   younger younger older   older   younger younger older   older   younger younger older  
+[22] older   younger younger older   older   younger younger older   older   younger younger older   older   younger younger older   older   younger younger
+Levels: younger older
+> relevel(tt.m$Age, "younger")->tt.m$Age
+> relevel(tt.m$Class, "Working")
+ [1] Working Working Working Working Middle  Middle  Middle  Middle  Working Working Working Working Middle  Middle  Middle  Middle  Working Working Working Working Middle 
+[22] Middle  Middle  Middle  Working Working Working Working Middle  Middle  Middle  Middle  Working Working Working Working Middle  Middle  Middle  Middle 
+Levels: Working Middle
+> relevel(tt.m$Class, "Working")->tt.m$Class
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_area(position = "fill")  + facet_wrap(Age ~ Class)
+Error in if (any(diff(intervals) < -1e-06)) { : 
+  missing value where TRUE/FALSE needed
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_area(position = "fill", aes(group = 1))  + facet_wrap(Age ~ Class)
+Error in if (any(diff(intervals) < -1e-06)) { : 
+  missing value where TRUE/FALSE needed
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_area(position = "bar", aes(group = 1))  + facet_wrap(Age ~ Class)
+Error: No position called bar
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_bar(position = "fill") + facet_wrap(Age ~ Class)
+Error in pmin(y, 0) : object 'y' not found
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_bar(position = "fill", stat = "identity") + facet_wrap(Age ~ Class)
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_bar(position = "fill", stat = "identity") + facet_wrap(Age ~ Sex)
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_bar(position = "fill", stat = "identity") + facet_Grid(Class ~ Sex)
+Error: could not find function "facet_Grid"
+> ggplot(tt.m, aes(Age, value, fill = variable)) + geom_bar(position = "fill", stat = "identity") + facet_grid(Class ~ Sex)
+> ggplot(tt.m, aes(as.numeric(Age), value, fill = variable)) + geom_area(position = "fill", stat = "identity") + facet_grid(Class ~ Sex)
+> ggplot(tt.m, aes(as.numeric(Age), value, fill = variable)) + geom_area(position = "fill", stat = "identity") + facet_grid(Class ~ Sex) + scale_x_reverse()
+> ggplot(tt.m, aes(as.numeric(Age), value, fill = variable)) + geom_area(position = "fill", stat = "identity", color = "black") + facet_grid(Class ~ Sex) + scale_x_reverse()
+> cast(tt.m, Class + Sex + variable ~ Age)
+     Class    Sex variable younger older
+1  Working female        r      21    40
+2  Working female       tt      39    18
+3  Working female        t       5    27
+4  Working female       ?t      20    12
+5  Working female        ?      13     2
+6  Working   male        r       2    15
+7  Working   male       tt      59    35
+8  Working   male        t       4     7
+9  Working   male       ?t      23    42
+10 Working   male        ?      12     2
+11  Middle female        r       2    12
+12  Middle female       tt      42    27
+13  Middle female        t       5    39
+14  Middle female       ?t      17    20
+15  Middle female        ?      34     2
+16  Middle   male        r       1     6
+17  Middle   male       tt      46    32
+18  Middle   male        t       4     5
+19  Middle   male       ?t      27    53
+20  Middle   male        ?      23     4
+> cast(tt.m, Class + Sex + variable ~ Age)->x
+> x$older-x$younger
+ [1]  19 -21  22  -8 -11  13 -24   3  19 -10  10 -15  34   3 -32   5 -14   1  26 -19
+> abs(x$older-x$younger) -> x$diff
+> x
+     Class    Sex variable younger older diff
+1  Working female        r      21    40   19
+2  Working female       tt      39    18   21
+3  Working female        t       5    27   22
+4  Working female       ?t      20    12    8
+5  Working female        ?      13     2   11
+6  Working   male        r       2    15   13
+7  Working   male       tt      59    35   24
+8  Working   male        t       4     7    3
+9  Working   male       ?t      23    42   19
+10 Working   male        ?      12     2   10
+11  Middle female        r       2    12   10
+12  Middle female       tt      42    27   15
+13  Middle female        t       5    39   34
+14  Middle female       ?t      17    20    3
+15  Middle female        ?      34     2   32
+16  Middle   male        r       1     6    5
+17  Middle   male       tt      46    32   14
+18  Middle   male        t       4     5    1
+19  Middle   male       ?t      27    53   26
+20  Middle   male        ?      23     4   19
+> reorder(x$variable, x$diff, mean)
+ [1] r  tt t  ?t ?  r  tt t  ?t ?  r  tt t  ?t ?  r  tt t  ?t ? 
+attr(,"scores")
+    r    tt     t    ?t     ? 
+11.75 18.50 15.00 14.00 18.00 
+Levels: r ?t t ? tt
+> levels(reorder(x$variable, x$diff, mean))
+[1] "r"  "?t" "t"  "?"  "tt"
+> levels(reorder(x$variable, x$diff, mean))->newLevel
+> relevel(tt.m$variable, newLevel)
+ [1] r  r  r  r  r  r  r  r  tt tt tt tt tt tt tt tt t  t  t  t  t  t  t  t  ?t ?t ?t ?t ?t ?t ?t ?t ?  ?  ?  ?  ?  ?  ?  ? 
+Levels: r ?t t ? tt
+Warning message:
+In if (is.na(ref)) stop("'ref' must be an existing level") :
+  the condition has length > 1 and only the first element will be used
+> relevel(tt.m$variable, newLevel)->tt.m$variable
+Warning message:
+In if (is.na(ref)) stop("'ref' must be an existing level") :
+  the condition has length > 1 and only the first element will be used
+> ggplot(tt.m, aes(as.numeric(Age), value, fill = variable)) + geom_area(position = "fill", stat = "identity", color = "black") + facet_grid(Class ~ Sex) + scale_x_reverse()
+> levels(reorder(x$variable, x$diff, median))->newLevel
+> newLevel
+[1] "r"  "t"  "?t" "?"  "tt"
+> relevel(tt.m$variable, "?t")->tt.m$variable
+> ggplot(tt.m, aes(as.numeric(Age), value, fill = variable)) + geom_area(position = "fill", stat = "identity", color = "black") + facet_grid(Class ~ Sex) + scale_x_reverse()
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable))
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable)) + facet_grid(Class ~ Sex) + scale_x_reverse()
+Error: Non-continuous variable supplied to scale_x_reverse.
+In addition: Warning messages:
+1: In Ops.factor(x) : - not meaningful for factors
+2: In Ops.factor(x) : - not meaningful for factors
+3: In Ops.factor(x) : - not meaningful for factors
+4: In Ops.factor(x) : - not meaningful for factors
+5: In Ops.factor(x) : - not meaningful for factors
+6: In Ops.factor(x) : - not meaningful for factors
+7: In Ops.factor(x) : - not meaningful for factors
+8: In Ops.factor(x) : - not meaningful for factors
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable)) + facet_grid(Class ~ Sex)
+> ?scale_x_discrete
+starting httpd help server ... done
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable)) + facet_grid(Class ~ Sex) + xlim("older","younger")
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable)) + facet_grid(Class ~ Sex) + xlim("older","younger") + ylim(0,1)
+Warning messages:
+1: Removed 10 rows containing missing values (geom_point). 
+2: Removed 10 rows containing missing values (geom_point). 
+3: Removed 10 rows containing missing values (geom_point). 
+4: Removed 9 rows containing missing values (geom_point). 
+5: Removed 1 rows containing missing values (geom_path). 
+> ggplot(tt.m, aes(Age, value, color = variable)) + geom_point() + geom_line(aes(group = variable)) + facet_grid(Class ~ Sex) + xlim("older","younger") + ylim(0,100)
+> par(mfrow=c(2,3)
++ for (i in 1:6)
+Error: unexpected 'for' in:
+"par(mfrow=c(2,3)
+for"
+>     {
++     plot(x, p1-i*p2, main=expression(Phi[1] - i * Phi[2]))
++     }
+Error in pairs.default(data.matrix(x), ...) : object 'p1' not found
+> par(mfrow=c(2,3)
++ for (i in 1:6)
+Error: unexpected 'for' in:
+"par(mfrow=c(2,3)
+for"
+>     {
++     plot(x, p1-i*p2, main=expression(Phi[1] - i * Phi[2]))
++     }
+Error in pairs.default(data.matrix(x), ...) : object 'p1' not found
+> 
+> 
+> par(mfrow=c(2,3)
++ for (i in 1:6)
+Error: unexpected 'for' in:
+"par(mfrow=c(2,3)
+for"
+>     {
++     plot(x, p1-i*p2, main=expression(Phi[1] - i * Phi[2]))
++     }
+Error in pairs.default(data.matrix(x), ...) : object 'p1' not found
+> par(mfrow=c(2,3)
++ for(i in 1:6){
+Error: unexpected 'for' in:
+"par(mfrow=c(2,3)
+for"
+>     plot(x, p1-i*p2, main=expression(Phi[1] - i * Phi[2]))
+Error in pairs.default(data.matrix(x), ...) : object 'p1' not found
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(x, p1-i*p2, main=expression(Phi[1] - i * Phi[2]))
++     }
+Error in pairs.default(data.matrix(x), ...) : object 'p1' not found
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=expression(Phi[1] - i * Phi[2]))
++     }
+> ?evaluate
+No documentation for 'evaluate' in specified packages and libraries:
+you could try '??evaluate'
+> ?eval
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=expression(Phi[1] - eval(i) * Phi[2]))
++     }
+> ?expression
+> length(ex1 <- expression(1+ 0:9))# 1
+[1] 1
+> ex1
+expression(1 + 0:9)
+> eval(ex1
++ )
+ [1]  1  2  3  4  5  6  7  8  9 10
+> expression(Phi[1] - i * Phi[2])
+expression(Phi[1] - i * Phi[2])
+> eval(expression(Phi[1] - i * Phi[2]))
+Error in eval(expr, envir, enclos) : object 'Phi' not found
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     main = paste("Phi[1] -", i, "* Phi[2]")
++     plot(1:10, 1:10, main=expression(main))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     main = paste("Phi[1] -", i, "* Phi[2]")
++     plot(1:10, 1:10, main=as.expression(main))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=expression(Phi[1] - `i` * Phi[2]))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1] -)), i, expression(* Phi[2])))
+Error: unexpected ')' in:
+"for(i in 1:6){
+    plot(1:10, 1:10, main=paste(expression(Phi[1] -)"
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1] -), i, expression(* Phi[2])))
+Error: unexpected ')' in:
+"for(i in 1:6){
+    plot(1:10, 1:10, main=paste(expression(Phi[1] -)"
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1] -), i, expression(* Phi[2]))
+Error: unexpected ')' in:
+"for(i in 1:6){
+    plot(1:10, 1:10, main=paste(expression(Phi[1] -)"
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(
++     					expression(Phi[1] -), 
+Error: unexpected ')' in:
+"    plot(1:10, 1:10, main=paste(
+                                        expression(Phi[1] -)"
+>     					i, 
+Error: unexpected ',' in "                                        i,"
+>     					expression(* Phi[2])))
+Error: unexpected '*' in "                                        expression(*"
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1] -),i,expression(* Phi[2])))
+Error: unexpected ')' in:
+"for(i in 1:6){
+    plot(1:10, 1:10, main=paste(expression(Phi[1] -)"
+>     }
+Error: unexpected '}' in "    }"
+> expression(Phi[1] -)
+Error: unexpected ')' in "expression(Phi[1] -)"
+> expression(Phi[1] - )
+Error: unexpected ')' in "expression(Phi[1] - )"
+> expression(Phi[1] - 1)
+expression(Phi[1] - 1)
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression("Phi[1] -"),i,expression("* Phi[2]")))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(as.expression("Phi[1] -"),i,as.expression("* Phi[2]")))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(as.expression("Phi[1] -"),i,as.expression("* Phi[2]")))
++     }
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1]),"-",i,"*"expression(Phi[2])))
+Error: unexpected symbol in:
+"for(i in 1:6){
+    plot(1:10, 1:10, main=paste(expression(Phi[1]),"-",i,"*"expression"
+>     }
+Error: unexpected '}' in "    }"
+> par(mfrow=c(2,3))
+> for(i in 1:6){
++     plot(1:10, 1:10, main=paste(expression(Phi[1]),"-",i,"*",expression(Phi[2])))
++     }
+> donner<-read.csv("http://www.ling.upenn.edu/~joseff/data/donner.csv")
+> 
+> donner <- arrange(donner, GENDER)
+> donner <- ddply(donner, .(AGE, NFATE), transform, stack = (0:(length(AGE)-1))*0.015)
+> 
+> ggplot(donner, aes(AGE, NFATE, color = GENDER))+
++   geom_point(aes(y = abs(NFATE - stack))) + 
++   stat_smooth(method = "glm", family = binomial, formula = y ~ poly(x,2))
+Warning messages:
+1: Removed 1 rows containing missing values (stat_smooth). 
+2: Removed 1 rows containing missing values (stat_smooth). 
+3: Removed 2 rows containing missing values (geom_point). 
+> quartz(,8,5)
+> donner <- arrange(donner, GENDER)
+> donner <- ddply(donner, .(AGE, NFATE), transform, stack = (0:(length(AGE)-1))*0.015)
+> 
+> ggplot(donner, aes(AGE, NFATE, color = GENDER))+
++   geom_point(aes(y = abs(NFATE - stack))) + 
++   stat_smooth(method = "glm", family = binomial, formula = y ~ poly(x,2))
+Warning messages:
+1: Removed 1 rows containing missing values (stat_smooth). 
+2: Removed 1 rows containing missing values (stat_smooth). 
+3: Removed 2 rows containing missing values (geom_point). 
+> ?economics
+> bp <- read.csv("http://github.com/ezgraphs/R-Programs/raw/master/BP_Oil_Recovery.csv")
+> summary(pb)
+Error in summary(pb) : object 'pb' not found
+> summary(bp)
+  Type         End.Period Recovery.Rate     
+ Gas:43   2010-06-04: 2   Min.   :    0.00  
+ Oil:43   2010-06-05: 2   1st Qu.:   41.83  
+          2010-06-06: 2   Median :   57.55  
+          2010-06-07: 2   Mean   : 9379.66  
+          2010-06-08: 2   3rd Qu.:20337.50  
+          2010-06-09: 2   Max.   :27098.00  
+          (Other)   :74                     
+> range(bp$End.Period)
+Error in Summary.factor(c(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L,  : 
+  range not meaningful for factors
+> as.Date(bp$End.Period)
+ [1] "2010-06-04" "2010-06-05" "2010-06-06" "2010-06-07" "2010-06-08" "2010-06-09" "2010-06-10" "2010-06-11" "2010-06-12" "2010-06-13" "2010-06-14" "2010-06-15"
+[13] "2010-06-16" "2010-06-17" "2010-06-18" "2010-06-19" "2010-06-20" "2010-06-21" "2010-06-22" "2010-06-23" "2010-06-24" "2010-06-25" "2010-06-26" "2010-06-27"
+[25] "2010-06-28" "2010-06-29" "2010-06-30" "2010-07-01" "2010-07-02" "2010-07-03" "2010-07-04" "2010-07-05" "2010-07-06" "2010-07-07" "2010-07-08" "2010-07-09"
+[37] "2010-07-10" "2010-07-11" "2010-07-12" "2010-07-13" "2010-07-14" "2010-07-15" "2010-07-16" "2010-06-04" "2010-06-05" "2010-06-06" "2010-06-07" "2010-06-08"
+[49] "2010-06-09" "2010-06-10" "2010-06-11" "2010-06-12" "2010-06-13" "2010-06-14" "2010-06-15" "2010-06-16" "2010-06-17" "2010-06-18" "2010-06-19" "2010-06-20"
+[61] "2010-06-21" "2010-06-22" "2010-06-23" "2010-06-24" "2010-06-25" "2010-06-26" "2010-06-27" "2010-06-28" "2010-06-29" "2010-06-30" "2010-07-01" "2010-07-02"
+[73] "2010-07-03" "2010-07-04" "2010-07-05" "2010-07-06" "2010-07-07" "2010-07-08" "2010-07-09" "2010-07-10" "2010-07-11" "2010-07-12" "2010-07-13" "2010-07-14"
+[85] "2010-07-15" "2010-07-16"
+> range(as.Date(bp$End.Period))
+[1] "2010-06-04" "2010-07-16"
+> as.Date(bp$End.Period) -> pb$End.Period
+Error in pb$End.Period <- as.Date(bp$End.Period) : object 'pb' not found
+> as.Date(bp$End.Period) -> bp$End.Period
+> 
+> 
+> 
+> bp
+   Type End.Period Recovery.Rate
+1   Oil 2010-06-04          16.0
+2   Oil 2010-06-05        6061.0
+3   Oil 2010-06-06       10496.0
+4   Oil 2010-06-07       11119.0
+5   Oil 2010-06-08       14842.0
+6   Oil 2010-06-09       15006.0
+7   Oil 2010-06-10       15816.0
+8   Oil 2010-06-11       15402.0
+9   Oil 2010-06-12       15554.0
+10  Oil 2010-06-13       15039.0
+11  Oil 2010-06-14       15208.0
+12  Oil 2010-06-15       15421.0
+13  Oil 2010-06-16       10448.0
+14  Oil 2010-06-17       18227.0
+15  Oil 2010-06-18       25295.0
+16  Oil 2010-06-19       24552.0
+17  Oil 2010-06-20       21041.0
+18  Oil 2010-06-21       23291.0
+19  Oil 2010-06-22       25816.0
+20  Oil 2010-06-23       27098.0
+21  Oil 2010-06-24       16866.0
+22  Oil 2010-06-25       23734.0
+23  Oil 2010-06-26       24548.0
+24  Oil 2010-06-27       22758.0
+25  Oil 2010-06-28       24455.0
+26  Oil 2010-06-29       23400.0
+27  Oil 2010-06-30       25223.0
+28  Oil 2010-07-01       23079.0
+29  Oil 2010-07-02       25154.0
+30  Oil 2010-07-03       25291.0
+31  Oil 2010-07-04       25198.0
+32  Oil 2010-07-05       24959.0
+33  Oil 2010-07-06       24982.0
+34  Oil 2010-07-07       24761.0
+35  Oil 2010-07-08       24579.0
+36  Oil 2010-07-09       24399.0
+37  Oil 2010-07-10       24792.0
+38  Oil 2010-07-11       15200.0
+39  Oil 2010-07-12        8235.0
+40  Oil 2010-07-13        8302.0
+41  Oil 2010-07-14       17063.0
+42  Oil 2010-07-15       12843.0
+43  Oil 2010-07-16        9307.0
+44  Gas 2010-06-04           0.0
+45  Gas 2010-06-05          15.7
+46  Gas 2010-06-06          22.0
+47  Gas 2010-06-07          22.1
+48  Gas 2010-06-08          30.4
+49  Gas 2010-06-09          29.4
+50  Gas 2010-06-10          31.1
+51  Gas 2010-06-11          30.8
+52  Gas 2010-06-12          31.2
+53  Gas 2010-06-13          32.9
+54  Gas 2010-06-14          33.4
+55  Gas 2010-06-15          33.2
+56  Gas 2010-06-16          25.1
+57  Gas 2010-06-17          40.1
+58  Gas 2010-06-18          50.3
+59  Gas 2010-06-19          47.4
+60  Gas 2010-06-20          43.4
+61  Gas 2010-06-21          48.3
+62  Gas 2010-06-22          52.2
+63  Gas 2010-06-23          54.4
+64  Gas 2010-06-24          36.7
+65  Gas 2010-06-25          54.7
+66  Gas 2010-06-26          54.5
+67  Gas 2010-06-27          52.9
+68  Gas 2010-06-28          56.2
+69  Gas 2010-06-29          54.2
+70  Gas 2010-06-30          57.4
+71  Gas 2010-07-01          53.2
+72  Gas 2010-07-02          57.1
+73  Gas 2010-07-03          56.9
+74  Gas 2010-07-04          57.0
+75  Gas 2010-07-05          56.9
+76  Gas 2010-07-06          57.1
+77  Gas 2010-07-07          57.5
+78  Gas 2010-07-08          57.6
+79  Gas 2010-07-09          55.5
+80  Gas 2010-07-10          57.3
+81  Gas 2010-07-11          35.2
+82  Gas 2010-07-12          19.5
+83  Gas 2010-07-13          19.4
+84  Gas 2010-07-14          41.3
+85  Gas 2010-07-15          30.7
+86  Gas 2010-07-16          22.5
+> ggplot(bp, aes(End.Period, Recovery.rate)) + facet_wrap(~Type)
+Error: No layers in plot
+> ggplot(bp, aes(End.Period, Recovery.rate)) + geom_line() +facet_wrap(~Type)
+Error in eval(expr, envir, enclos) : object 'Recovery.rate' not found
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_wrap(~Type)
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_wrap(~Type, scales = "free_y") 
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_grid(.~Type, scales = "free_y")
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_grid(Type~., scales = "free_y")
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_grid(.~Type, scales = "free_y")
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_grid(Type~., scales = "free_y")
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_line() +facet_grid(Type~., scales = "free_y") + expand_limits(y = 0)
+> jean <- read.csv("http://www.ling.upenn.edu/~joseff/data/jean2.csv")
+> ay <- subset(jean, VClass %in% c("ay","ay0"))
+> ay$VClass <- as.factor(as.character(ay$VClass))
+> 
+> ay.m <- melt(ay, id = c("Time","RTime", "Word","VClass"), measure = c("F1","F2"))
+> head(ay.m)
+      Time      RTime Word VClass variable   value
+1 0.025139 0.00000000 I150     ay       F1 730.055
+2 0.027139 0.01351351 I150     ay       F1 738.336
+3 0.029139 0.02702703 I150     ay       F1 746.532
+4 0.031139 0.04054054 I150     ay       F1 754.158
+5 0.033139 0.05405405 I150     ay       F1 759.454
+6 0.035139 0.06756757 I150     ay       F1 762.912
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line()
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_wrap(~VClass)
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass~.)
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass~.) + expand_limits(y = 0)
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass~.) + scale_y_log10()
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass~variable) + scale_y_log10()
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass~variable, scales = "free_y") 
+> ggplot(ay.m, aes(Time, value, group = Word:variable)) + geom_line() + facet_grid(VClass + variable~., scales = "free_y")
+> head(ay.m)
+      Time      RTime Word VClass variable   value
+1 0.025139 0.00000000 I150     ay       F1 730.055
+2 0.027139 0.01351351 I150     ay       F1 738.336
+3 0.029139 0.02702703 I150     ay       F1 746.532
+4 0.031139 0.04054054 I150     ay       F1 754.158
+5 0.033139 0.05405405 I150     ay       F1 759.454
+6 0.035139 0.06756757 I150     ay       F1 762.912
+> ggplot(ay.m, aes(Time, value, group = Word)) + geom_line() + facet_grid(VClass + variable~., scales = "free_y")
+> ggplot(ay.m, aes(Time, value, group = Word)) + geom_line() + facet_wrap(VClass + variable~., scales = "free_y")
+Error in `[.data.frame`(plot$data, , setdiff(cond, names(df)), drop = FALSE) : 
+  undefined columns selected
+> ggplot(ay.m, aes(Time, value, group = Word)) + geom_line() + facet_wrap(~VClass + variable, scales = "free_y")
+> ggplot(ay.m, aes(Time, value, group = Word)) + geom_line() + facet_wrap(VClass  ~ variable, scales = "free_y")
+> ggplot(ay.m, aes(Time, value, group = Word)) + geom_line() + facet_grid(VClass + variable~.)
+> ggplot(ay.m, aes(Time, value, group = Word)) + 
++   geom_line()+
++   facet_grid(VClass ~ variable)
+> ggplot(ay.m, aes(Time, value, group = Word)) + 
++   geom_line()+
++   facet_grid(VClass ~ variable, scales = "free")
+> ggplot(ay.m, aes(Time, value, group = Word)) + 
++   geom_line()+
++   facet_grid(VClass + variable~ ., scales = "free_y")
+> ggplot(ay.m, aes(Time, value, group = Word)) + 
++   geom_line()+
++   facet_grid(variable + VClass~ ., scales = "free_y")
+> ggplot(ay.m, aes(Time, value, group = Word)) + 
++   geom_line()+
++   facet_grid(VClass + variable~ ., scales = "free_y")
+> summary(diamonds)
+     carat              cut        color        clarity          depth           table           price             x                y                z         
+ Min.   :0.200   Fair     : 1610   D: 6775   SI1    :13065   Min.   :43.00   Min.   :43.00   Min.   :  326   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+ 1st Qu.:0.400   Good     : 4906   E: 9797   VS2    :12258   1st Qu.:61.00   1st Qu.:56.00   1st Qu.:  950   1st Qu.: 4.710   1st Qu.: 4.720   1st Qu.: 2.910  
+ Median :0.700   Very Good:12082   F: 9542   SI2    : 9194   Median :61.80   Median :57.00   Median : 2401   Median : 5.700   Median : 5.710   Median : 3.530  
+ Mean   :0.798   Premium  :13791   G:11292   VS1    : 8171   Mean   :61.75   Mean   :57.46   Mean   : 3933   Mean   : 5.731   Mean   : 5.735   Mean   : 3.539  
+ 3rd Qu.:1.040   Ideal    :21551   H: 8304   VVS2   : 5066   3rd Qu.:62.50   3rd Qu.:59.00   3rd Qu.: 5324   3rd Qu.: 6.540   3rd Qu.: 6.540   3rd Qu.: 4.040  
+ Max.   :5.010                     I: 5422   VVS1   : 3655   Max.   :79.00   Max.   :95.00   Max.   :18823   Max.   :10.740   Max.   :58.900   Max.   :31.800  
+                                   J: 2808   (Other): 2531                                                                                                     
+> ggplot(diamonds, aes(cata, price)) + geom_point() + facet_wrap(~cut)
+Error in eval(expr, envir, enclos) : object 'cata' not found
+> ggplot(diamonds, aes(carat, price)) + geom_point() + facet_wrap(~cut)
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_wrap(~cut)
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_wrap(~cut) + stat_smooth()
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_wrap(~cut) + stat_smooth() + scale_x_log10() + scale_y_log10()
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_grid(color~cut) + stat_smooth() + scale_x_log10() + scale_y_log10()
+> quartz(,8,5)
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_grid(color~cut) + stat_smooth() + scale_x_log10() + scale_y_log10()
+> head(mpg)
+  manufacturer model displ year cyl      trans drv cty hwy fl   class
+1         audi    a4   1.8 1999   4   auto(l5)   f  18  29  p compact
+2         audi    a4   1.8 1999   4 manual(m5)   f  21  29  p compact
+3         audi    a4   2.0 2008   4 manual(m6)   f  20  31  p compact
+4         audi    a4   2.0 2008   4   auto(av)   f  21  30  p compact
+5         audi    a4   2.8 1999   6   auto(l5)   f  16  26  p compact
+6         audi    a4   2.8 1999   6 manual(m5)   f  18  26  p compact
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_wrap(~year)
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_wrap(class~year)
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(class~year)
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~class)
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~class) + stat_smoooth()
+Error: could not find function "stat_smoooth"
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~class) + stat_smooth()
+Error in predLoess(object$y, object$x, newx, object$s, object$weights,  : 
+  NA/NaN/Inf in foreign function call (arg 5)
+In addition: There were 25 warnings (use warnings() to see them)
+> warnings()[1:5]
+$`pseudoinverse used at 2.393`
+NULL
+
+$`neighborhood radius 0.907`
+NULL
+
+$`reciprocal condition number  0`
+NULL
+
+$`There are other near singularities as well. 0.25705`
+NULL
+
+$`pseudoinverse used at 2.393`
+predLoess(object$y, object$x, newx, object$s, object$weights, 
+    object$pars$robust, object$pars$span, object$pars$degree, 
+    object$pars$normalize, object$pars$parametric, object$pars$drop.square, 
+    object$pars$surface, object$pars$cell, object$pars$family, 
+    object$kd, object$divisor, se = se)
+
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~class) + stat_smooth(method = "gam")
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~reorder(class, displ, mean)) + stat_smooth(method = "gam")
+Error in `[.data.frame`(plot$data, , setdiff(cond, names(df)), drop = FALSE) : 
+  undefined columns selected
+> reorder(mpg$class, mpg$displ, mean)
+  [1] compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact   
+ [16] midsize    midsize    midsize    suv        suv        suv        suv        suv        2seater    2seater    2seater    2seater    2seater    suv        suv       
+ [31] suv        suv        midsize    midsize    midsize    midsize    midsize    minivan    minivan    minivan    minivan    minivan    minivan    minivan    minivan   
+ [46] minivan    minivan    minivan    pickup     pickup     pickup     pickup     pickup     pickup     pickup     pickup     pickup     suv        suv        suv       
+ [61] suv        suv        suv        suv        pickup     pickup     pickup     pickup     pickup     pickup     pickup     pickup     pickup     pickup     suv       
+ [76] suv        suv        suv        suv        suv        suv        suv        suv        pickup     pickup     pickup     pickup     pickup     pickup     pickup    
+ [91] subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact subcompact
+[106] subcompact subcompact subcompact midsize    midsize    midsize    midsize    midsize    midsize    midsize    subcompact subcompact subcompact subcompact subcompact
+[121] subcompact subcompact suv        suv        suv        suv        suv        suv        suv        suv        suv        suv        suv        suv        suv       
+[136] suv        suv        suv        suv        suv        suv        compact    compact    midsize    midsize    midsize    midsize    midsize    midsize    midsize   
+[151] suv        suv        suv        suv        midsize    midsize    midsize    midsize    midsize    suv        suv        suv        suv        suv        suv       
+[166] subcompact subcompact subcompact subcompact compact    compact    compact    compact    suv        suv        suv        suv        suv        suv        midsize   
+[181] midsize    midsize    midsize    midsize    midsize    midsize    compact    compact    compact    compact    compact    compact    compact    compact    compact   
+[196] compact    compact    compact    suv        suv        pickup     pickup     pickup     pickup     pickup     pickup     pickup     compact    compact    compact   
+[211] compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    compact    subcompact subcompact subcompact subcompact
+[226] subcompact subcompact midsize    midsize    midsize    midsize    midsize    midsize    midsize   
+attr(,"scores")
+   2seater    compact    midsize    minivan     pickup subcompact        suv 
+  6.160000   2.325532   2.921951   3.390909   4.418182   2.660000   4.456452 
+Levels: compact subcompact midsize minivan pickup suv 2seater
+> reorder(mpg$class, mpg$displ, mean)->mog$class
+Error in mog$class <- reorder(mpg$class, mpg$displ, mean) : 
+  object 'mog' not found
+> reorder(mpg$class, mpg$displ, mean)->mpg$class
+> ggplot(mpg, aes(displ, hwy)) + geom_point() + facet_grid(year~class) + stat_smooth(method = "gam")
+> head(diamonds)
+  carat       cut color clarity depth table price    x    y    z
+1  0.23     Ideal     E     SI2  61.5    55   326 3.95 3.98 2.43
+2  0.21   Premium     E     SI1  59.8    61   326 3.89 3.84 2.31
+3  0.23      Good     E     VS1  56.9    65   327 4.05 4.07 2.31
+4  0.29   Premium     I     VS2  62.4    58   334 4.20 4.23 2.63
+5  0.31      Good     J     SI2  63.3    58   335 4.34 4.35 2.75
+6  0.24 Very Good     J    VVS2  62.8    57   336 3.94 3.96 2.48
+> ggplot(diamonds, aes(carat)) + stat_bin()
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> ggplot(diamonds, aes(carat)) + stat_bin() + facet_wrap(~cut)
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> diamonds$price.cat <- cut(diamonds$price, 3)
+> ggplot(diamonds, aes(carat)) + stat_bin() + facet_grid(price.cat~cut)
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> ggplot(diamonds, aes(carat)) + stat_bin(aes(y = ..density..)) + facet_grid(price.cat~cut)
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> ggplot(diamonds, aes(carat)) + stat_bin() + facet_grid(price.cat~cut)
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> ggplot(diamonds, aes(cut, color)) + stat_sum() + scale_area()
+> ggplot(diamonds, aes(cut, color)) + stat_sum(aes(size = ..n..)) + scale_area()
+> ggplot(diamonds, aes(cut, color)) + stat_sum(aes(size = ..prop..)) + scale_area()
+> ?stat_sum
+> ggplot(diamonds, aes(cut, color)) + stat_sum(aes(group = 1) + scale_area()
++ )
+Error in aes(group = 1) + scale_area() : 
+  non-numeric argument to binary operator
+> ggplot(diamonds, aes(cut, color)) + stat_sum(aes(group = 1)) + scale_area()
+> ggplot(diamonds, aes(cut, color)) + stat_sum(aes(group = cut)) + scale_area()
+> head(sbuck)
+Error in head(sbuck) : object 'sbuck' not found
+> 
+> 
+> 
+> buck <- read.csv("~/Documents/NWAV2008/buck.csv")
+> summary(buck)
+        Word              Next                                                  Phrase       PreSegTrans    FolSegTrans   Seg           Trans          DepVar      
+ just     :2023   <SIL>     :1133   <SIL> <VOCNOISE> <SIL> i don't know <SIL> i    :    2   n      :6668   ah     :1281   d: 3279   t      :3190   Min.   :0.0000  
+ don't    :1914   of        : 813   i think that's the best way to <NOISE>         :    2   s      :3648   SIL    :1133   t:10385   n      :2396   1st Qu.:0.0000  
+ didn't   : 512   <VOCNOISE>: 751   lot times maybe they don't get that at         :    2   en     : 929   n      : 939             s      :1946   Median :0.0000  
+ kind     : 499   know      : 720   maybe i'm gay i don't know if i'm              :    2   l      : 871   w      : 888             d      :1592   Mean   :0.6693  
+ can't    : 346   like      : 348   people pray if they don't want to before       :    2   k      : 620   hh     : 772             tq     :1391   3rd Qu.:1.0000  
+ different: 286   and       : 339   the whole house completely furnished i want the:    2   v      : 252   Voc    : 750             nx     : 727   Max.   :3.0000  
+ (Other)  :8084   (Other)   :9560   (Other)                                        :13652   (Other): 676   (Other):7901             (Other):2422                   
+      tq1              tq0         PreSeg       FolSeg        GramStat    Gram        Speaker      Age       Sex      
+ Min.   :0.0000   Min.   :0.0000   f: 345   v      :4000   m      :7515   d: 392   s16    :  519   o:12151   f: 2385  
+ 1st Qu.:0.0000   1st Qu.:0.0000   k: 809   q      :2167   n      :3855   m:7716   s07    :  489   y: 1513   m:11279  
+ Median :0.0000   Median :0.0000   l: 931   k      :1858   p      :1701   n:3855   s12    :  488                      
+ Mean   :0.4657   Mean   :0.3639   n:7640   n      :1394   d      : 279   p:1701   s35    :  479                      
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   s:3939   w      : 888   d4     : 201            s19    :  476                      
+ Max.   :1.0000   Max.   :1.0000            s      : 811   d1     :  65            s15    :  452                      
+                                            (Other):2546   (Other):  48            (Other):10761                      
+> d <- ggplot(diamonds, aes(x = cut, y = clarity))
+> d + stat_sum(aes(group = clarity, colour = cut))
+> d + stat_sum(aes(group = cut, colour = cut))
+> head(buck)
+       Word  Next                                                          Phrase PreSegTrans FolSegTrans Seg Trans DepVar tq1 tq0 PreSeg FolSeg GramStat Gram Speaker Age
+1     lived    in <EXCLUDE-name> <VOCNOISE> <SIL> <EXT-I've> lived in columbus my           v          ih   d     d      1   1   1      f      v        p    p     s01   y
+2    raised    on                       <VOCNOISE> um born and raised on the west           z          aa   d     d      1   1   1      s      v        p    p     s01   y
+3      west  side                         and raised on the west side of columbus           s           s   t     s      0   0   0      s      s        m    m     s01   y
+4      kind    of                       um <VOCNOISE> <SIL> it's kind of a unique           n          ah   d    nx      0   0   0      n      v        m    m     s01   y
+5  received    my                  um <VOCNOISE> <SIL> i received my um bachelors           v           m   d     d      1   1   1      f      n        p    p     s01   y
+6 different <SIL>            <VOCNOISE> working on three different <SIL> um <SIL>           n         SIL   t     t      1   1   1      n      q        m    m     s01   y
+  Sex
+1   f
+2   f
+3   f
+4   f
+5   f
+6   f
+> summary(buck)
+        Word              Next                                                  Phrase       PreSegTrans    FolSegTrans   Seg           Trans          DepVar      
+ just     :2023   <SIL>     :1133   <SIL> <VOCNOISE> <SIL> i don't know <SIL> i    :    2   n      :6668   ah     :1281   d: 3279   t      :3190   Min.   :0.0000  
+ don't    :1914   of        : 813   i think that's the best way to <NOISE>         :    2   s      :3648   SIL    :1133   t:10385   n      :2396   1st Qu.:0.0000  
+ didn't   : 512   <VOCNOISE>: 751   lot times maybe they don't get that at         :    2   en     : 929   n      : 939             s      :1946   Median :0.0000  
+ kind     : 499   know      : 720   maybe i'm gay i don't know if i'm              :    2   l      : 871   w      : 888             d      :1592   Mean   :0.6693  
+ can't    : 346   like      : 348   people pray if they don't want to before       :    2   k      : 620   hh     : 772             tq     :1391   3rd Qu.:1.0000  
+ different: 286   and       : 339   the whole house completely furnished i want the:    2   v      : 252   Voc    : 750             nx     : 727   Max.   :3.0000  
+ (Other)  :8084   (Other)   :9560   (Other)                                        :13652   (Other): 676   (Other):7901             (Other):2422                   
+      tq1              tq0         PreSeg       FolSeg        GramStat    Gram        Speaker      Age       Sex      
+ Min.   :0.0000   Min.   :0.0000   f: 345   v      :4000   m      :7515   d: 392   s16    :  519   o:12151   f: 2385  
+ 1st Qu.:0.0000   1st Qu.:0.0000   k: 809   q      :2167   n      :3855   m:7716   s07    :  489   y: 1513   m:11279  
+ Median :0.0000   Median :0.0000   l: 931   k      :1858   p      :1701   n:3855   s12    :  488                      
+ Mean   :0.4657   Mean   :0.3639   n:7640   n      :1394   d      : 279   p:1701   s35    :  479                      
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   s:3939   w      : 888   d4     : 201            s19    :  476                      
+ Max.   :1.0000   Max.   :1.0000            s      : 811   d1     :  65            s15    :  452                      
+                                            (Other):2546   (Other):  48            (Other):10761                      
+> ddply(buck, .(PreSeg, FolSeg, Gram), summarize, pTD = mean(tq1)) 
+    PreSeg FolSeg Gram        pTD
+1        f      f    d 0.00000000
+2        f      f    m 1.00000000
+3        f      f    p 0.33333333
+4        f      h    d 1.00000000
+5        f      h    m 1.00000000
+6        f      h    p 1.00000000
+7        f      k    m 0.40000000
+8        f      k    p 0.29411765
+9        f      l    m 1.00000000
+10       f      l    p 0.33333333
+11       f      n    d 1.00000000
+12       f      n    m 0.25000000
+13       f      n    p 0.66666667
+14       f      q    d 1.00000000
+15       f      q    m 1.00000000
+16       f      q    p 0.84615385
+17       f      r    p 0.50000000
+18       f      s    d 0.00000000
+19       f      s    m 0.00000000
+20       f      s    p 1.00000000
+21       f      v    d 1.00000000
+22       f      v    m 1.00000000
+23       f      v    p 0.96894410
+24       f      w    d 0.25000000
+25       f      w    m 0.33333333
+26       f      w    p 0.56250000
+27       f      y    m 0.33333333
+28       f      y    p 0.60000000
+29       k      f    d 0.00000000
+30       k      f    m 0.37500000
+31       k      f    p 0.44444444
+32       k      h    d 0.00000000
+33       k      h    m 0.81818182
+34       k      h    p 0.91304348
+35       k      k    d 0.00000000
+36       k      k    m 0.47826087
+37       k      k    p 0.66666667
+38       k      l    m 0.66666667
+39       k      l    p 0.80000000
+40       k      n    d 0.50000000
+41       k      n    m 0.05882353
+42       k      n    p 0.41379310
+43       k      q    d 0.50000000
+44       k      q    m 0.73684211
+45       k      q    p 0.86363636
+46       k      r    m 1.00000000
+47       k      r    p 1.00000000
+48       k      s    d 0.00000000
+49       k      s    m 0.33333333
+50       k      s    p 0.50000000
+51       k      v    d 0.80000000
+52       k      v    m 0.91919192
+53       k      v    p 0.93822394
+54       k      w    d 1.00000000
+55       k      w    m 0.66666667
+56       k      w    p 0.80952381
+57       k      y    d 1.00000000
+58       k      y    m 0.87500000
+59       k      y    p 1.00000000
+60       l      e    m 1.00000000
+61       l      e    p 1.00000000
+62       l      f    d 1.00000000
+63       l      f    m 0.83333333
+64       l      f    p 1.00000000
+65       l      h    d 0.59375000
+66       l      h    m 0.78571429
+67       l      h    p 0.84615385
+68       l      k    d 0.88888889
+69       l      k    m 0.83333333
+70       l      k    p 0.75000000
+71       l      l    d 0.52173913
+72       l      l    m 0.80000000
+73       l      l    p 1.00000000
+74       l      n    d 0.27272727
+75       l      n    m 0.76000000
+76       l      n    p 0.69230769
+77       l      q    d 1.00000000
+78       l      q    m 0.91780822
+79       l      q    p 0.90000000
+80       l      r    d 1.00000000
+81       l      r    m 0.66666667
+82       l      r    p 1.00000000
+83       l      s    d 1.00000000
+84       l      s    m 0.92307692
+85       l      s    p 1.00000000
+86       l      v    d 0.87500000
+87       l      v    m 0.86486486
+88       l      v    p 0.91803279
+89       l      w    d 0.58823529
+90       l      w    m 0.65306122
+91       l      w    p 0.62500000
+92       l      y    d 0.66666667
+93       l      y    m 1.00000000
+94       l      y    p 1.00000000
+95       n      e    m 0.50000000
+96       n      e    n 0.50000000
+97       n      f    d 1.00000000
+98       n      f    m 0.51546392
+99       n      f    n 0.48484848
+100      n      f    p 0.50000000
+101      n      h    d 0.00000000
+102      n      h    m 0.41818182
+103      n      h    n 0.16666667
+104      n      h    p 0.90000000
+105      n      k    d 0.66666667
+106      n      k    m 0.41666667
+107      n      k    n 0.29145729
+108      n      k    p 0.37500000
+109      n      l    d 0.00000000
+110      n      l    m 0.46250000
+111      n      l    n 0.36649215
+112      n      l    p 0.41666667
+113      n      n    d 0.30769231
+114      n      n    m 0.32773109
+115      n      n    n 0.14689266
+116      n      n    p 0.30000000
+117      n      q    d 0.77777778
+118      n      q    m 0.78503185
+119      n      q    n 0.64303178
+120      n      q    p 0.82926829
+121      n      r    m 0.41935484
+122      n      r    n 0.50000000
+123      n      r    p 0.50000000
+124      n      s    d 0.40000000
+125      n      s    m 0.57386364
+126      n      s    n 0.54424779
+127      n      s    p 0.41666667
+128      n      v    d 0.55769231
+129      n      v    m 0.29271438
+130      n      v    n 0.21129707
+131      n      v    p 0.75182482
+132      n      w    d 0.25000000
+133      n      w    m 0.44751381
+134      n      w    n 0.25423729
+135      n      w    p 0.31818182
+136      n      y    m 0.52380952
+137      n      y    n 0.53424658
+138      n      y    p 0.75000000
+139      s      e    m 0.62500000
+140      s      e    p 0.00000000
+141      s      f    m 0.24539877
+142      s      f    p 0.50000000
+143      s      h    d 1.00000000
+144      s      h    m 0.52985075
+145      s      h    p 0.81818182
+146      s      k    d 0.33333333
+147      s      k    m 0.24519941
+148      s      k    p 0.65116279
+149      s      l    m 0.31858407
+150      s      l    p 0.75000000
+151      s      n    d 0.00000000
+152      s      n    m 0.38775510
+153      s      n    p 0.55555556
+154      s      q    d 0.83333333
+155      s      q    m 0.43800322
+156      s      q    p 0.78640777
+157      s      r    m 0.50632911
+158      s      r    p 0.62500000
+159      s      s    d 1.00000000
+160      s      s    m 0.09278351
+161      s      s    p 0.29411765
+162      s      v    d 0.25000000
+163      s      v    m 0.69420290
+164      s      v    p 0.78242678
+165      s      w    d 1.00000000
+166      s      w    m 0.41176471
+167      s      w    p 0.52777778
+168      s      y    d 1.00000000
+169      s      y    m 0.52525253
+170      s      y    p 0.57142857
+> ddply(buck, .(PreSeg, FolSeg, Gram), summarize, pTD = mean(tq1))->buck.p
+> bp
+   Type End.Period Recovery.Rate
+1   Oil 2010-06-04          16.0
+2   Oil 2010-06-05        6061.0
+3   Oil 2010-06-06       10496.0
+4   Oil 2010-06-07       11119.0
+5   Oil 2010-06-08       14842.0
+6   Oil 2010-06-09       15006.0
+7   Oil 2010-06-10       15816.0
+8   Oil 2010-06-11       15402.0
+9   Oil 2010-06-12       15554.0
+10  Oil 2010-06-13       15039.0
+11  Oil 2010-06-14       15208.0
+12  Oil 2010-06-15       15421.0
+13  Oil 2010-06-16       10448.0
+14  Oil 2010-06-17       18227.0
+15  Oil 2010-06-18       25295.0
+16  Oil 2010-06-19       24552.0
+17  Oil 2010-06-20       21041.0
+18  Oil 2010-06-21       23291.0
+19  Oil 2010-06-22       25816.0
+20  Oil 2010-06-23       27098.0
+21  Oil 2010-06-24       16866.0
+22  Oil 2010-06-25       23734.0
+23  Oil 2010-06-26       24548.0
+24  Oil 2010-06-27       22758.0
+25  Oil 2010-06-28       24455.0
+26  Oil 2010-06-29       23400.0
+27  Oil 2010-06-30       25223.0
+28  Oil 2010-07-01       23079.0
+29  Oil 2010-07-02       25154.0
+30  Oil 2010-07-03       25291.0
+31  Oil 2010-07-04       25198.0
+32  Oil 2010-07-05       24959.0
+33  Oil 2010-07-06       24982.0
+34  Oil 2010-07-07       24761.0
+35  Oil 2010-07-08       24579.0
+36  Oil 2010-07-09       24399.0
+37  Oil 2010-07-10       24792.0
+38  Oil 2010-07-11       15200.0
+39  Oil 2010-07-12        8235.0
+40  Oil 2010-07-13        8302.0
+41  Oil 2010-07-14       17063.0
+42  Oil 2010-07-15       12843.0
+43  Oil 2010-07-16        9307.0
+44  Gas 2010-06-04           0.0
+45  Gas 2010-06-05          15.7
+46  Gas 2010-06-06          22.0
+47  Gas 2010-06-07          22.1
+48  Gas 2010-06-08          30.4
+49  Gas 2010-06-09          29.4
+50  Gas 2010-06-10          31.1
+51  Gas 2010-06-11          30.8
+52  Gas 2010-06-12          31.2
+53  Gas 2010-06-13          32.9
+54  Gas 2010-06-14          33.4
+55  Gas 2010-06-15          33.2
+56  Gas 2010-06-16          25.1
+57  Gas 2010-06-17          40.1
+58  Gas 2010-06-18          50.3
+59  Gas 2010-06-19          47.4
+60  Gas 2010-06-20          43.4
+61  Gas 2010-06-21          48.3
+62  Gas 2010-06-22          52.2
+63  Gas 2010-06-23          54.4
+64  Gas 2010-06-24          36.7
+65  Gas 2010-06-25          54.7
+66  Gas 2010-06-26          54.5
+67  Gas 2010-06-27          52.9
+68  Gas 2010-06-28          56.2
+69  Gas 2010-06-29          54.2
+70  Gas 2010-06-30          57.4
+71  Gas 2010-07-01          53.2
+72  Gas 2010-07-02          57.1
+73  Gas 2010-07-03          56.9
+74  Gas 2010-07-04          57.0
+75  Gas 2010-07-05          56.9
+76  Gas 2010-07-06          57.1
+77  Gas 2010-07-07          57.5
+78  Gas 2010-07-08          57.6
+79  Gas 2010-07-09          55.5
+80  Gas 2010-07-10          57.3
+81  Gas 2010-07-11          35.2
+82  Gas 2010-07-12          19.5
+83  Gas 2010-07-13          19.4
+84  Gas 2010-07-14          41.3
+85  Gas 2010-07-15          30.7
+86  Gas 2010-07-16          22.5
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_area() + facet_wrap(~Type)
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_area() + facet_wrap(~Type, scales = "free_y")
+> ggplot(bp, aes(End.Period, Recovery.Rate)) + geom_area() + facet_grid(Type~., scales = "free_y")
+> ggplot(mpg, aes(displ, hwy)+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap()
++ 
++ )
+Error in aes(displ, hwy) + geom_point() : 
+  non-numeric argument to binary operator
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap()
+Error in plyr::as.quoted(facets) : 
+  argument "facets" is missing, with no default
+> 
+> 
+> 
+> 
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap()
+Error in plyr::as.quoted(facets) : 
+  argument "facets" is missing, with no default
+> 
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap(~year)
+> 
+> quartz(,8,5)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap(~year)
+> head(mpg
++ )
+  manufacturer model displ year cyl      trans drv cty hwy fl   class
+1         audi    a4   1.8 1999   4   auto(l5)   f  18  29  p compact
+2         audi    a4   1.8 1999   4 manual(m5)   f  21  29  p compact
+3         audi    a4   2.0 2008   4 manual(m6)   f  20  31  p compact
+4         audi    a4   2.0 2008   4   auto(av)   f  21  30  p compact
+5         audi    a4   2.8 1999   6   auto(l5)   f  16  26  p compact
+6         audi    a4   2.8 1999   6 manual(m5)   f  18  26  p compact
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap(~manufacturer)
+Error in predLoess(object$y, object$x, newx, object$s, object$weights,  : 
+  NA/NaN/Inf in foreign function call (arg 5)
+In addition: There were 50 or more warnings (use warnings() to see the first 50)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   facet_wrap(~manufacturer)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   facet_wrap(~manufacturer, scales = "free")
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   facet_wrap(~manufacturer)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth()+
++   facet_wrap(~manufacturer)
+Error in predLoess(object$y, object$x, newx, object$s, object$weights,  : 
+  NA/NaN/Inf in foreign function call (arg 5)
+In addition: There were 50 or more warnings (use warnings() to see the first 50)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth(method = "lm")+
++   facet_wrap(~manufacturer)
+> ggplot(mpg, aes(displ, hwy))+
++   geom_point()+
++   stat_smooth(method = "gam")+
++   facet_wrap(~manufacturer)
+> ls()
+ [1] "ay"            "ay.m"          "bp"            "buck"          "buck.p"        "coplevels"     "d"             "data"          "data.comp"     "data.m"       
+[11] "diamonds"      "donner"        "ex1"           "i"             "jean"          "lsos"          "main"          "mod.sub"       "mpg"           "newLevel"     
+[21] "newTypeLevels" "newTypeOrder"  "np"            "np.cop"        "np.cop.p"      "np.cop.tab"    "np.trans"      "np.trans.p"    "np.trans.tab"  "sub.cop.trans"
+[31] "sub.df"        "sub.p"         "sub.tab"       "translevels"   "tt"            "tt.m"          "verbs"         "x"            
+> head(ay)
+  X     Time      F1       F2       F3 Word VClass N      RTime
+1 1 0.025139 730.055 1260.368 2450.352 I150     ay 0 0.00000000
+2 2 0.027139 738.336 1273.035 2462.434 I150     ay 0 0.01351351
+3 3 0.029139 746.532 1289.219 2465.238 I150     ay 0 0.02702703
+4 4 0.031139 754.158 1302.717 2464.034 I150     ay 0 0.04054054
+5 5 0.033139 759.454 1309.668 2463.277 I150     ay 0 0.05405405
+6 6 0.035139 762.912 1311.245 2464.934 I150     ay 0 0.06756757
+> colmeans(ay[,1:3])
+Error: could not find function "colmeans"
+> colMeans(ay[,1:3])
+           X         Time           F1 
+6518.6679151    0.1351347  738.8070208 
+> summary(dur)
+Error in summary(dur) : object 'dur' not found
+> dur <- read.delim("http://www.ling.upenn.edu/~joseff/rstudy/data/Joe.Durr1.txt")
+> summary(duf)
+Error in summary(duf) : object 'duf' not found
+> summary(dur)
+     Begin             end            Duration          Label            Num          Pos   
+ Min.   : 32.91   Min.   : 33.34   Min.   :0.1076   Min.   :0.000   Min.   : 1   Min.   :1  
+ 1st Qu.:156.55   1st Qu.:156.85   1st Qu.:0.1873   1st Qu.:2.000   1st Qu.:24   1st Qu.:2  
+ Median :270.27   Median :270.52   Median :0.2275   Median :5.000   Median :47   Median :4  
+ Mean   :284.94   Mean   :285.20   Mean   :0.2560   Mean   :4.507   Mean   :47   Mean   :4  
+ 3rd Qu.:413.37   3rd Qu.:413.62   3rd Qu.:0.2979   3rd Qu.:7.000   3rd Qu.:70   3rd Qu.:6  
+ Max.   :558.75   Max.   :559.13   Max.   :0.6625   Max.   :9.000   Max.   :93   Max.   :7  
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar") + scale_y_log2()
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrane")
+Error: No geom called pointrane
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrange")
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrange") + facet_grid(.~Label)
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrange") + facet_grid(Label.)
+Error in inherits(x, "formula") : object 'Label.' not found
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrange") + facet_grid(Label~.)
+> ggplot(dur, aes(Pos, Duration)) + stat_summary(fun.y = mean, geom = "bar")+ stat_summary(fun.data = mean_cl_boot, geom = "pointrange") + facet_wrap(~Label)
+> head(mpg)
+  manufacturer model displ year cyl      trans drv cty hwy fl   class
+1         audi    a4   1.8 1999   4   auto(l5)   f  18  29  p compact
+2         audi    a4   1.8 1999   4 manual(m5)   f  21  29  p compact
+3         audi    a4   2.0 2008   4 manual(m6)   f  20  31  p compact
+4         audi    a4   2.0 2008   4   auto(av)   f  21  30  p compact
+5         audi    a4   2.8 1999   6   auto(l5)   f  16  26  p compact
+6         audi    a4   2.8 1999   6 manual(m5)   f  18  26  p compact
+> head(movies)
+                     title year length budget rating votes   r1   r2  r3   r4   r5   r6   r7   r8   r9  r10 mpaa Action Animation Comedy Drama Documentary Romance Short
+1                        $ 1971    121     NA    6.4   348  4.5  4.5 4.5  4.5 14.5 24.5 24.5 14.5  4.5  4.5           0         0      1     1           0       0     0
+2        $1000 a Touchdown 1939     71     NA    6.0    20  0.0 14.5 4.5 24.5 14.5 14.5 14.5  4.5  4.5 14.5           0         0      1     0           0       0     0
+3   $21 a Day Once a Month 1941      7     NA    8.2     5  0.0  0.0 0.0  0.0  0.0 24.5  0.0 44.5 24.5 24.5           0         1      0     0           0       0     1
+4                  $40,000 1996     70     NA    8.2     6 14.5  0.0 0.0  0.0  0.0  0.0  0.0  0.0 34.5 45.5           0         0      1     0           0       0     0
+5 $50,000 Climax Show, The 1975     71     NA    3.4    17 24.5  4.5 0.0 14.5 14.5  4.5  0.0  0.0  0.0 24.5           0         0      0     0           0       0     0
+6                    $pent 2000     91     NA    4.3    45  4.5  4.5 4.5 14.5 14.5 14.5  4.5  4.5 14.5 14.5           0         0      0     1           0       0     0
+> ggplot(movies, aes(rating)) + stat_bin() + facet_grid(Comedy ~ Romance)
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+> ggplot(movies, aes(rating)) + stat_bin(aes(..density..)) + facet_grid(Comedy ~ Romance)
+Error: Casting formula contains variables not found in molten data: Comedy, Romance
+> ggplot(movies, aes(rating)) + stat_density() + facet_grid(Comedy ~ Romance)
+> funx <- function(x){
++ 	m <- mean(x)
++ 	names(m) <- "x"
++ 	return(m)	
++ }
+> ggplot(movies, aes(rating)) + stat_density() + facet_grid(Comedy ~ Romance) + stat_summary(fun.data = funx, geom = "vline")
+Error: stat_summary requires the following missing aesthetics: y
+> funx <- function(x){
++ 	m <- mean(x)
++ 	names(m) <- "xintercept"
++ 	return(m)	
++ }
+> ggplot(movies, aes(rating)) + stat_density() + facet_grid(Comedy ~ Romance) + stat_summary(fun.data = funx, geom = "vline")
+Error: stat_summary requires the following missing aesthetics: y
+> funx <- function(x){
++ 	m <- mean(x)
++ 	m <- c(m,m)
++ 	names(m) <- c("x","xend")
++ 	return(m)	
++ }
+> ggplot(movies, aes(rating)) + stat_density() + facet_grid(Comedy ~ Romance) + stat_summary(fun.data = funx, geom = "segment", y = 0, yend = Inf)
+Error: stat_summary requires the following missing aesthetics: y
+> ggplot(movies, aes(rating)) + stat_density() + facet_grid(Comedy ~ Romance) + stat_summary(fun.data = funx, geom = "segment", aes(y = 0, yend = Inf))
+> head(diamonds)
+  carat       cut color clarity depth table price    x    y    z      price.cat
+1  0.23     Ideal     E     SI2  61.5    55   326 3.95 3.98 2.43 (308,6.49e+03]
+2  0.21   Premium     E     SI1  59.8    61   326 3.89 3.84 2.31 (308,6.49e+03]
+3  0.23      Good     E     VS1  56.9    65   327 4.05 4.07 2.31 (308,6.49e+03]
+4  0.29   Premium     I     VS2  62.4    58   334 4.20 4.23 2.63 (308,6.49e+03]
+5  0.31      Good     J     SI2  63.3    58   335 4.34 4.35 2.75 (308,6.49e+03]
+6  0.24 Very Good     J    VVS2  62.8    57   336 3.94 3.96 2.48 (308,6.49e+03]
+> quartz(,8,5)
+> ggplot(diamonds, aes(carat, price)) + geom_point() + facet_grid(cut ~ color)
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_grid(cut ~ color) + scale_y_log10() + scale_x_log10()
+> ggplot(diamonds, aes(carat, price)) + geom_point(alpha = 1/20) + facet_grid(cut ~ color) + scale_y_log10() + scale_x_log2()
+> ggplot(diamonds, aes(price)) + geom_density() + facet_grid(cut ~ color) + scale_y_log10() + scale_x_log2()
+> ggplot(diamonds, aes(price)) + geom_density() + facet_grid(cut ~ color) + scale_x_log10()
+> 10000/24
+[1] 416.6667
+> 10000/40
+[1] 250
+> (10000/40) / 51
+[1] 4.901961
+>  library(Deducer)
+Error in library(Deducer) : there is no package called 'Deducer'
+> install.packages("Deducer")
+Warning in install.packages("Deducer") :
+  argument 'lib' is missing: using '/Users/joseffruehwald/Library/R/2.11/library'
+also installing the dependencies ÔJavaGDÕ, ÔiplotsÕ, ÔmvtnormÕ, ÔrJavaÕ, ÔJGRÕ, ÔmultcompÕ, ÔeffectsÕ
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/JavaGD_0.5-2.tgz'
+Content type 'application/x-gzip' length 58120 bytes (56 Kb)
+opened URL
+==================================================
+downloaded 56 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/iplots_1.1-3.tgz'
+Content type 'application/x-gzip' length 422762 bytes (412 Kb)
+opened URL
+==================================================
+downloaded 412 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/mvtnorm_0.9-92.tgz'
+Content type 'application/x-gzip' length 387933 bytes (378 Kb)
+opened URL
+==================================================
+downloaded 378 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/rJava_0.8-4.tgz'
+Content type 'application/x-gzip' length 591903 bytes (578 Kb)
+opened URL
+==================================================
+downloaded 578 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/JGR_1.7-1.tgz'
+Content type 'application/x-gzip' length 482942 bytes (471 Kb)
+opened URL
+==================================================
+downloaded 471 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/multcomp_1.1-7.tgz'
+Content type 'application/x-gzip' length 955561 bytes (933 Kb)
+opened URL
+==================================================
+downloaded 933 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/effects_2.0-10.tgz'
+Content type 'application/x-gzip' length 177422 bytes (173 Kb)
+opened URL
+==================================================
+downloaded 173 Kb
+
+trying URL 'http://cran.mirrors.hoobly.com/bin/macosx/leopard/contrib/2.11/Deducer_0.3-3.tgz'
+Content type 'application/x-gzip' length 1626292 bytes (1.6 Mb)
+opened URL
+==================================================
+downloaded 1.6 Mb
+
+
+The downloaded packages are in
+	/var/folders/cg/cgE7KPYpGamEVBjlmna5ZE+++TI/-Tmp-//RtmpR5pjn1/downloaded_packages
+> library(Deducer)
+Loading required package: rJava
+Loading required package: JGR
+Loading required package: JavaGD
+Loading required package: iplots
+Note: On Mac OS X we strongly recommend using iplots from within JGR.
+Proceed at your own risk as iplots cannot resolve potential ev.loop deadlocks.
+'Yes' is assumed for all dialogs as they cannot be shown without a deadlock,
+also ievent.wait() is disabled.
+Error in .jnew("org/rosuda/iplots/Framework") : 
+  java.lang.InternalError: Can't start the AWT because Java was started on the first thread.  Make sure StartOnFirstThread is not specified in your application's Info.plist or on the command line
+Error: package 'iplots' could not be loaded
+> data(tips)
+> tips
+    total_bill   tip    sex smoker  day   time size
+1        16.99  1.01 Female     No  Sun Dinner    2
+2        10.34  1.66   Male     No  Sun Dinner    3
+3        21.01  3.50   Male     No  Sun Dinner    3
+4        23.68  3.31   Male     No  Sun Dinner    2
+5        24.59  3.61 Female     No  Sun Dinner    4
+6        25.29  4.71   Male     No  Sun Dinner    4
+7         8.77  2.00   Male     No  Sun Dinner    2
+8        26.88  3.12   Male     No  Sun Dinner    4
+9        15.04  1.96   Male     No  Sun Dinner    2
+10       14.78  3.23   Male     No  Sun Dinner    2
+11       10.27  1.71   Male     No  Sun Dinner    2
+12       35.26  5.00 Female     No  Sun Dinner    4
+13       15.42  1.57   Male     No  Sun Dinner    2
+14       18.43  3.00   Male     No  Sun Dinner    4
+15       14.83  3.02 Female     No  Sun Dinner    2
+16       21.58  3.92   Male     No  Sun Dinner    2
+17       10.33  1.67 Female     No  Sun Dinner    3
+18       16.29  3.71   Male     No  Sun Dinner    3
+19       16.97  3.50 Female     No  Sun Dinner    3
+20       20.65  3.35   Male     No  Sat Dinner    3
+21       17.92  4.08   Male     No  Sat Dinner    2
+22       20.29  2.75 Female     No  Sat Dinner    2
+23       15.77  2.23 Female     No  Sat Dinner    2
+24       39.42  7.58   Male     No  Sat Dinner    4
+25       19.82  3.18   Male     No  Sat Dinner    2
+26       17.81  2.34   Male     No  Sat Dinner    4
+27       13.37  2.00   Male     No  Sat Dinner    2
+28       12.69  2.00   Male     No  Sat Dinner    2
+29       21.70  4.30   Male     No  Sat Dinner    2
+30       19.65  3.00 Female     No  Sat Dinner    2
+31        9.55  1.45   Male     No  Sat Dinner    2
+32       18.35  2.50   Male     No  Sat Dinner    4
+33       15.06  3.00 Female     No  Sat Dinner    2
+34       20.69  2.45 Female     No  Sat Dinner    4
+35       17.78  3.27   Male     No  Sat Dinner    2
+36       24.06  3.60   Male     No  Sat Dinner    3
+37       16.31  2.00   Male     No  Sat Dinner    3
+38       16.93  3.07 Female     No  Sat Dinner    3
+39       18.69  2.31   Male     No  Sat Dinner    3
+40       31.27  5.00   Male     No  Sat Dinner    3
+41       16.04  2.24   Male     No  Sat Dinner    3
+42       17.46  2.54   Male     No  Sun Dinner    2
+43       13.94  3.06   Male     No  Sun Dinner    2
+44        9.68  1.32   Male     No  Sun Dinner    2
+45       30.40  5.60   Male     No  Sun Dinner    4
+46       18.29  3.00   Male     No  Sun Dinner    2
+47       22.23  5.00   Male     No  Sun Dinner    2
+48       32.40  6.00   Male     No  Sun Dinner    4
+49       28.55  2.05   Male     No  Sun Dinner    3
+50       18.04  3.00   Male     No  Sun Dinner    2
+51       12.54  2.50   Male     No  Sun Dinner    2
+52       10.29  2.60 Female     No  Sun Dinner    2
+53       34.81  5.20 Female     No  Sun Dinner    4
+54        9.94  1.56   Male     No  Sun Dinner    2
+55       25.56  4.34   Male     No  Sun Dinner    4
+56       19.49  3.51   Male     No  Sun Dinner    2
+57       38.01  3.00   Male    Yes  Sat Dinner    4
+58       26.41  1.50 Female     No  Sat Dinner    2
+59       11.24  1.76   Male    Yes  Sat Dinner    2
+60       48.27  6.73   Male     No  Sat Dinner    4
+61       20.29  3.21   Male    Yes  Sat Dinner    2
+62       13.81  2.00   Male    Yes  Sat Dinner    2
+63       11.02  1.98   Male    Yes  Sat Dinner    2
+64       18.29  3.76   Male    Yes  Sat Dinner    4
+65       17.59  2.64   Male     No  Sat Dinner    3
+66       20.08  3.15   Male     No  Sat Dinner    3
+67       16.45  2.47 Female     No  Sat Dinner    2
+68        3.07  1.00 Female    Yes  Sat Dinner    1
+69       20.23  2.01   Male     No  Sat Dinner    2
+70       15.01  2.09   Male    Yes  Sat Dinner    2
+71       12.02  1.97   Male     No  Sat Dinner    2
+72       17.07  3.00 Female     No  Sat Dinner    3
+73       26.86  3.14 Female    Yes  Sat Dinner    2
+74       25.28  5.00 Female    Yes  Sat Dinner    2
+75       14.73  2.20 Female     No  Sat Dinner    2
+76       10.51  1.25   Male     No  Sat Dinner    2
+77       17.92  3.08   Male    Yes  Sat Dinner    2
+78       27.20  4.00   Male     No Thur  Lunch    4
+79       22.76  3.00   Male     No Thur  Lunch    2
+80       17.29  2.71   Male     No Thur  Lunch    2
+81       19.44  3.00   Male    Yes Thur  Lunch    2
+82       16.66  3.40   Male     No Thur  Lunch    2
+83       10.07  1.83 Female     No Thur  Lunch    1
+84       32.68  5.00   Male    Yes Thur  Lunch    2
+85       15.98  2.03   Male     No Thur  Lunch    2
+86       34.83  5.17 Female     No Thur  Lunch    4
+87       13.03  2.00   Male     No Thur  Lunch    2
+88       18.28  4.00   Male     No Thur  Lunch    2
+89       24.71  5.85   Male     No Thur  Lunch    2
+90       21.16  3.00   Male     No Thur  Lunch    2
+91       28.97  3.00   Male    Yes  Fri Dinner    2
+92       22.49  3.50   Male     No  Fri Dinner    2
+93        5.75  1.00 Female    Yes  Fri Dinner    2
+94       16.32  4.30 Female    Yes  Fri Dinner    2
+95       22.75  3.25 Female     No  Fri Dinner    2
+96       40.17  4.73   Male    Yes  Fri Dinner    4
+97       27.28  4.00   Male    Yes  Fri Dinner    2
+98       12.03  1.50   Male    Yes  Fri Dinner    2
+99       21.01  3.00   Male    Yes  Fri Dinner    2
+100      12.46  1.50   Male     No  Fri Dinner    2
+101      11.35  2.50 Female    Yes  Fri Dinner    2
+102      15.38  3.00 Female    Yes  Fri Dinner    2
+103      44.30  2.50 Female    Yes  Sat Dinner    3
+104      22.42  3.48 Female    Yes  Sat Dinner    2
+105      20.92  4.08 Female     No  Sat Dinner    2
+106      15.36  1.64   Male    Yes  Sat Dinner    2
+107      20.49  4.06   Male    Yes  Sat Dinner    2
+108      25.21  4.29   Male    Yes  Sat Dinner    2
+109      18.24  3.76   Male     No  Sat Dinner    2
+110      14.31  4.00 Female    Yes  Sat Dinner    2
+111      14.00  3.00   Male     No  Sat Dinner    2
+112       7.25  1.00 Female     No  Sat Dinner    1
+113      38.07  4.00   Male     No  Sun Dinner    3
+114      23.95  2.55   Male     No  Sun Dinner    2
+115      25.71  4.00 Female     No  Sun Dinner    3
+116      17.31  3.50 Female     No  Sun Dinner    2
+117      29.93  5.07   Male     No  Sun Dinner    4
+118      10.65  1.50 Female     No Thur  Lunch    2
+119      12.43  1.80 Female     No Thur  Lunch    2
+120      24.08  2.92 Female     No Thur  Lunch    4
+121      11.69  2.31   Male     No Thur  Lunch    2
+122      13.42  1.68 Female     No Thur  Lunch    2
+123      14.26  2.50   Male     No Thur  Lunch    2
+124      15.95  2.00   Male     No Thur  Lunch    2
+125      12.48  2.52 Female     No Thur  Lunch    2
+126      29.80  4.20 Female     No Thur  Lunch    6
+127       8.52  1.48   Male     No Thur  Lunch    2
+128      14.52  2.00 Female     No Thur  Lunch    2
+129      11.38  2.00 Female     No Thur  Lunch    2
+130      22.82  2.18   Male     No Thur  Lunch    3
+131      19.08  1.50   Male     No Thur  Lunch    2
+132      20.27  2.83 Female     No Thur  Lunch    2
+133      11.17  1.50 Female     No Thur  Lunch    2
+134      12.26  2.00 Female     No Thur  Lunch    2
+135      18.26  3.25 Female     No Thur  Lunch    2
+136       8.51  1.25 Female     No Thur  Lunch    2
+137      10.33  2.00 Female     No Thur  Lunch    2
+138      14.15  2.00 Female     No Thur  Lunch    2
+139      16.00  2.00   Male    Yes Thur  Lunch    2
+140      13.16  2.75 Female     No Thur  Lunch    2
+141      17.47  3.50 Female     No Thur  Lunch    2
+142      34.30  6.70   Male     No Thur  Lunch    6
+143      41.19  5.00   Male     No Thur  Lunch    5
+144      27.05  5.00 Female     No Thur  Lunch    6
+145      16.43  2.30 Female     No Thur  Lunch    2
+146       8.35  1.50 Female     No Thur  Lunch    2
+147      18.64  1.36 Female     No Thur  Lunch    3
+148      11.87  1.63 Female     No Thur  Lunch    2
+149       9.78  1.73   Male     No Thur  Lunch    2
+150       7.51  2.00   Male     No Thur  Lunch    2
+151      14.07  2.50   Male     No  Sun Dinner    2
+152      13.13  2.00   Male     No  Sun Dinner    2
+153      17.26  2.74   Male     No  Sun Dinner    3
+154      24.55  2.00   Male     No  Sun Dinner    4
+155      19.77  2.00   Male     No  Sun Dinner    4
+156      29.85  5.14 Female     No  Sun Dinner    5
+157      48.17  5.00   Male     No  Sun Dinner    6
+158      25.00  3.75 Female     No  Sun Dinner    4
+159      13.39  2.61 Female     No  Sun Dinner    2
+160      16.49  2.00   Male     No  Sun Dinner    4
+161      21.50  3.50   Male     No  Sun Dinner    4
+162      12.66  2.50   Male     No  Sun Dinner    2
+163      16.21  2.00 Female     No  Sun Dinner    3
+164      13.81  2.00   Male     No  Sun Dinner    2
+165      17.51  3.00 Female    Yes  Sun Dinner    2
+166      24.52  3.48   Male     No  Sun Dinner    3
+167      20.76  2.24   Male     No  Sun Dinner    2
+168      31.71  4.50   Male     No  Sun Dinner    4
+169      10.59  1.61 Female    Yes  Sat Dinner    2
+170      10.63  2.00 Female    Yes  Sat Dinner    2
+171      50.81 10.00   Male    Yes  Sat Dinner    3
+172      15.81  3.16   Male    Yes  Sat Dinner    2
+173       7.25  5.15   Male    Yes  Sun Dinner    2
+174      31.85  3.18   Male    Yes  Sun Dinner    2
+175      16.82  4.00   Male    Yes  Sun Dinner    2
+176      32.90  3.11   Male    Yes  Sun Dinner    2
+177      17.89  2.00   Male    Yes  Sun Dinner    2
+178      14.48  2.00   Male    Yes  Sun Dinner    2
+179       9.60  4.00 Female    Yes  Sun Dinner    2
+180      34.63  3.55   Male    Yes  Sun Dinner    2
+181      34.65  3.68   Male    Yes  Sun Dinner    4
+182      23.33  5.65   Male    Yes  Sun Dinner    2
+183      45.35  3.50   Male    Yes  Sun Dinner    3
+184      23.17  6.50   Male    Yes  Sun Dinner    4
+185      40.55  3.00   Male    Yes  Sun Dinner    2
+186      20.69  5.00   Male     No  Sun Dinner    5
+187      20.90  3.50 Female    Yes  Sun Dinner    3
+188      30.46  2.00   Male    Yes  Sun Dinner    5
+189      18.15  3.50 Female    Yes  Sun Dinner    3
+190      23.10  4.00   Male    Yes  Sun Dinner    3
+191      15.69  1.50   Male    Yes  Sun Dinner    2
+192      19.81  4.19 Female    Yes Thur  Lunch    2
+193      28.44  2.56   Male    Yes Thur  Lunch    2
+194      15.48  2.02   Male    Yes Thur  Lunch    2
+195      16.58  4.00   Male    Yes Thur  Lunch    2
+196       7.56  1.44   Male     No Thur  Lunch    2
+197      10.34  2.00   Male    Yes Thur  Lunch    2
+198      43.11  5.00 Female    Yes Thur  Lunch    4
+199      13.00  2.00 Female    Yes Thur  Lunch    2
+200      13.51  2.00   Male    Yes Thur  Lunch    2
+201      18.71  4.00   Male    Yes Thur  Lunch    3
+202      12.74  2.01 Female    Yes Thur  Lunch    2
+203      13.00  2.00 Female    Yes Thur  Lunch    2
+204      16.40  2.50 Female    Yes Thur  Lunch    2
+205      20.53  4.00   Male    Yes Thur  Lunch    4
+206      16.47  3.23 Female    Yes Thur  Lunch    3
+207      26.59  3.41   Male    Yes  Sat Dinner    3
+208      38.73  3.00   Male    Yes  Sat Dinner    4
+209      24.27  2.03   Male    Yes  Sat Dinner    2
+210      12.76  2.23 Female    Yes  Sat Dinner    2
+211      30.06  2.00   Male    Yes  Sat Dinner    3
+212      25.89  5.16   Male    Yes  Sat Dinner    4
+213      48.33  9.00   Male     No  Sat Dinner    4
+214      13.27  2.50 Female    Yes  Sat Dinner    2
+215      28.17  6.50 Female    Yes  Sat Dinner    3
+216      12.90  1.10 Female    Yes  Sat Dinner    2
+217      28.15  3.00   Male    Yes  Sat Dinner    5
+218      11.59  1.50   Male    Yes  Sat Dinner    2
+219       7.74  1.44   Male    Yes  Sat Dinner    2
+220      30.14  3.09 Female    Yes  Sat Dinner    4
+221      12.16  2.20   Male    Yes  Fri  Lunch    2
+222      13.42  3.48 Female    Yes  Fri  Lunch    2
+223       8.58  1.92   Male    Yes  Fri  Lunch    1
+224      15.98  3.00 Female     No  Fri  Lunch    3
+225      13.42  1.58   Male    Yes  Fri  Lunch    2
+226      16.27  2.50 Female    Yes  Fri  Lunch    2
+227      10.09  2.00 Female    Yes  Fri  Lunch    2
+228      20.45  3.00   Male     No  Sat Dinner    4
+229      13.28  2.72   Male     No  Sat Dinner    2
+230      22.12  2.88 Female    Yes  Sat Dinner    2
+231      24.01  2.00   Male    Yes  Sat Dinner    4
+232      15.69  3.00   Male    Yes  Sat Dinner    3
+233      11.61  3.39   Male     No  Sat Dinner    2
+234      10.77  1.47   Male     No  Sat Dinner    2
+235      15.53  3.00   Male    Yes  Sat Dinner    2
+236      10.07  1.25   Male     No  Sat Dinner    2
+237      12.60  1.00   Male    Yes  Sat Dinner    2
+238      32.83  1.17   Male    Yes  Sat Dinner    2
+239      35.83  4.67 Female     No  Sat Dinner    3
+240      29.03  5.92   Male     No  Sat Dinner    3
+241      27.18  2.00 Female    Yes  Sat Dinner    2
+242      22.67  2.00   Male    Yes  Sat Dinner    2
+243      17.82  1.75   Male     No  Sat Dinner    2
+244      18.78  3.00 Female     No Thur Dinner    2
+> ?tips
+> head(tips)
+  total_bill  tip    sex smoker day   time size
+1      16.99 1.01 Female     No Sun Dinner    2
+2      10.34 1.66   Male     No Sun Dinner    3
+3      21.01 3.50   Male     No Sun Dinner    3
+4      23.68 3.31   Male     No Sun Dinner    2
+5      24.59 3.61 Female     No Sun Dinner    4
+6      25.29 4.71   Male     No Sun Dinner    4
+> ggplot(data = tips, aes(size, tip/total_bill)) + geom_bar()
+stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+Error in pmin(y, 0) : object 'y' not found
+> ggplot(data = tips, aes(size, tip/total_bill)) + stat_summary(fun.y = mean, geom = "bar")
+> range(tips$tip/ tips$total_bill)
+[1] 0.03563814 0.71034483
+> ggplot(data = tips, aes(size, tip/total_bill)) + stat_summary(fun.y = mean, geom = "bar") + facet_grid(day ~ sex)
+> ggplot(data = tips, aes(size, tip/total_bill)) + stat_summary(fun.y = mean, geom = "bar") + facet_grid(day ~ time)
+> ggplot(data = tips, aes(factor(size), tip/total_bill)) + stat_summary(fun.y = mean, geom = "bar") + facet_grid(day ~ time)
+> ggplot(data = tips, aes(as.factor(size), tip/total_bill)) + stat_summary(fun.y = mean, geom = "bar") + facet_grid(day ~ time)
+> 

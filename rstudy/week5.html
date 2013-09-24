@@ -1,0 +1,567 @@
+<html>
+	<font face = "Veranda">
+	<head><title>Week 5-6</title><h1>Week 5-6</h1></head>
+	
+	<body>
+		<p>
+			<table>
+				<tr>
+					<td><a href = "r-study.html">Home</a> </td><td><a href = "week4.html"><- Week 4</a></td><td>Week 7-></td>
+				</tr>
+			</table>
+		</p>
+		
+		<h2>Contents</h2>
+<ol>
+<li><a href = "#contdata">Continuous Data</a></li>
+
+
+<li><a href = "#corr">Correlation</a></li>
+	<ol>
+	<li><a href = "#cormatrix">Correlation Matrix</a></li>
+	<li><a href = "#corrsig">Correlation Significance</a></li>
+	<li><a href = "#nonparatest">Non-parametric Tests</a></li>
+	</ol>
+
+
+<li><a href = "#regress">Simple Regression</a></li>
+	<ol>
+	<li><a href = "#conf">Confidence and Prediction Lines</a></li>
+	</ol>
+
+
+<li><a href = "#cat-anova">Categorical Predictors / ANOVA</a></li>
+	<ol>
+	<li><a href = "#anova">ANOVA</a></li>
+	<li><a href = "#contrasts">Regression and Contrasts</a></li>
+		<ol>
+		<li><a href = "#lesson">The Lesson</a></li>
+			<ol>
+				<li><a href="#whycontrast">Why the fuss?</a></li>
+			</ol>
+		<li><a href = "#pairwise">Pairwise Testing</a></li>
+		</ol>
+	<li><a href = "#multiple">Multiple Regression</a></li>
+	<li><a href = "#poly">Polynomial Regressions and Interactions</a></li>
+	</ol>
+</ol>
+		
+		<h2>References</h2>
+		<p><b>Dalgaard 2008</b><br>
+			<b>Johnson 2008</b><br>
+			<b>Gelman and Hill 2008</b>
+		</p>
+		
+		<h2>Continuous Data<a name = "contdata"></h2>
+		<p>The topic this week will be what to do with continuous data as the response, or dependant variable.  We'll look at correlation and simple
+		regression to see what to do when your predictor, or independant variable is also continuous, and at ANOVA and Multiple Regression for when they are
+		categorical.</p>
+		
+		<h2>Correlation<a name = "corr"></h2>
+		<p>I'm going to walk through the description of the Pearson product-moment correlation coefficient (r) from Johnson 2008, because it makes it clear
+		why standard correlation measures rely upon assumptions of linearity and normality.</p>
+		
+		<p>First, load the <font face = "Courier">ISwR</font> library (or install it if you haven't already), and attach the 
+		<font face = "Courier">rmr</font> data frame.  If you look at it with <font face = "Courier">summary()</font>, you can see that it data on
+		the body weight and energy consumption of a few subjects.  Let's plot it with body weight on the x-axis.</p>
+		<blockquote>
+			<font face = "Courier">
+				library(ISwR)<br>
+				attach(rmr)<br>
+				summary(rmr)<br>
+				plot(body.weight,metabolic.rate)
+			</font>
+		</blockquote>
+		<p>So, they look very correlated. 	To measure correlation, we want to see if the magnitude of changes in x are closely related to the magnitude of changes in
+		y.  To do this by hand, first subtract out the mean from the x and y vectors:</p>
+		<blockquote>
+			<font face = "Courier">
+				c.body.weight <- body.weight-mean(body.weight)<br>
+				c.metabolic.rate <- metabolic.rate-mean(metabolic.rate)
+			</font>
+		</blockquote>
+		<p>Now we have the distance of every point from the mean of their distribution.  Next, we'll take a z-score by dividing their distances from the mean
+		by the standard deviations of their distributions.  This now gives us a score of every point's relative location within their distribution, making the data
+		from these two rather different distributions more comparable (z-scores are very useful)</p>
+		<blockquote>
+			<font face = "Courier">
+				z.body.weight <- c.body.weight / sd(body.weight)<br>
+				z.metabolic.rate <- c.metabolic.rate / sd(metabolic.rate)
+			</font>
+		</blockquote>
+		<p>Now, we multipy the z-score of x<sub>i</sub> by the z-score of y<sub>i</sub>. If x and y are positively correlated, then this should produce
+		a vector of large positive numbers.  If they are negatively correlated, this should produce a vector of large negative numbers.  We'll sum this
+		vector, and then divide it by n-1, producing <i>r</i>.</p>
+		<blockquote>
+			<font face = "Courier">
+				sum(z.body.weight*z.metabolic.rate)/(nrow(rmr)-1)
+			</font>
+		</blockquote>
+		<p>Viola!  Of course, R has a function for this: <font face = "Courier">cor()</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				cor(body.weight, metabolic.rate)
+			</font>
+		</blockquote>
+		<p>But keep in mind that calculations of means and standard deviations goes into determining the correlation coefficient.  If one or both distributions
+		are not normal, then you may come back with a weaker correlation than there really is.  In this case, by inspecting the density, or by comparing the mean
+		and median of body weights, we can see that the data is a little left skewed. Apparently body weight is sometimes lognormal.  The correlation of
+		log(body weight) and metabolic rate isn't much higher, but it is a little.</p>
+		<blockquote>
+			<font face = "Courier">
+				cor(body.weight, metabolic.rate) ## == 0.7442379<br>
+				cor(log(body.weight), metabolic.rate) ## == 0.7493597
+			</font>
+		</blockquote>
+		<center>
+		<a href="plots/continuous/body.weight.R"><img src = "plots/continuous/body.weight.png" height = 70%></a>
+		</center>
+
+		<h3>Correlation Matrix<a name = "cormatrix"></h3>
+		<p>If you give <font face = "Courier">cor()</font> a matrix of values, it will return a matrix of correlations between the columns. We can do this
+		with the data we were just looking at.</p>
+		<blockquote>
+			<font face = "Courier">
+				cor(rmr)
+			</font>
+		</blockquote>
+		<p>This is very boring since there are only two values. Columns are, of course, prefectly correlated with themselves, and the two sides of the matrix
+		will be symmetrical.</p>
+		<p>I've been playing around with ways to visualize correlation matrices, and here's a result. The following graph is based on mean F1 values for
+		the vowels listed along the axes for 61 speakers from the Inland North.  The darker the square, the larger the absolute correlation.</p>
+		<center>
+		<a href = "plots/continuous/inf1.R"><img src = "plots/continuous/inf1.png" height = 70%></a>
+		</center>
+		
+		<h3>Correlation Significance<a name = "corrsig"></h3>
+		<p>To determine whether a correlation value is significantly different from 0, you can use <font face = "Courier">cor.test()</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				cor.test(body.weight, metabolic.rate)
+			</font>
+		</blockquote>
+		
+		<h3>Non-parametric Tests<a name = "nonparatest"></h3>
+		<p>Two non-parametric measures of correlation are Spearman's &rho and Kendall's &tau .  There aren't separate tests for these.  Rather you
+		specify the <font face = "Courier">method</font> argument in <font face = "Courier">cor.test()</font> as either <font face = "Courier">"spearman"</font> or
+		<font face = "Courier">"kendall"</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				cor.test(body.weight, metabolic.rate,method = "spearman")<br>
+				cor.test(body.weight, metabolic.rate,method = "kendall")
+			</font>
+		</blockquote>
+		
+		<h2>Simple Regression<a name = "regress"></h2>
+		<p>If you want to know <em>what</em> the relationship between two continuous variables is, then you want to do a linear regression.  The output of a
+		linear regression is essentially a formula: <center>y<sub>i</sub> = &alpha + &beta x<sub>i</sub> + &epsilon<sub>i</sub> </center> which can be read as 
+		"a token of the response variable y can be given as a constant (or intercept) &alpha plus &beta times the predictor value, plus some residual error term."
+		The linear regression process trys to minimize the size of the residual error term, maximizing how much of y can be described by x plus some constant.</p>
+		
+		<p>One example of a formula like this that I find really tractable is temperature conversion. To convert Celcius to Farenheit, the formula is
+		<center>&alpha;=32<br>&beta;=1.8<br>&epsilon;=0<br>F&deg; = 32 + (1.8*C&deg;) + 0</center> For any temperature in Celcius, this formula will
+		return the temperature in Farenheit. Since the conversion is deterministic, the error term is 0.</p>
+
+		<p>Now, think about the conversion formula as a prediction instead.  In a sense, the formula predicts what temperature a thermometer should give in
+		Farenheit if you know what it gives in Celcius. Similar predictive formulas can be made to relate other things together, like height to weight, 
+		or age to fundamental frequency. Of course, there is a little bit of noise in the real world, so the formula prediction won't always be exactly
+		right. How big will the difference be between the predicted (or fitted) value and the observed value be? This difference is given by &epsilon;, and it 
+		is assumed that the values of &epsilon; for every observation will be normally distributed around 0.</p>
+		
+		
+		
+		
+		<p>To do this in R, we will use the <font face = "Courier">lm()</font> function. Let's look at a linear regression of the body weight and metabolic 
+		rate data.</p>
+		<blockquote>
+			<font face = "Courier">
+				lm(metabolic.rate~body.weight)
+			</font>
+		</blockquote>
+		<p>The first argument to <font face = "Courier">lm()</font> is a formula.  Here, it means "explain metabolic rate in terms of body weight".  The simple
+		printed output of <font face = "Courier">lm()</font> is pretty sparse, with just the intercept (&alpha = 811.23) and body weight effect (&beta = 7.06).
+		However, <font face = "Courier">lm()</font> actually produces a complex data object on which quite a few different functions can be performed, and from
+		which quite a few elements can be extracted.</p>
+		<blockquote>
+			<font face = "Courier">
+				mod <- lm(metabolic.rate~body.weight)<br>
+				summary(mod)
+			</font>
+		</blockquote>
+		
+		<p>Using <font face = "Courier">summary()</font> on the object produces a much richer printed output.  From top to bottom:</p>
+		<xmp>
+	Call:
+	lm(formula = metabolic.rate ~ body.weight)		
+		</xmp>
+		<p>This is the command that was given to <font face = "Courier">lm()</font></p>
+		<xmp>
+	Residuals:
+	    Min      1Q  Median      3Q     Max 
+	-245.74 -113.99  -32.05  104.96  484.81 
+		</xmp>
+		<p>This is a 5 number summary of the regression residuals.  The residuals are the &epsilon; for every data point.  That is, the size of the difference
+		from the observed value to the value given by the formula intercept+(slope*body.weight).  The residuals should be normally distributed. Here, it looks like
+		they're somewhat left skewed.</p>
+		<xmp>
+	Coefficients:
+       		    Estimate Std. Error t value Pr(>|t|)    
+	(Intercept) 811.2267    76.9755  10.539 2.29e-13 ***
+	body.weight   7.0595     0.9776   7.221 7.03e-09 ***
+	---
+	Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1 			
+		</xmp>
+		<p>These are the regression coefficients along with their standard errors, and their significance as determined by the t-distribution.  The way 
+		to understand these significance values is that the intercept and effect of body weight are significantly non-zero. For this model, it's not too surprising
+		that the intercept is significantly different from 0, but occasionally, you may come across a model where the intercept is not significantly different from 0.
+		There, you may consider eliminating the intercept from the model (forcing the fitted line to pass through (0,0)) by adding <font face = "Courier">-1</font>
+		to the model formula.</p>
+		<p>The significance of the predictor variable also means that its coefficient is significantly non-zero.</p>
+		<xmp>
+	Residual standard error: 157.9 on 42 degrees of freedom
+		</xmp>
+		<p>This is a measure of the variance of the residuals. </p>
+		<xmp>
+	Multiple R-squared: 0.5539,	Adjusted R-squared: 0.5433 			
+		</xmp>
+		<p>The multiple R-squared is simply the square of Pearson's r, or the output of <font face = "Courier">cor()</font>.  The adjusted R-squared 
+		accounts for the sample size and some other things, and can be read as "the % of variance reduction."</p>
+		<xmp>
+	F-statistic: 52.15 on 1 and 42 DF,  p-value: 7.025e-09 
+		</xmp>
+		<p>This F statistic tells you whether or not there is a significant predictor in your data.  For this simple regression, it's kind of pointless.  However, in
+		a larger regression model with more predictors, none of their coefficients may be significant, but if the F test returns a significant result, then there
+		is some significant effect being accounted for.</p>
+		
+		<p>You can plot a simple regression line with <font face = "Courier">abline()</font>.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(body.weight, metabolic.rate)<br>
+				abline(mod)
+			</font>
+		</blockquote>
+		<p>The fitted regression line can be given by the formula <center>metabolic.rate = 811.2267 + 7.0595*body.weight</center> Residual error terms can 
+		be understood as the distance from the data points to the line along the y-axis.  We can add this in.</p>
+		<blockquote>
+			<font face = "Courier">
+				segments(body.weight,fitted(mod),body.weight,metabolic.rate)
+			</font>
+		</blockquote>
+		<center>
+		<img src = "plots/continuous/residuals.png" height = 70%>
+		</center>
+		<p>You would hope that the size of residual errors would be independant of the predictor variable, and that they would be normally distributed. We can
+		do both of these checks by plotting the fitted values by residual values, and by producing a Q-Q plot of the residuals.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(fitted(mod),resid(mod)<br>
+				qqnorm(resid(mod))<br>
+				qqline(resid(mod))
+			</font>
+		</blockquote>
+		
+		
+		<h3>Confidence and Prediction Lines<a name = "conf"></h3>
+		<p>It's possible to produce confidence and prediction bands for the regression line using <font face = "Courier">predict()</font>.  
+		Using <font face = "Courier">predict()</font> with no other arguments will give the same output as <font face = "Courier">fitted()</font>.  We can
+		also produce two kinds of confidence intervals for these fitted points:
+		<ul>
+			<li>confidence: our confidence in the current line</li>
+			<li>prediction: our confidence of the range where future measurements from this population will lie.</li>
+		</ul>
+		The prediction intervals will be wider than the confidence intervals.
+		</p>
+		<p>The tricky thing is that the intervals will be calculated for the x-values as they were in the original data frame.  In this case, we were lucky 
+		enough that  the x values were ordered, but they typically won't be.  Here's what do do about that.</p>
+		<blockquote>
+			<font face = "Courier">
+				##create a new data frame with ordered values<br>
+				##and the same variable name<br>
+				pred.frame <- data.frame(body.weight = seq(min(body.weight),max(body.weight),length = 100))<br>
+				##give pred.frame to newdata<br>
+				conf.int <- predict(mod, newdata = pred.frame, int = "c")<br>
+				head(conf.int)
+			</font>
+		</blockquote>
+		<p>You can see that we've gotten back a matrix with 3 columns.  The first is the fitted values, the next is lower end of the interval, and the third
+		is the higher.  We can add this to a plot of the regression line with <font face = "Courier">matlines()</font>.  When you give <font face = "Courier">matlines()</font>
+		two matrices, it treats the first as the x matrix and the second as the y matrix.  It plots the i<sup>th</sup> column of the x matrix by the i<sup>th</sup>
+		column of the y matrix. If one of them is just a vector, then it plots all the columns of the matrix against the vector.  Here, we'll give the 
+		body weight vector from <font face = "Courier">pred.frame</font> as x, and the different interval matrices as the y.  <font face = "Courier">matlines()</font>
+		has some pretty strange default <font face= "Courier">col</font> and <font face = "Courier">lty</font> settings, so we'll adjust them by hand here.</p>
+		<blockquote>
+			<font face = "Courier">
+				plot(body.weight, metabolic.rate)<br>
+				abline(mod)<br>
+				matlines(pred.frame$body.weight, conf.int, lty = c(1,2,2),col = "black")<br>
+				pred.int <- predict(mod, newdata = pred.frame, int = "p")<br>
+				matlines(pred.frame$body.weight, pred.int, lty = c(1,2,2), col = "black")
+			</font>
+		</blockquote>
+		
+		<h2>Categorical Predictors / ANOVA<a name = "cat-anova"></h2>
+		<p>If you have a continuous response variable, and categorical predictors, you will want to do a regression with these categorical predictors, 
+		and an Analysis of Variance, or ANOVA.</p>
+		
+		<h3>ANOVA<a name = "anova"></h3>
+		<p>If you have a sample of continuous data labeled for two or more groups, you want to know whether there are any significant differences 
+		between groups in the data.  It can be shown that if there is no difference between groups, that is, they have the same &mu; and &sigma;, then the
+		variance within these groups &asymp; the variance between the groups &asymp; the sample variance. If the variance between groups is significantly > 
+		the variance within groups, then there is a significant group effect on the response variable.</p>
+		<p>ANOVA's are stupid easy to do in R.  I'm sorry I don't have some other, better data immediately available.  For now we'll look at the 
+		<font face = "Courier">red.cell.folate</font> data from Dalgaard.</p>
+		<blockquote>
+			<font face = "Courier">
+				summary(red.cell.folate)<br>
+				anova(lm(folate~ventilation, data = red.cell.folate))
+			</font>
+		</blockquote>
+		<xmp>
+	Analysis of Variance Table
+
+	Response: folate
+	            Df Sum Sq Mean Sq F value  Pr(>F)  
+	ventilation  2  15516    7758  3.7113 0.04359 *
+	Residuals   19  39716    2090               
+		</xmp>
+		<p>And there you go. In the printed output, the named row is the between groups variance, and the row named Residuals is the within groups
+		variance.  Looks as if there is a just about significant group effect here.</p>
+		
+		<h3>Regression and Contrasts<a name = "contrasts"></h3>
+		<p>As you can see, ANOVA in R is carried out on a linear regression object.  We can use the lm object itself to look at the size of the differences 
+		between groups.</p>
+		<blockquote>
+			<font face = "Courier">
+				levels(red.cell.folate$ventilation)<br>
+				summary(lm(folate~ventilation, data = red.cell.folate))
+			</font>
+		</blockquote>
+		<xmp>
+	...
+	Coefficients:
+	                     Estimate Std. Error t value Pr(>|t|)    
+	(Intercept)            316.62      16.16  19.588 4.65e-14 ***
+	ventilationN2O+O2,op   -60.18      22.22  -2.709   0.0139 *  
+	ventilationO2,24h      -38.62      26.06  -1.482   0.1548
+	...
+		</xmp>
+		<p>As you can see from the levels of ventilation, there are three groups in the data, which I will just refer to as A, B, and C. A is the default, or control
+		group, and B and C are the experimental, or treatment groups. The intercept in the lm summary is the mean of group A, which can be confirmed with</p>
+		<blockquote>
+			<font face = "Courier">
+				g.means<-tapply(red.cell.folate$folate, red.cell.folate$ventilation,mean)<br>
+				g.means
+			</font>
+		</blockquote>
+		<p>The effect sizes for B and C are the differences of the mean of B and C from A. The p values for B and C indicate whether they are significantly 
+		different from A.</p>
+		<blockquote>
+			<font face = "Courier">
+				g.means[2]-g.means[1]<br>
+				g.means[3]-g.means[1]
+			</font>
+		</blockquote>
+		<p>It's important to understand the use of contrasts in linear regressions to interpret the output.  By default, R uses <i>treatment contrasts</i>, 
+		where the first level of a factor is taken to be the defaut or control, and then the effect sizes reported are the differences of the 
+		treatments from the default.  Note, this is really only acceptable when there is some level which can be considered the default, or at least only when you
+		are concerned how some levels differ from a baseline.  Here is what treatment contrasts look like:</p>
+		<blockquote>
+			<font face = "Courier">
+				contr.treatment(c("A","B","C"))
+			</font>
+		</blockquote>
+		<xmp>
+	  B C
+	A 0 0
+	B 1 0
+	C 0 1
+		</xmp>
+		<p>This means that when doing a linear regression where a factor with levels A, B, and C is given as a predictor, two dummy variables
+		are generated.  Dummy variable B is 1 where the factor == B, 0 elsewhere, and dummy variable C is 1 where the factor == C, 0 elsewhere.</p>
+		<p>Frequently in linguistic research, there is no level which could be considered the default.  For example, when looking at the effect of different 
+		following contexts on vowel height, it's not always possible to determine which context is "untreated."  Rather, it's possible that all contexts
+		have some effect on the intended vowel target.  For this, kind of situation, you might want to use sum contrasts: </p>
+		<blockquote>
+			<font face = "Courier">
+				contr.sum(c("A","B","C"))
+			</font>
+		</blockquote>
+		<xmp>
+	  [,1] [,2]
+	A    1    0
+	B    0    1
+	C   -1   -1
+		</xmp>
+		<p>This changes the dummy variables used in the regression.  Here, variable [,1] is 1 when the factor == A, -1 when the factor == C, and 0 elsewhere, 
+		and variable [,2] is 1 when the factor == B, -1 when the factor == C, and 0 elsewhere. </p>
+		<p>Although it's probably inappropriate, let's do a regression on the red.cell.folate data with sum contrasts.</p>
+		<blockquote>
+			<font face = "Courier">
+				summary(lm(folate~ventilation, data = red.cell.folate,contrasts = list(ventilation = "contr.sum")))
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	             Estimate Std. Error t value Pr(>|t|)    
+	(Intercept)    283.69      10.06  28.188   <2e-16 ***
+	ventilation1    32.94      13.73   2.400   0.0268 *  
+	ventilation2   -27.25      13.37  -2.038   0.0557 .
+		</xmp>
+		<p>The interpretation of regression output with sum contrasts is a little different.  Here, the intercept will be some kind of abstract mean, and the
+		regression coefficients will represent the difference of the factor level from that mean.  The first coefficient is the size of the effect of the first
+		level, and the second the size of the second level.  The effect size of the third level is the sum of the first two *-1</p>
+		<blockquote>
+			<font face = "Courier">
+				mod<-lm(folate~ventilation, data = red.cell.folate,contrasts = list(ventilation = "contr.sum"))<br>
+				mod$coef<br>
+				sum(mod$coef[2:3])*-1
+			</font>
+		</blockquote>
+		<p>The p-values here indicate whether the coefficient is significantly different from the mean given in the intercept.</p>
+		<p>**Note** See my <a href="http://www.ling.upenn.edu/~joseff/scripts/recontrast.html">recontrast.r script page</a> for usage notes on a script I wrote to manage contrasts. It is a lot easier than what I've done 
+		here, and it'll return meaningful names in the model output, not numbered variables.</p>
+		
+		
+		
+		
+		<h4>The Lesson<a name = "lesson"></h4>
+		<p>Make sure your levels are in the right order if you're going to do a regression, with the default or control group first.  If you 
+		can't assume there is some untreated group, consider using sum contrasts.</p>
+		
+		<h5><a name="whycontrast">Why the fuss?</a></h5>
+			<p>Remember above, where we thought about linear regression in terms of temperature conversion? That formula involved multiplying
+			degrees in Celcius by 1.8. If we were looking at data on the pitch of people's voices, and we wanted to see how the person's sex
+			affected their pitch, how would we write the prediction formula? What is (2*Male)? Categorical predictors like this are only meaningful
+			when compared <i>to</i> something. If you haven't thought through how you are making these comparisons (setting up the contrasts), 
+			then you cannot really understand what the coefficients for each categorical predictor mean.</p>
+		
+		<h4>Pairwise Testing<a name = "pairwise"></h4>
+		<p>If you want to test all possible differences between groups, then you want to use <font face = "Courier">pairwise.t.test()</font>.  
+		Note: you don't want to do a test for every pair of groups, because the more tests you do, the more likely you are to get an random 
+		p &lt; 0.05 result (Type I error).  <font face = "Courier">pairwise.t.test()</font> corrects for the fact repeated tests are being done.</p>
+		<blockquote>
+			<font face = "Courier">
+				pairwise.t.test(red.cell.folate$folate, red.cell.folate$ventilation)
+			</font>
+		</blockquote>
+		<xmp>
+		Pairwise comparisons using t tests with pooled SD 
+
+	data:  red.cell.folate$folate and red.cell.folate$ventilation 
+
+	          N2O+O2,24h N2O+O2,op
+	N2O+O2,op 0.042      -        
+	O2,24h    0.310      0.408    
+
+	P value adjustment method: holm 
+		</xmp>
+
+		<h3>Multiple Regression<a name = "multiple"></h3>
+		<p>Frequently when you draw data from some other source than an experiment, the range of possible predictors has not been constrained.  Regression 
+		analyses can be used to filter through the possible predictors to see which are reliable. <b>Gelman and Hill 2008</b> is a rather comprehensive guide to 
+		using regression models this way.  We'll just play around with some toy examples here.
+		</p>
+		<p>Dalgaard demonstrates how to do multiple regression model fitting with data on cystic fibrosis.</p>
+		<blockquote>
+			<font face = "Courier">
+				summary(cystfibr)
+			</font>
+		</blockquote>
+		<p><font face = "Courier">pemax</font> is the response variable we're interested in.  To begin with, let's fit a regression with all the 
+		predictor variables just in the order they're in the dataframe.</p>
+		<blockquote>
+			<font face = "Courier">
+				lm(pemax~age+sex+height+weight+bmp+fev1+rv+frc+tlc,data = cystfibr)->mod<br>
+				summary(mod)
+			</font>
+		</blockquote>
+		<xmp>
+	Coefficients:
+	            Estimate Std. Error t value Pr(>|t|)
+	(Intercept) 176.0582   225.8912   0.779    0.448
+	age          -2.5420     4.8017  -0.529    0.604
+	sex          -3.7368    15.4598  -0.242    0.812
+	height       -0.4463     0.9034  -0.494    0.628
+	weight        2.9928     2.0080   1.490    0.157
+	bmp          -1.7449     1.1552  -1.510    0.152
+	fev1          1.0807     1.0809   1.000    0.333
+	rv            0.1970     0.1962   1.004    0.331
+	frc          -0.3084     0.4924  -0.626    0.540
+	tlc           0.1886     0.4997   0.377    0.711
+
+	Residual standard error: 25.47 on 15 degrees of freedom
+	Multiple R-squared: 0.6373,	Adjusted R-squared: 0.4197 
+	F-statistic: 2.929 on 9 and 15 DF,  p-value: 0.03195 
+		</xmp>
+		<p>There is no single predictor with a significant coefficient, but the F test at the bottom has a significant value.  This means that this model
+		is significantly better than a model with no predictors.  That is, these predictors significantly reduce variance. To see how the predictors 
+		reduce variance directly, we'll use <font face = "Courier">anova()</font>
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				anova(mod)
+			</font>
+		</blockquote>
+		<xmp>
+	Analysis of Variance Table
+
+	Response: pemax
+	          Df  Sum Sq Mean Sq F value   Pr(>F)   
+	age        1 10098.5 10098.5 15.5661 0.001296 **
+	sex        1   955.4   955.4  1.4727 0.243680   
+	height     1   155.0   155.0  0.2389 0.632089   
+	weight     1   632.3   632.3  0.9747 0.339170   
+	bmp        1  2862.2  2862.2  4.4119 0.053010 . 
+	fev1       1  1549.1  1549.1  2.3878 0.143120   
+	rv         1   561.9   561.9  0.8662 0.366757   
+	frc        1   194.6   194.6  0.2999 0.592007   
+	tlc        1    92.4    92.4  0.1424 0.711160   
+	Residuals 15  9731.2   648.7         
+		</xmp>
+		<p>What this ANOVA table says is that after age has been added as a predictor, no other predictor significantly reduced the variance of the 
+		model.  It's possible to compare two models, one of which is a subset of the other, to see if one is significantly better than another.</p>
+		<blockquote>
+			<font face = "Courier">
+				lm(pemax~age,data = cystfibr)->mod1<br>
+				anova(mod1,mod)
+			</font>
+		</blockquote>
+		Analysis of Variance Table
+		<xmp>
+	Model 1: pemax ~ age
+	Model 2: pemax ~ age + sex + height + weight + bmp + fev1 + rv + frc + 
+	    tlc
+	  Res.Df     RSS Df Sum of Sq      F Pr(>F)
+	1     23 16734.2                           
+	2     15  9731.2  8    7002.9 1.3493 0.2936
+		</xmp>
+		<p>What this ANOVA table tells is is that after adding age, none of the other predictors put together significantly improve the model.</p>
+		<p>However, this is partially because age was added to the model first.  It may be possible that some other predictor would reduce the variance of the
+		model even more if added first, but since age was added, this other predictor doesn't reach significance.  This introduces the need for model search.
+		There are two ways to go about it.  First, you could add or remove variables by hand and check models against eachother.  This is what Dalgaard goes through.
+		The benefit of this is that you can apply some logical order to the process according to what you know about the variables you're looking at.</p>  
+		<p>The other option is to do a stepwise regression using <font face = "Courier">step()</font>. They way step works is it first fits a model with no predictors.
+		Then, it sees which predictor would significantly improve the model the most.  Then it adds it.  Then, it iterates through this process, adding and
+		subtratcting predictors until neither adding nor subtracting predictors would significantly improve the model.
+		</p>
+		<blockquote>
+			<font face = "Courier">
+				step(lm(pemax~1,data = cystfibr),pemax ~ age + sex + height + weight + bmp + fev1 + rv + frc + tlc)->mod2
+				summary(mod2)
+			</font>
+		</blockquote>
+		<p>Apparently, stepwise regressions were very in vogue a number of years ago, but now within the statistics community they're less so.</p>
+		
+		<h3>Polynomial Regressions and Interactions<a name = "poly"></h3>
+		<p>We'll do these during logistic regression I think.</p>
+		<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>

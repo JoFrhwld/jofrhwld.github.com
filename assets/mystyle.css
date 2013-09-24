@@ -1,0 +1,192 @@
+body {
+	font: 100% "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial Narrow", "Arial", "Lucida Grande", sans-serif; 
+	background: #ebeb2b2;
+	margin: 0;
+	padding: 0;
+	text-align: center; 
+	color: #000000;
+}
+.oneColElsCtr #container {
+	width: 46em;
+	background: #FFFFFF;
+	margin: 0 auto; 
+	text-align: justify; 
+}
+.oneColElsCtr #mainContent {
+	padding: 0 20px;
+}
+h1 {
+	color:  #08306B;
+	text-align: left;
+}
+h2 {
+	margin: 0px;
+	color: #08519C;
+	text-align: left;
+}
+h3 {
+	margin: 0px;
+	color: #2171B5;
+	text-align: left;
+}
+h4 {
+	color: #4292C6;
+	text-align: left;
+}
+
+.nav{
+	float: left;
+	width: 100%;
+	margin: 0 0 10px 0;
+}
+.nav ul{
+	list-style-type:none;
+	margin:0;
+    padding:0;
+}
+
+.nav li{
+	float: left;
+}
+
+.nav a{
+	display: block;
+	width: 60px;
+}
+
+a {
+	color: #006837;
+}
+a:hover {
+	color: #A6D96A;
+}
+a:visited{
+	color : #A50026;
+}
+
+rcode{
+	font-family: Courier, monospace;
+	font-size: 100%;
+}
+
+
+.box { 
+	margin: 5px; 
+	color: #000; 
+	background: #E6E6E6; 
+	padding: 10px; 
+	border-width: 3px;
+	border-color: black;
+	border-style: solid;
+}
+
+.imgbox{
+	margin: 5px; 
+	color: #000; 
+	background: #E6E6E6; 
+	padding: 10px; 
+	border-width: 3px;
+	border-color: black;
+	border-style: solid;
+	text-align: center;
+}
+
+.imgbox img{
+	border: 2px solid #acacac;	
+}
+
+
+
+.boxrow{
+	margin: 10px;
+	padding: 3px;
+}
+
+.left {
+	float: left;
+	width: 50%;
+	margin: 0 0 10px 0;
+}
+
+
+.right {
+	float: right;
+	width: 50%;
+	margin: 0 0 10px 0;
+}
+
+.mid {
+	float: left;
+	width: 100%;
+	margin: 0 0 10px 0;
+}
+
+.content {
+	text-align: left;
+	padding: 0 10px;
+}
+
+table.pub th, table.pub td {
+  font-size : 80%;
+  font-family :  "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial Narrow", "Arial", "Lucida Grande", sans-serif; ;
+  text-align: left;
+}
+
+#topnav {
+	width: 100%;
+	float: left;
+	margin: 5px 0px;
+	padding: 5px 0px;
+	list-style: none;
+}
+
+#topnav li {
+	float: left;
+	margin: 0px 10px; }
+
+#topnav li#curr {
+	float: left;
+	margin: 0px 10px;
+	color: #4292C6;
+}
+
+#topnav li a{
+	text-decoration: none;
+	display: block;
+}
+
+a#nav{
+	text-decoration: none;
+}
+
+#pagenav {
+	width: 100%;
+	float: left;
+	margin: 5px;
+	padding: 5px;
+	list-style: none;
+}
+
+#pagenav li {
+	float: left;
+	margin: 0px 10px; 
+	display: inline;
+}
+
+#pagenav li#curr {
+	float: left;
+	margin: 0px 10px;
+	color: #4292C6;
+	display: inline;
+}
+
+
+#pagenav li a{
+	text-decoration: none;
+	display: block;
+}
+
+ul#updates {
+	list-style: none;	
+}
+

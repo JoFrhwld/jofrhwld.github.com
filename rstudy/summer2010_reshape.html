@@ -1,0 +1,602 @@
+<html>
+	<font face = "Veranda">
+	<head>
+		<title>Summer 2010 &mdash; R: Data Goals</title>
+		<style type="text/css"> 
+			<!--
+			body {
+				font: 100% Verdana, Arial, Helvetica, sans-serif;
+				background: #ebeb2b2;
+				margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+				padding: 0;
+				text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+				color: #000000;
+			}
+			.oneColElsCtr #container {
+				width: 46em;
+				background: #FFFFFF;
+				margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+				/* border: 1px solid #000000; */
+				text-align: left; /* this overrides the text-align: center on the body element. */
+			}
+			.oneColElsCtr #mainContent {
+				padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+			}
+			rcode {
+				font-family: Courier, monospace;
+				font-size: 100%;
+			}
+			rcodeblock{
+				font-family: Courier, monospace;
+				font-size: 100%;
+				padding: 0 40px 0 40px;
+			}
+			h1 {
+				color:  #08306B;
+			}
+			h2 {
+				color: #08519C;
+			}
+			h3 {
+				color: #2171B5;
+			}
+			h4 {
+				color: #4292C6;
+			}
+			a {
+				color: #006837;
+			}
+			a:hover {
+				color: #A6D96A;
+			}
+			a:visited{
+				color : #A50026;
+			}
+			-->
+		</style>
+	</head> 
+	
+	<body class="oneColElsCtr"> 
+		<div id = "container">
+			<div id = "mainContent">
+			<h1>Summer 2010 &mdash; R: Functions</h1>
+				<table>
+					<tr>
+						<td><a href="summer2010_functions.html"><- R: Functions</a></td><td><a href = "r-study.html">Home</a> </td> <!--<td>Week 2-></td> -->
+					</tr>
+				</table>
+				<h2>Contents</h2>
+					<ol>
+						<li><a href = "#intro">Intro</a></li>
+						<li><a href = "#reshape_package"> <rcode>reshape</rcode> Package</a></li>
+						<li><a href = "#us_war_casualties">US War Casualties</a></li>
+						<li><a href = "#gender_gap">Gender Gap</a></li>
+						<li><a href = "#peterson_barney">Peterson and Barney</a></li>
+					</ol>
+				
+				<h2><a name = "intro"></a>Intro</h2>
+				<p>
+					Effectively deploying <rcode>plyr</rcode> functions, and soon enough producing graphics in <rcode>ggplot2</rcode>, relies pretty
+					heavilly upon having data in a particular format. However, perhaps it's not always possible to appropriately format data as you
+					collect it, and frequently we inherit data from other sources and researchers who had different concerns when putting together their data.
+					Here, we'll discuss how the <rcode>reshape</rcode> package can help us reformat data into other forms.
+				</p>
+				<p>
+					My approach to this topic will be mostly examples based.
+				</p>
+				<h2><a name = "reshape_package"></a> <rcode>reshape</rcode> Package</h2>
+				<p>
+					The webpage for the <rcode>reshape</rcode> package is located here: <a href="http://had.co.nz/reshape/">http://had.co.nz/reshape/</a>. The
+					<a href="http://www.jstatsoft.org/v21/i12">suggested documentation</a> on that page is pretty good.
+				</p>
+				
+				<h2><a name = "us_war_casualties"></a>US War Casualties</h2>
+				<p>
+					The first set of data we'll look at comes was linked to by a post on the <a href="http://www.guardian.co.uk/news/datablog">Guardian Data Blog</a>.
+					<a href="http://www.guardian.co.uk/news/datablog/2009/sep/17/afghanistan-casualties-dead-wounded-british-data">The post</a> is about British casualties 
+					in Afghanistan, but we'll be looking at data on US war casualties. That data is located here: 
+					<a href="http://spreadsheets.google.com/ccc?key=phNtm3LmDZEP-WVJJxqgYfA#gid=0">http://spreadsheets.google.com/ccc?key=phNtm3LmDZEP-WVJJxqgYfA#gid=0</a>
+				</p>
+				<p>
+					Now, this data is going to require some processing before it's in a workable format, and a lot of that will probably be easier in the text editor
+					of your choice. Download the data from Google Docs as a txt file, then follow these steps in a text editor.
+				</p>
+				<ul>
+					<li>Delete the first line</li>
+					<li>Delete final 6 lines, starting with "ROUNDING ADJUSTMENTS</li>
+					<li>Search and replace all commas with nothing</li>
+					<li>Search and replace all quotes with nothing</li>
+					<li>Search and replace all hyphens wth nothing</li>
+					<li>Search and replace all parentheses with nothing</li>
+					<li>Search and replace all spaces with periods</li>
+				</ul>
+				
+				<p>
+					We still need to code which country the data is coming from into the column names. In principle, it might be a good idea to do this by
+					hand in the raw data. However, we can also do it in a more automated way in R. Save the above changes, then load the data into R using
+					<rcode>read.delim()</rcode>. Be sure to set <rcode>check.names = F</rcode> in <rcode>read.delim()</rcode>. We have a number of 
+					columns which have the same names. Ordinarily, this would be bad, and by default R would fix it for us, but for our present purposes we want
+					to leave them as-is.
+				</p>
+				<blockquote>
+					<rcode>
+						# Append "Afghanistan_" to the Afghanistan data<br>
+						colnames(casualties)[2:5] <- paste("Afghanistan", colnames(casualties)[2:5], sep = "_")<br>
+						<br>
+						#Append "Iraq_" to the Iraq data<br>
+						colnames(casualties)[6:9] <- paste("Iraq", colnames(casualties)[6:9], sep = "_")<br>
+					</rcode>
+				</blockquote>
+				<p>
+					The next step is to "melt" the data with the <rcode>reshape::melt()</rcode> function. The arguments that <rcode>melt()</rcode> takes 
+					are:
+				</p>
+				<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing the data.</dd>
+					<dt><rcode>id.vars</rcode></dt>
+						<dd>The columns which define the id variables</dd>
+					<dt><rcode>measure.vars</rcode></dt>
+						<dd>The columns which define measure variables. By default, it assumes all non-id variables are measure variables</dd>
+					<dt><rcode>variable_name</rcode></dt>
+						<dd>What you want to call the new variable column. The default is "variable", which is pretty fine.</dd>
+				</dl>
+				<p>
+					For this casualties data, the only id variable defined in a column is <rcode>STATE</rcode>. The other id variable is
+					which country the data came from, which is unfortunately spread out along the columns.
+				</p>
+				<blockquote>
+					<rcode>
+						# melt the data<br>
+						# 1 indicates the column index<br>
+						casualties.m <- melt(casualties, id = 1, na.rm = T)<br>
+						<br>
+						# this is an equivalent call to melt()<br>
+						casualties.m <- melt(casualties, id = "STATE", na.rm = T)
+					</rcode>
+				</blockquote>
+				<p>
+					The resulting <rcode>casualties.m</rcode> data frame should look something like this:
+				</p>
+				<pre>
+             STATE                 variable value
+  1        ALABAMA Afghanistan_HOSTILE.DEAD     8
+  2         ALASKA Afghanistan_HOSTILE.DEAD     1
+  3 AMERICAN.SAMOA Afghanistan_HOSTILE.DEAD     1
+  4        ARIZONA Afghanistan_HOSTILE.DEAD    19
+  5       ARKANSAS Afghanistan_HOSTILE.DEAD     5
+  6     CALIFORNIA Afghanistan_HOSTILE.DEAD    75 
+				</pre>
+				<p>
+					The column <rcode>variable</rcode> contains the measure column names from <rcode>casualties</rcode>, and <rcode>value</rcode>
+					contains the value from the cell corresponding the rows defined by the id variables, and the column defined by <rcode>variable</rcode>.
+				</p>
+				<p>
+					We haven't got this data in a very usable format yet. We need to separate the country information from the casualty type information.
+					We'll do this by using <rcode>reshape::colsplit()</rcode>. Using <rcode>colsplit()</rcode> alone will split a given vector along a
+					specific character, and will return a data frame with however many columns this splitting creates. We'll add these new columns back onto the 
+					original data frame with <rcode>base::cbind()</rcode>.
+				</p>
+				<blockquote>
+					<rcode>
+						## Let's just see what colsplit() produces<br>
+						head(colsplit(casualties.m$variable, split = "_", names = c("Country","Type")))<br>
+						<br>
+						## Add these results back onto the dataframe<br>
+						casualties.m <- cbind(casualties.m, colsplit(casualties.m$variable, split = "_", names = c("Country","Type")))<br>
+					</rcode>
+				</blockquote>
+				<p>
+					Now that we have the data in this format, we can recast the data into almost any shape, including various aggregations.
+					The function to recast data is called <rcode>reshape::cast()</rcode>. It takes the following arguments:
+				</p>
+					<dl>
+					<dt><rcode>data</rcode></dt>
+						<dd>The data frame containing molten data.</dd>
+					<dt><rcode>formula</rcode></dt>
+						<dd>The casting formula. Variables to the left of the <rcode>~</rcode> define rows, and variables 
+						to the right define columns. A pipe (<rcode>|</rcode>) following the formula defines subsets.</dd>
+					<dt><rcode>value</rcode></dt>
+						<dd>The column to treat as the value. By default, it assumes that a column named "<rcode>value</rcode>"
+						is the value column</dd>
+					<dt><rcode>fun.aggregate</rcode></dt>
+						<dd>aggregation function</dd>
+					<dt><rcode>margins</rcode></dt>
+						<dd>Which margins to calculate grand summaries for</dd>
+				</dl>
+				<p>
+					So, if we want to just see how many states we have observations for for each country and casualty type, we can use
+					the following code:
+				</p>
+				<blockquote>
+					<rcode>
+						cast(casualties.m, Type ~ Country)<br>
+					</rcode>
+				</blockquote>
+				<pre>
+  Aggregation requires fun.aggregate: length used as default
+                      Type Afghanistan Iraq
+  1           HOSTILE.DEAD          53   56
+  2 HOSTILE.WOUNDED.ACTUAL          56   56
+  3    HOSTILE.WOUNDED.EST          52   55
+  4        NONHOSTILE.DEAD          50   55
+					
+				</pre>
+				<p>
+					As <rcode>cast()</rcode> warns us, we didn't define an aggregation function, so it uses <rcode>length()</rcode>, or
+					the number of observations for each combination of casualty type and country. It looks as if we have data from 56 states 
+					(the 50 states proper, plus 5 territories and Washington D.C.). However, many states don't have reported data for some
+					casualty types for one or more of the countries.
+				</p>
+				<p>
+					We can also use <rcode>cast()</rcode> to calculate total casualties, and median casualties using different aggregation functions.
+					I'll also add column grand summaries.
+				</p>
+				<blockquote>
+					<rcode>
+						## Total casualties<br>
+						cast(casualties.m, Type ~ Country, fun = sum, margins = "grand_col")
+					</rcode>
+				</blockquote>
+				<pre>
+                      Type Afghanistan  Iraq (all)
+  1           HOSTILE.DEAD         731  3461  4192
+  2 HOSTILE.WOUNDED.ACTUAL        4263 27817 32080
+  3    HOSTILE.WOUNDED.EST         924  3853  4777
+  4        NONHOSTILE.DEAD         272   899  1171
+				</pre>
+				<blockquote>
+					<rcode>
+						## Median Casualties by State<br>
+						cast(casualties.m, Type ~ Country, fun = median, margins = "grand_col")
+					</rcode>
+				</blockquote>
+				<pre>
+                      Type Afghanistan Iraq
+  1           HOSTILE.DEAD         9.0   47
+  2 HOSTILE.WOUNDED.ACTUAL        48.5  379
+  3    HOSTILE.WOUNDED.EST        12.5   53
+  4        NONHOSTILE.DEAD         4.0   10
+				</pre>
+				<p>
+					Overall, the Iraq war has been deadlier. We can also compare this at a state by state level.
+				</p>
+				<blockquote>
+					<rcode>
+						## Create a data frame for comparison<br>
+						## If the combination of ID and measure variables <br>
+						## &nbsp;&nbsp;produces cells which all only have 1 observation, <br>
+						## &nbsp;&nbsp;cast will fill the cells with that value<br>
+						casualties.comp <- cast(casualties.m, STATE + Type ~ Country)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/warcompare.R"><img src = "plots/reshape/warcompare.png" width = 60%></a>
+				</center>
+				<p>
+					You might also want to compare how one kind of casualty is related to another.
+				</p>
+				<blockquote>
+					<rcode>
+						casualties.comp2 <- cast(casualties.m, STATE + Country  ~ Type)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/casualtycompare.R"><img src = "plots/reshape/casualtycompare.png" width = 60%></a>
+				</center>
+				<p>
+					As a final exercise, we might try using the pipe syntax in <rcode>cast()</rcode>. This will produce a list of data frames, 
+					where every element in the list is defined by the variables following the pipe.
+				</p>
+				<blockquote>
+					<rcode>
+						## Using the pipe syntax<br>
+						casualties.list <- cast(casualties.m, STATE ~ Country | Type)<br>
+						<br>
+						## Just print all of casualties.list, or<br>
+						## &nbsp;&nbsp;plot some if it<br>
+						qplot(Iraq, Afghanistan, data = casualties.list$HOSTILE.DEAD)<br>
+						<br>
+						qplot(Iraq, Afghanistan, data = casualties.list$NONHOSTILE.DEAD)
+					</rcode>
+				</blockquote>
+				<p>
+					It might also help, conceptually, if we recreated the format that the Gaurdian published the data in.
+				</p>
+				<blockquote>
+					<rcode>
+						cast(casualties.m, STATE ~ Country + Type)
+					</rcode>
+				</blockquote>
+				<p>
+					It might be useful for you to think about the way you structure your data in terms of a <rcode>cast()</rcode> formula, per 
+					our <a href="summer2010_general_data_structure.html">general discussion</a> of data structure.
+				</p>
+				
+				<h2><a name = "gender_gap"></a>Gender Gap</h2>
+				<p>
+					This next data set also comes from <a href="http://www.guardian.co.uk/news/datablog/2009/mar/10/gender-educationsgendergap">a post</a> 
+					to the Guardian Data blog about gender inequality. You can find the data here: 
+					<a href="http://spreadsheets0.google.com/ccc?key=phNtm3LmDZENDfX6fD5PSMw#gid=0">http://spreadsheets0.google.com/ccc?key=phNtm3LmDZENDfX6fD5PSMw#gid=0</a>
+				</p>
+				<p>
+					Again, we'll do some pre-processing in a text editor. Download the data from Google spreadsheets, then perform the following steps
+				</p>
+				<ul>
+					<li>Delete the first 8 lines, so that the first line starts "Afghanistan"</li>
+					<li>Delete the final 3 lines, so that the last line starts "Zimbabwe"</li>
+					<li>Search and replace all commas with nothing</li>
+					<li>Search and replace all quotes with nothing</li>
+					<li>Search and replace all spaces with periods</li>
+					<li>Search and replace all double tabs with single tabs</li>
+				</ul>
+				<p>
+					Like before, we'll add in the column names in R. I did this part by hand, but it's easier for us all to recreate the same steps
+					if we just copy my code below. Read in the data with <rcode>read.delim()</rcode>, being sure to set <rcode>header = F</rcode> and
+					<rcode>na.strings = ".."</rcode>. The next block of code will rename the columns appropriately.
+				</p>
+				<blockquote>
+					<rcode>
+						colnames(gender) <- c("Country", "LifeExp_Female", "LifeExp_Male", "Literacy_Female", 
+"Literacy_Male", "Edu_Female", "Edu_Male", "Income_Female", "Income_Male", 
+"Parliament", "Legislators", "Professional", "IncomeRatio")<br>
+					</rcode>
+				</blockquote>
+				<p>
+					Looking at the data, there are really two kinds of data sets here. The first compares the status of men and women on a number of different
+					metrics, and the other looks strictly at metrics about women's placement in societies. For our purpose, we'll focus on the former.
+					So, the following code takes the correct subset.
+				</p>
+				<blockquote>
+					<rcode>
+						 ## Only keep the relevant columns<br>
+						 gender1 <- gender[, c(1,2:9)]<br>
+					</rcode>
+				</blockquote>
+				<p>
+					Now, like before, we want to melt the data, then use <rcode>colsplit()</rcode> to split appart the
+					measurement data from the gender data.
+				</p>
+				<blockquote>
+					<rcode>
+						 ## Melt the data!<br>
+						 gender.m <- melt(gender1, id = 1, na.rm = T)<br>
+						 <br>
+						 ## Split the variable column!<br>
+						 gender.m <- cbind(gender.m, colsplit(gender.m$variable, split = "_", names = c("Measure","Gender")))
+					</rcode>
+				</blockquote>
+				<p>
+					Now we can do some serious stuff. Let's start by checking how balanced the observations are.
+				</p>
+				<blockquote>
+					<rcode>
+						cast(gender.m, Measure ~ Gender)
+					</rcode>
+				</blockquote>
+				<pre>
+  Aggregation requires fun.aggregate: length used as default
+     Measure Female Male
+  1      Edu    178  178
+  2   Income    174  174
+  3  LifeExp    194  194
+  4 Literacy    171  171
+				</pre>
+				<p>
+					All contries in the sample have life expectancy data, but no other metric has data from all other countries
+				</p>
+				<p>
+					Now let's look at median values for each measure.
+				</p>
+				<blockquote>
+					<rcode>
+						cast(gender.m, Measure ~ Gender, fun = median)
+					</rcode>
+				</blockquote>
+				<pre>
+     Measure  Female    Male
+  1      Edu   74.25   72.05
+  2   Income 3994.00 7984.50
+  3  LifeExp   74.05   68.30
+  4 Literacy   89.20   93.70
+				</pre>
+				<p>Women have higher median educational involvement rates and life expectancy, but lower median literacy rates, and much lower
+				median incomes. Let's compare men and women on each metric.</p>
+				<blockquote>
+					<rcode>
+						## Create the comparison dataframe<br>
+						gender.comp <- cast(gender.m, Country + Measure ~ Gender)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/gendercompare.R"><img src = "plots/reshape/gendercompare.png" width = 60%></a>
+				</center>
+				<p>
+					There are a few interesting patterns here. To begin with, it looks mostly like the differences between countries is larger than
+					differences within countries. So, countries with high education, for instance, have both high male and female education. There's also apparently
+					an artificial clipping of reported male incomes. No country reports a mean male income greater than $40,000. I'll be excluding 
+					these and other artificially clipped data points in the following plots.
+				</p>
+				<p>
+					The gender differences within countries are also interesting. The most striking, to my eyes, is that in high education rate countries,
+					women have a higher education rate than men, but in lower education rate countries, men have a higher rate than women.
+				</p>
+				<p>
+					We should probably also look at how different measures are correlated with eachother.
+				</p>
+				<blockquote>
+					<rcode>
+						gender.comp2 <- cast(gender.m, Country + Gender ~ Measure)
+					</rcode>
+				</blockquote>
+				<p>
+					Let's start with income and life expectancy.
+				</p>
+				<center>
+					<a href = "plots/reshape/income_life.R"><img src = "plots/reshape/income_life.png" width = 70%></a>
+				</center>
+				<p>
+					Unsurprisingly, the greater average income, the greater life expectancy is. Women almost always have a higher life expectancy than men of the same
+					average income, but as income increases, life expectancy seems to increase at the same rate for men and women.
+				</p>
+				<p>
+					Next, education and literacy!
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_lit.R"><img src = "plots/reshape/edu_lit.png" width = 75%></a>
+				</center>
+				<p>
+					Unsurprisingly, as education increases, so does literacy. The effect of education on literacy also appears to be the same for both genders.
+				</p>
+				<p>
+					Next, let's look at the effect of education on income!
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_income1.R"><img src = "plots/reshape/edu_income1.png" width = 70%></a>
+				</center>
+				<p>
+					Now that is a strong interaction. Over all, as education increases, average income increases. However, the effect is stronger for men
+					than for women. That is, men get more income bang for their education buck, internationally. For women, the effect of education on income 
+					is weaker at the higher education and income end of the spectrum.
+				</p>
+				<p>
+					We can also visualize this effect by connecting the male and female data points within each country.
+				</p>
+				<center>
+					<a href = "plots/reshape/edu_income2.R"><img src = "plots/reshape/edu_income2.png" width = 70%></a>
+				</center>
+				<p>
+					Now, the cross-over pattern in education above makes more sense. The high income countries are also the high education countries, but
+					it's in those countries that women need to have proportionally more education to get the same income benefits. The arbitrariness of this
+					effect should be clear. Women don't appear to be worse learners, as evidenced by there not being a large gender effect on the direct
+					outcome of education, literacy. 
+				</p>
+				<p>
+					Of course, I'm also commiting the <a href="http://en.wikipedia.org/wiki/Ecological_fallacy">environmental fallacy</a>, and maybe others.
+				</p>
+				
+				<h2><a name = "peterson_barney"></a>Peterson and Barney</h2>
+				<p>
+					I'll use this final set of data to demonstrate some useful aggregation utility in <rcode>cast()</rcode>. This data set is acoustic measurements
+					of recordings of 8 repitions of 10 vowels by 76 speakers as collected by Peterson and Barney (1952). It can be found here: 
+					<a href="http://ling.upenn.edu/courses/cogs501/pb.Table1">http://ling.upenn.edu/courses/cogs501/pb.Table1</a>
+				</p>
+				<p>
+					First, let's load it into R and clean it up a bit.
+				</p>
+				<blockquote>
+					<rcode>
+						## Read in the data<br>
+						pb <- read.delim("http://ling.upenn.edu/courses/cogs501/pb.Table1", header = F)<br>
+						<br>
+						## Give meaningful column names<br>
+						colnames(pb) <- c("Age","Sex","Speaker","Vowel","V1","F0.hz","F1.hz","F2.hz","F3.hz")<br>
+						<br>
+						## Fix up the age data<br>
+						levels(pb$Age) <- c("Child","Adult","Adult")<br>
+						pb$Age <- relevel(pb$Age, "Adult")
+					</rcode>
+				</blockquote>
+				<p>Next, melt the data.</p>
+				<blockquote>
+					<rcode>
+						pb.m <- melt(pb, id = 1:5)
+					</rcode>
+				</blockquote>
+				<p>
+					Now, examine the balance of the data.
+				</p>
+				<blockquote>
+					<rcode>
+						## How many measurements by age and sex?<br>
+						cast(pb.m, Vowel ~ Age+Sex)
+					</rcode>
+				</blockquote>
+				<xmp>
+  Aggregation requires fun.aggregate: length used as default
+     Vowel Adult_f Adult_m Child_f Child_m
+  1     aa     224     264      64      56
+  2     ae     224     264      64      56
+  3     ah     224     264      64      56
+  4     ao     224     264      64      56
+  5     eh     224     264      64      56
+  6     er     224     264      64      56
+  7     ih     224     264      64      56
+  8     iy     224     264      64      56
+  9     uh     224     264      64      56
+  10    uw     224     264      64      56
+				</xmp>
+				<blockquote>
+					<rcode>
+						## How many speakers by age and sex?<br>
+						cast(pb.m, Age+Sex ~ ., value = "Speaker", <br>
+						&nbsp;&nbsp;fun = function(x) length(unique(x)))
+					</rcode>
+				</blockquote>
+				<xmp>
+      Age Sex (all)
+  1 Adult   f    28
+  2 Adult   m    33
+  3 Child   f     8
+  4 Child   m     7				
+  				</xmp>
+				<blockquote>
+					<rcode>
+						## How many measurements of each vowel by speaker?<br>
+						cast(pb.m, Vowel ~ Speaker)
+					</rcode>
+				</blockquote>
+				<p>
+					So, the data isn't necesarilly balanced in terms of numbers of speakers in each category, but every speaker produced the same number
+					of each vowel.
+				</p>
+				<p>
+					Now, let's calculate the mean formant values for each vowel in each category of speaker.
+				</p>
+				<blockquote>
+					<rcode>
+						pb.means1 <- cast(pb.m, Vowel + Sex + Age + variable ~ ., fun = mean)
+					</rcode>
+				</blockquote>
+				<center>
+					<a href = "plots/reshape/sex_age_formant.R"><img src = "plots/reshape/sex_age_formant.png" width = 100%></a>
+				</center>
+				<p>
+					The patterns which seem most clear to me are
+				</p>
+				<ol>
+					<li>The logarithmic distribution of formant values</li>
+					<li>The order of low to high values go <br>
+						Adult Male < Adult Female < Child Male < Child Female</li>
+				</ol>
+				<p>
+					To calculate speaker category means:
+				</p>
+				<blockquote>
+					<rcode>
+						cast(pb.m, Vowel + Sex + Age ~ variable, fun = mean)
+					</rcode>
+				</blockquote>
+				<p>
+					To calculate speaker means:
+				</p>
+				<blockquote>
+					<rcode>
+						cast(pb.m, Speaker + Vowel + Sex + Age ~ variable, fun = mean)
+					</rcode>
+				</blockquote>
+			</div>
+		</div>
+	
+		
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-835627-6");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+	</body>
+</html>
